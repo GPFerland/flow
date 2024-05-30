@@ -50,6 +50,8 @@ import 'firebase_options.dart';
 
 //todo - Give a theme options to let a user disable the Today, Yesterday, Tomorrow in the heading
 
+//todo - the way I am loading in Icons is assssssss!!!!!
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
