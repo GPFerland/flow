@@ -43,3 +43,4 @@ doc/api/
 /.idea/*
 /flow.iml
 /.github/*
+/android/app/*/*.aab
