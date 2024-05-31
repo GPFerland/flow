@@ -25,3 +25,21 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# Avoid committing API keys
+/firebase.json
+/android/app/google-services.json
+/ios/Runner/GoogleService-Info.plist
+/lib/firebase_options.dart
+
+#Generated firebase files
+/.firebase/hosting.*.cache
+/.firebaserc
+/lib/firebase_options.dart
+/android/.idea/*
+
+# Weird files
+/.idea/*
+/.idea/*
+/flow.iml
+/.github/*

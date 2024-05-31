@@ -161,7 +161,7 @@ class _RoutineFormState extends ConsumerState<RoutineForm> {
                   child: ElevatedButton(
                     onPressed: _saveRoutine,
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(
                         Theme.of(context).colorScheme.primary,
                       ),
                     ),

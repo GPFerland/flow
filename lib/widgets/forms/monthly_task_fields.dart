@@ -117,7 +117,7 @@ class _MonthlyTaskFieldsState extends State<MonthlyTaskFields> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.clear),
-                        color: Theme.of(context).colorScheme.onBackground,
+                        color: Theme.of(context).colorScheme.onSurface,
                         onPressed: () {
                           setState(
                             () {

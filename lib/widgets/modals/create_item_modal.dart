@@ -21,10 +21,10 @@ Future showCreateItemModal({
               pageIndexNotifier.value = 0;
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
+              backgroundColor: WidgetStateProperty.all(
                 Theme.of(context).colorScheme.primary,
               ),
-              shadowColor: MaterialStateProperty.all(
+              shadowColor: WidgetStateProperty.all(
                 Theme.of(context).colorScheme.primary,
               ),
             ),
@@ -39,7 +39,7 @@ Future showCreateItemModal({
             pageIndexNotifier.value = 1;
           },
           style: ButtonStyle(
-            shadowColor: MaterialStateProperty.all(
+            shadowColor: WidgetStateProperty.all(
               Theme.of(context).colorScheme.primary,
             ),
           ),
@@ -79,7 +79,7 @@ Future showCreateItemModal({
             pageIndexNotifier.value = 0;
           },
           style: ButtonStyle(
-            shadowColor: MaterialStateProperty.all(
+            shadowColor: WidgetStateProperty.all(
               Theme.of(context).colorScheme.primary,
             ),
           ),
@@ -91,10 +91,10 @@ Future showCreateItemModal({
               pageIndexNotifier.value = 1;
             },
             style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all(
+              backgroundColor: WidgetStateProperty.all(
                 Theme.of(context).colorScheme.primary,
               ),
-              shadowColor: MaterialStateProperty.all(
+              shadowColor: WidgetStateProperty.all(
                 Theme.of(context).colorScheme.primary,
               ),
             ),

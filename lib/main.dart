@@ -1,10 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flow/providers/future/user_data_future_provider.dart';
+import 'package:flow/providers/future/theme_future_provider.dart';
 import 'package:flow/providers/theme/theme_provider.dart';
 import 'package:flow/screens/auth/auth_screen.dart';
 import 'package:flow/screens/error/error_screen.dart';
-import 'package:flow/screens/home/list_screen.dart';
+import 'package:flow/screens/home/home_screen.dart';
 import 'package:flow/screens/loading/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,6 +52,12 @@ import 'firebase_options.dart';
 
 //todo - the way I am loading in Icons is assssssss!!!!!
 
+//todo - I need to figure out how to use Icons better because its fucking me up
+
+//todo - Use SafeArea to avoid native device hardware, cameras, notches, shit
+
+//todo - remove any secret keys from the git repo and ignore them going forward
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -79,15 +85,15 @@ class FlowApp extends ConsumerWidget {
             return const LoadingScreen();
           }
           if (snapshot.hasData) {
-            return ref.watch(userDataFutureProvider).when(
+            return ref.watch(userThemeFutureProvider).when(
+              loading: () {
+                return const LoadingScreen();
+              },
               data: (data) {
-                return const ListScreen();
+                return const HomeScreen();
               },
               error: (Object error, StackTrace stackTrace) {
                 return ErrorScreen(error: error);
-              },
-              loading: () {
-                return const LoadingScreen();
               },
             );
           }

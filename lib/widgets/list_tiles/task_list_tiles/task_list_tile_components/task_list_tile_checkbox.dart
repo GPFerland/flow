@@ -11,10 +11,12 @@ class TaskListTileCheckbox extends ConsumerWidget {
     super.key,
     required this.task,
     this.routine,
+    this.isCheckable = true,
   });
 
   final Task task;
   final Routine? routine;
+  final bool isCheckable;
 
   Future<void> toggleStatus(
       bool? newValue, WidgetRef ref, BuildContext context) async {
@@ -57,7 +59,7 @@ class TaskListTileCheckbox extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     DateTime selectedDate = ref.read(selectedDateProvider);
-    bool isEnabled = !selectedDate.isAfter(DateTime.now());
+    bool isEnabled = !selectedDate.isAfter(DateTime.now()) && isCheckable;
 
     return Checkbox(
       value: task.isComplete(selectedDate),

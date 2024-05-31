@@ -2,6 +2,7 @@ import 'package:flow/models/occurrence.dart';
 import 'package:flow/models/routine.dart';
 import 'package:flow/models/task.dart';
 import 'package:flow/providers/date/selected_date_provider.dart';
+import 'package:flow/providers/future/selected_date_list_data_future_provider.dart';
 import 'package:flow/providers/models/occurrences_provider.dart';
 import 'package:flow/providers/models/routines_provider.dart';
 import 'package:flow/providers/models/tasks_provider.dart';
@@ -9,6 +10,7 @@ import 'package:flow/providers/theme/show_completed_provider.dart';
 import 'package:flow/widgets/dividers/divider_on_primary_container.dart';
 import 'package:flow/widgets/list_tiles/routine_list_tiles/expandable_routine_list_tile.dart';
 import 'package:flow/widgets/list_tiles/task_list_tiles/checkable_task_list_tile.dart';
+import 'package:flow/widgets/lists/shimmer_loading_task_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,7 +26,7 @@ class SelectedDateList extends ConsumerStatefulWidget {
 class _SelectedDateListState extends ConsumerState<SelectedDateList>
     with SingleTickerProviderStateMixin {
   late DateTime _selectedDate;
-  late List<dynamic> _items;
+  late List<dynamic>? _items;
   final GlobalKey<AnimatedListState> _itemListKey =
       GlobalKey<AnimatedListState>();
   late AnimationController _animationController;
@@ -34,7 +36,7 @@ class _SelectedDateListState extends ConsumerState<SelectedDateList>
   void initState() {
     super.initState();
     _selectedDate = ref.read(selectedDateProvider);
-    _items = _getSelectedDateList();
+    _items = null;
     _animationController = AnimationController(
       vsync: this,
       duration: _animationDuration,
@@ -162,19 +164,24 @@ class _SelectedDateListState extends ConsumerState<SelectedDateList>
 
     List<dynamic> newTodaysList = _getSelectedDateList();
 
+    if (_items == null) {
+      _items = newTodaysList;
+      return;
+    }
+
     List<dynamic> itemsToShow = [];
     List<dynamic> itemsToHide = [];
     List<dynamic> itemsToMove = [];
 
     for (var newItem in newTodaysList) {
-      if (!_items.contains(newItem)) {
+      if (!_items!.contains(newItem)) {
         itemsToShow.add(newItem);
       }
     }
 
-    for (var oldItem in _items) {
+    for (var oldItem in _items!) {
       final newIndex = newTodaysList.indexOf(oldItem);
-      final oldIndex = _items.indexOf(oldItem);
+      final oldIndex = _items!.indexOf(oldItem);
       if (newIndex == -1 && oldIndex != -1) {
         itemsToHide.add({
           'item': oldItem,
@@ -282,7 +289,7 @@ class _SelectedDateListState extends ConsumerState<SelectedDateList>
   }
 
   void _showItems(List<dynamic> items) async {
-    final newIndex = _items.indexOf(items.first);
+    final newIndex = _items!.indexOf(items.first);
     if (newIndex == -1) {
       return;
     }
@@ -310,7 +317,7 @@ class _SelectedDateListState extends ConsumerState<SelectedDateList>
 
   void _moveItem(dynamic itemMap) async {
     final oldIndex = itemMap['oldIndex'];
-    final newIndex = itemMap['newIndex'].clamp(0, _items.length - 1);
+    final newIndex = itemMap['newIndex'].clamp(0, _items!.length - 1);
 
     if (oldIndex == -1 || newIndex == -1 || newIndex == oldIndex) {
       return;
@@ -366,20 +373,32 @@ class _SelectedDateListState extends ConsumerState<SelectedDateList>
     //todo - figure out how to get the screen to update when the day changes
     //DateTime currentDate = ref.watch(currentDateProvider);
     ref.watch(selectedDateProvider);
+    ref.watch(showCompletedProvider);
     ref.watch(occurrencesProvider);
     ref.watch(routinesProvider);
     ref.watch(tasksProvider);
-    ref.watch(showCompletedProvider);
 
-    _updateSelectedDateList();
+    return ref.watch(selectedDateListDataFutureProvider).when(
+      loading: () {
+        return const ShimmerLoadingList();
+      },
+      data: (data) {
+        _updateSelectedDateList();
 
-    return AnimatedList(
-      key: _itemListKey,
-      initialItemCount: _items.length,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context, index, animation) {
-        return _buildItem(_items[index], index, animation);
+        return AnimatedList(
+          key: _itemListKey,
+          initialItemCount: _items!.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index, animation) {
+            return _buildItem(_items![index], index, animation);
+          },
+        );
+      },
+      error: (Object error, StackTrace stackTrace) {
+        return Center(
+          child: Text(error.toString()),
+        );
       },
     );
   }

@@ -14,16 +14,19 @@ class AuthScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Card(
-                margin: const EdgeInsets.all(20),
-                color: Theme.of(context).colorScheme.onPrimary,
-                child: const SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: Card(
+                  margin: const EdgeInsets.all(20),
+                  color: Theme.of(context).colorScheme.onPrimary,
+                  child: const SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                      child: AuthForm(),
                     ),
-                    child: AuthForm(),
                   ),
                 ),
               ),

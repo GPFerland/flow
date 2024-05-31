@@ -16,10 +16,12 @@ class CheckableTaskListTile extends ConsumerWidget {
     super.key,
     required this.task,
     this.routine,
+    this.isCheckable = true,
   });
 
   final Task task;
   final Routine? routine;
+  final bool isCheckable;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -64,6 +66,7 @@ class CheckableTaskListTile extends ConsumerWidget {
                 TaskListTileCheckbox(
                   task: task,
                   routine: routine,
+                  isCheckable: isCheckable,
                 ),
               ],
             ),

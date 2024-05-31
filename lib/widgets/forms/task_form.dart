@@ -306,7 +306,7 @@ class _TaskFormState extends ConsumerState<TaskForm>
                   child: ElevatedButton(
                     onPressed: _saveTask,
                     style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
+                      backgroundColor: WidgetStateProperty.all(
                         Theme.of(context).colorScheme.primary,
                       ),
                     ),
