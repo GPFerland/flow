@@ -1,10 +1,8 @@
-import 'package:flow/widgets/buttons/show_routines_screen_button.dart';
-import 'package:flow/widgets/buttons/show_tasks_screen_button.dart';
 import 'package:flow/widgets/dividers/divider_on_secondary_container.dart';
-import 'package:flow/widgets/footers/drawer_footer_tile.dart';
-import 'package:flow/widgets/headers/title_drawer_header.dart';
-import 'package:flow/widgets/input_fields/color/color_input_list_tile.dart';
-import 'package:flow/widgets/input_fields/toggle/dark_mode_toggle_slider.dart';
+import 'package:flow/widgets/drawer/drawer_navigation_buttons/drawer_navigation_buttons.dart';
+import 'package:flow/widgets/drawer/drawer_theme_buttons/drawer_theme_buttons.dart';
+import 'package:flow/widgets/drawer/default_drawer_header.dart';
+import 'package:flow/widgets/drawer/drawer_account_buttons/drawer_account_buttons.dart';
 import 'package:flutter/material.dart';
 
 class DefaultDrawer extends StatelessWidget {
@@ -12,53 +10,24 @@ class DefaultDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: Column(
-        children: [
-          const DefaultDrawerHeader(),
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              shrinkWrap: true,
-              children: const [
-                ShowTasksScreenButton(),
-                DividerOnSecondaryContainer(),
-                ShowRoutinesScreenButton(),
-                DividerOnSecondaryContainer(),
-                ThemeColorListTile(),
-                DividerOnSecondaryContainer(),
-                DarkModeToggleSlider(),
-                DividerOnSecondaryContainer(),
-                // ShowTasksScreenButton(),
-                // DividerOnSecondaryContainer(),
-                // ShowRoutinesScreenButton(),
-                // DividerOnSecondaryContainer(),
-                // ThemeColorListTile(),
-                // DividerOnSecondaryContainer(),
-                // DarkModeToggleSlider(),
-                // DividerOnSecondaryContainer(),
-                // ShowTasksScreenButton(),
-                // DividerOnSecondaryContainer(),
-                // ShowRoutinesScreenButton(),
-                // DividerOnSecondaryContainer(),
-                // ThemeColorListTile(),
-                // DividerOnSecondaryContainer(),
-                // DarkModeToggleSlider(),
-                // DividerOnSecondaryContainer(),
-                // ShowTasksScreenButton(),
-                // DividerOnSecondaryContainer(),
-                // ShowRoutinesScreenButton(),
-                // DividerOnSecondaryContainer(),
-                // ThemeColorListTile(),
-                // DividerOnSecondaryContainer(),
-                // DarkModeToggleSlider(),
-                // DividerOnSecondaryContainer(),
-              ],
-            ),
-          ),
-          const DividerOnSecondaryContainer(),
-          const DrawerFooterTile(),
-        ],
+    return const Drawer(
+      child: Padding(
+        padding: EdgeInsets.only(
+          top: 40,
+          //bottom: 40,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            DefaultDrawerHeader(),
+            DividerOnSecondaryContainer(),
+            DrawerNavigationButtons(),
+            DividerOnSecondaryContainer(),
+            DrawerThemeButtons(),
+            DividerOnSecondaryContainer(),
+            DrawerAccountButtons(),
+          ],
+        ),
       ),
     );
   }

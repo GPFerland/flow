@@ -14,6 +14,7 @@ class ThemeColorInputField extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () {
+        //todo - This function is duplicated, figure out a new location for it
         showDialog(
           context: context,
           builder: (BuildContext context) {

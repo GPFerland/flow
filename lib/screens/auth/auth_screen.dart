@@ -1,4 +1,4 @@
-import 'package:flow/widgets/auth/auth_form.dart';
+import 'package:flow/screens/auth/widgets/auth/auth_form.dart';
 import 'package:flutter/material.dart';
 
 //todo - Is this screen good?

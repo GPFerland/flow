@@ -5,10 +5,13 @@ class DividerOnSecondaryContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 2,
-      color:
-          Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.5),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Container(
+        height: 2,
+        color:
+            Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.1),
+      ),
     );
   }
 }

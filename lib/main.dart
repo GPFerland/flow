@@ -4,7 +4,7 @@ import 'package:flow/providers/future/theme_future_provider.dart';
 import 'package:flow/providers/theme/theme_provider.dart';
 import 'package:flow/screens/auth/auth_screen.dart';
 import 'package:flow/screens/error/error_screen.dart';
-import 'package:flow/screens/home/home_screen.dart';
+import 'package:flow/screens/selected_date_list/selected_date_list_screen.dart';
 import 'package:flow/screens/loading/loading_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -90,7 +90,7 @@ class FlowApp extends ConsumerWidget {
                 return const LoadingScreen();
               },
               data: (data) {
-                return const HomeScreen();
+                return const SelectedDateListScreen();
               },
               error: (Object error, StackTrace stackTrace) {
                 return ErrorScreen(error: error);
