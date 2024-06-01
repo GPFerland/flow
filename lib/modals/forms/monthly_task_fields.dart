@@ -21,121 +21,128 @@ class _MonthlyTaskFieldsState extends State<MonthlyTaskFields> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(18, 0, 18, 0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final maxWidth = constraints.maxWidth * 1;
+
+        return ConstrainedBox(
+          constraints: BoxConstraints(maxWidth: maxWidth),
+          child: Column(
             children: [
-              Text(
-                'The',
-                style: getTitleMediumOnPrimaryContainer(context),
-              ),
-              const SizedBox(
-                width: 12,
-              ),
-              DropdownButton<String>(
-                items: [
-                  for (String monthlyWhen in monthlyOrdinalsMap.values)
-                    DropdownMenuItem(
-                      value: monthlyWhen,
-                      child: Text(
-                        monthlyWhen,
-                        style: getTitleMediumOnPrimaryContainer(context),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          when = monthlyWhen;
-                        });
-                      },
-                    ),
-                ],
-                value: when,
-                onChanged: (String? selected) {},
-              ),
-              const SizedBox(
-                width: 12,
-              ),
-              DropdownButton<String>(
-                items: [
-                  for (String monthlyWhatDay in monthlyWeekdaysMap.values)
-                    DropdownMenuItem(
-                      value: monthlyWhatDay,
-                      child: Text(
-                        monthlyWhatDay,
-                        style: getTitleMediumOnPrimaryContainer(context),
-                      ),
-                      onTap: () {
-                        setState(() {
-                          whatDay = monthlyWhatDay;
-                        });
-                      },
-                    ),
-                ],
-                value: whatDay,
-                onChanged: (String? selected) {},
-              ),
-              IconButton(
-                onPressed: () {
-                  if (when != null && whatDay != null) {
-                    setState(() {
-                      widget.selectedMonthDays.add({
-                        'when': when!,
-                        'whatDay': whatDay!,
-                      });
-                    });
-                  }
-                },
-                icon: Icon(
-                  Icons.add_circle_outline,
-                  size: 28,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer,
-                ),
-              ),
-            ],
-          ),
-        ),
-        if (widget.selectedMonthDays.isNotEmpty)
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            child: DividerOnPrimaryContainer(),
-          ),
-        if (widget.selectedMonthDays.isNotEmpty)
-          Column(
-            children: [
-              for (Map<String, dynamic> selectedMonthDay
-                  in widget.selectedMonthDays)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'The ${selectedMonthDay['when']} ${selectedMonthDay['whatDay']} of the month.',
-                        style: getBodyLargeOnPrimaryContainer(context),
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.clear),
-                        color: Theme.of(context).colorScheme.onSurface,
-                        onPressed: () {
-                          setState(
-                            () {
-                              widget.selectedMonthDays.remove(selectedMonthDay);
-                            },
-                          );
-                        },
-                      ),
-                    ],
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    width: 12,
                   ),
+                  DropdownButton<String>(
+                    items: [
+                      for (String monthlyWhen in monthlyOrdinalsMap.values)
+                        DropdownMenuItem(
+                          value: monthlyWhen,
+                          child: Text(
+                            monthlyWhen,
+                            style: getTitleMediumOnPrimaryContainer(context),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              when = monthlyWhen;
+                            });
+                          },
+                        ),
+                    ],
+                    value: when,
+                    onChanged: (String? selected) {},
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  DropdownButton<String>(
+                    items: [
+                      for (String monthlyWhatDay in monthlyWeekdaysMap.values)
+                        DropdownMenuItem(
+                          value: monthlyWhatDay,
+                          child: Text(
+                            monthlyWhatDay,
+                            style: getTitleMediumOnPrimaryContainer(context),
+                          ),
+                          onTap: () {
+                            setState(() {
+                              whatDay = monthlyWhatDay;
+                            });
+                          },
+                        ),
+                    ],
+                    value: whatDay,
+                    onChanged: (String? selected) {},
+                  ),
+                  IconButton(
+                    onPressed: () {
+                      if (when != null && whatDay != null) {
+                        setState(() {
+                          widget.selectedMonthDays.add({
+                            'when': when!,
+                            'whatDay': whatDay!,
+                          });
+                        });
+                      }
+                    },
+                    icon: Icon(
+                      Icons.add,
+                      size: 28,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    ),
+                  ),
+                ],
+              ),
+              if (widget.selectedMonthDays.isNotEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  child: DividerOnPrimaryContainer(),
+                ),
+              if (widget.selectedMonthDays.isNotEmpty)
+                Column(
+                  children: [
+                    for (Map<String, dynamic> selectedMonthDay
+                        in widget.selectedMonthDays)
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Text(
+                                '${selectedMonthDay['when']} ${selectedMonthDay['whatDay']} of the month',
+                                style: getBodyLargeOnPrimaryContainer(context),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.clear),
+                              color: Theme.of(context).colorScheme.onSurface,
+                              onPressed: () {
+                                setState(
+                                  () {
+                                    widget.selectedMonthDays
+                                        .remove(selectedMonthDay);
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              if (widget.selectedMonthDays.isEmpty)
+                const SizedBox(
+                  height: 8,
                 ),
             ],
           ),
-        if (widget.selectedMonthDays.isEmpty)
-          const SizedBox(
-            height: 8,
-          ),
-      ],
+        );
+      },
     );
   }
 }

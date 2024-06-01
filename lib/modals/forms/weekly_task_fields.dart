@@ -72,27 +72,32 @@ class _WeeklyTaskFieldsState extends State<WeeklyTaskFields> {
             ],
           ),
         ),
-        ToggleButtons(
-          borderRadius: BorderRadius.circular(16),
-          borderWidth: 2,
-          constraints: BoxConstraints.tight(const Size.square(44)),
-          isSelected: widget.selectedWeekDays.values.toList(),
-          fillColor: Theme.of(context).colorScheme.primary,
-          selectedColor: Theme.of(context).colorScheme.onPrimary,
-          color: Theme.of(context).colorScheme.onPrimaryContainer,
-          onPressed: (index) {
-            setState(() {
-              widget.selectedWeekDays[shorthandWeekdays[index]] =
-                  !widget.selectedWeekDays[shorthandWeekdays[index]]!;
-            });
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            final buttonWidth = constraints.maxWidth / 8;
+            return ToggleButtons(
+              borderRadius: BorderRadius.circular(16),
+              borderWidth: 2,
+              constraints: BoxConstraints.tight(Size.square(buttonWidth)),
+              isSelected: widget.selectedWeekDays.values.toList(),
+              fillColor: Theme.of(context).colorScheme.primary,
+              selectedColor: Theme.of(context).colorScheme.onPrimary,
+              color: Theme.of(context).colorScheme.onPrimaryContainer,
+              onPressed: (index) {
+                setState(() {
+                  widget.selectedWeekDays[shorthandWeekdays[index]] =
+                      !widget.selectedWeekDays[shorthandWeekdays[index]]!;
+                });
+              },
+              children: shorthandWeekdays
+                  .map(
+                    (day) => Text(
+                      day,
+                    ),
+                  )
+                  .toList(),
+            );
           },
-          children: shorthandWeekdays
-              .map(
-                (day) => Text(
-                  day,
-                ),
-              )
-              .toList(),
         ),
         const SizedBox(
           height: 12,

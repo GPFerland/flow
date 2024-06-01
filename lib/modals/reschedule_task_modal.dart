@@ -8,6 +8,9 @@ Future showScheduleTaskModal({
   required Task task,
   required DateTime date,
 }) {
+  final double screenWidth = MediaQuery.of(context).size.width;
+  final double modalWidth = screenWidth * 0.9;
+
   SliverWoltModalSheetPage scheduleTaskPage = WoltModalSheetPage(
     hasTopBarLayer: false,
     child: Container(
@@ -34,6 +37,7 @@ Future showScheduleTaskModal({
 
   return WoltModalSheet.show<void>(
     context: context,
+    maxDialogWidth: modalWidth > 640 ? 640 : modalWidth,
     pageListBuilder: (modalSheetContext) {
       return [
         scheduleTaskPage,

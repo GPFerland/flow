@@ -244,57 +244,54 @@ class _TaskFormState extends ConsumerState<TaskForm>
             Card(
               margin: const EdgeInsets.all(0),
               color: Theme.of(context).colorScheme.secondaryContainer,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
-                child: Column(
-                  children: [
-                    TabBar(
-                      labelColor: Theme.of(context).colorScheme.primary,
-                      dividerColor: Theme.of(context).colorScheme.onPrimary,
-                      controller: _taskTypeTabController,
-                      tabs: [
-                        Tab(
-                          child: Text(
-                            'One-time',
-                            style: _taskTypeTabController.index == 0
-                                ? getTitleMediumOnSecondaryContainer(context)
-                                : getTitleSmallOnSecondaryContainer(context),
-                          ),
+              child: Column(
+                children: [
+                  TabBar(
+                    labelColor: Theme.of(context).colorScheme.primary,
+                    dividerColor: Theme.of(context).colorScheme.onPrimary,
+                    controller: _taskTypeTabController,
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          'One-time',
+                          style: _taskTypeTabController.index == 0
+                              ? getTitleMediumOnSecondaryContainer(context)
+                              : getTitleSmallOnSecondaryContainer(context),
                         ),
-                        Tab(
-                          child: Text(
-                            'Weekly',
-                            style: _taskTypeTabController.index == 1
-                                ? getTitleMediumOnPrimaryContainer(context)
-                                : getTitleSmallOnPrimaryContainer(context),
-                          ),
+                      ),
+                      Tab(
+                        child: Text(
+                          'Weekly',
+                          style: _taskTypeTabController.index == 1
+                              ? getTitleMediumOnPrimaryContainer(context)
+                              : getTitleSmallOnPrimaryContainer(context),
                         ),
-                        Tab(
-                          child: Text(
-                            'Monthly',
-                            style: _taskTypeTabController.index == 2
-                                ? getTitleMediumOnPrimaryContainer(context)
-                                : getTitleSmallOnPrimaryContainer(context),
-                          ),
+                      ),
+                      Tab(
+                        child: Text(
+                          'Monthly',
+                          style: _taskTypeTabController.index == 2
+                              ? getTitleMediumOnPrimaryContainer(context)
+                              : getTitleSmallOnPrimaryContainer(context),
                         ),
-                      ],
-                    ),
-                    Center(
-                      child: [
-                        OneTimeTaskFields(
-                          selectedDate: _selectedDate,
-                          selectDate: _selectDate,
-                        ),
-                        WeeklyTaskFields(
-                          selectedWeekDays: _selectedWeekDays,
-                        ),
-                        MonthlyTaskFields(
-                          selectedMonthDays: _selectedMonthDays,
-                        ),
-                      ][_taskTypeTabController.index],
-                    )
-                  ],
-                ),
+                      ),
+                    ],
+                  ),
+                  Center(
+                    child: [
+                      OneTimeTaskFields(
+                        selectedDate: _selectedDate,
+                        selectDate: _selectDate,
+                      ),
+                      WeeklyTaskFields(
+                        selectedWeekDays: _selectedWeekDays,
+                      ),
+                      MonthlyTaskFields(
+                        selectedMonthDays: _selectedMonthDays,
+                      ),
+                    ][_taskTypeTabController.index],
+                  )
+                ],
               ),
             ),
             const SizedBox(
