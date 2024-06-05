@@ -1,7 +1,7 @@
-import 'package:flow/models/routine.dart';
-import 'package:flow/models/task.dart';
-import 'package:flow/providers/models/routines_provider.dart';
-import 'package:flow/providers/models/tasks_provider.dart';
+import 'package:flow/data/models/routine.dart';
+import 'package:flow/data/models/task.dart';
+import 'package:flow/data/providers/models/routines_provider.dart';
+import 'package:flow/data/providers/models/tasks_provider.dart';
 import 'package:flow/utils/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

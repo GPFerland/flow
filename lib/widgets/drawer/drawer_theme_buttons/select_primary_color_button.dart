@@ -1,5 +1,5 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
-import 'package:flow/providers/theme/color_provider.dart';
+import 'package:flow/data/providers/theme/color_provider.dart';
 import 'package:flow/utils/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

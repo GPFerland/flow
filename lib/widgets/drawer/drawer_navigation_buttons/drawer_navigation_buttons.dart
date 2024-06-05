@@ -1,10 +1,14 @@
-import 'package:flow/widgets/drawer/drawer_navigation_buttons/show_routines_screen_button.dart';
-import 'package:flow/widgets/drawer/drawer_navigation_buttons/show_selected_date_list_screen_button.dart';
-import 'package:flow/widgets/drawer/drawer_navigation_buttons/show_tasks_screen_button.dart';
+import 'package:flow/data/providers/screen/screen_provider.dart';
+import 'package:flow/widgets/drawer/drawer_navigation_buttons/show_screen_button.dart';
 import 'package:flutter/material.dart';
 
 class DrawerNavigationButtons extends StatelessWidget {
-  const DrawerNavigationButtons({super.key});
+  const DrawerNavigationButtons({
+    super.key,
+    this.popContext = true,
+  });
+
+  final bool popContext;
 
   @override
   Widget build(BuildContext context) {
@@ -15,11 +19,26 @@ class DrawerNavigationButtons extends StatelessWidget {
 
         return SizedBox(
             width: buttonsWidth,
-            child: const Column(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                ShowSelectedDateListScreenButton(),
-                ShowTasksScreenButton(),
-                ShowRoutinesScreenButton(),
+                ShowScreenButton(
+                  screen: AppScreen.selectedDateList,
+                  buttonTitle: 'List',
+                  popContext: popContext,
+                ),
+                const SizedBox(height: 8),
+                ShowScreenButton(
+                  screen: AppScreen.tasksList,
+                  buttonTitle: 'Tasks',
+                  popContext: popContext,
+                ),
+                const SizedBox(height: 8),
+                ShowScreenButton(
+                  screen: AppScreen.routinesList,
+                  buttonTitle: 'Routines',
+                  popContext: popContext,
+                ),
               ],
             ));
       },

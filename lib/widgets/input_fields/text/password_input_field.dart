@@ -18,7 +18,7 @@ class PasswordInputField extends StatelessWidget {
       controller: passwordController,
       decoration: getTextInputFieldDecoration(
         labelText: 'Password',
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
+        context: context,
       ),
       validator: (value) {
         if (value == null || value.trim().length < 6) {

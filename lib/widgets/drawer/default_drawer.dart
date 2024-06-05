@@ -6,27 +6,33 @@ import 'package:flow/widgets/drawer/drawer_account_buttons/drawer_account_button
 import 'package:flutter/material.dart';
 
 class DefaultDrawer extends StatelessWidget {
-  const DefaultDrawer({super.key});
+  const DefaultDrawer({
+    super.key,
+    this.popContext = true,
+  });
+
+  final bool popContext;
 
   @override
   Widget build(BuildContext context) {
-    return const Drawer(
+    return Drawer(
+      shape: const LinearBorder(),
       child: SingleChildScrollView(
-        physics: AlwaysScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         child: Padding(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
             top: 60,
             bottom: 20,
           ),
           child: Column(
             children: [
-              DefaultDrawerHeader(),
-              DefaultDrawerDivider(),
-              DrawerNavigationButtons(),
-              DefaultDrawerDivider(),
-              DrawerThemeButtons(),
-              DefaultDrawerDivider(),
-              DrawerAccountButtons(),
+              const DefaultDrawerHeader(),
+              const DefaultDrawerDivider(),
+              DrawerNavigationButtons(popContext: popContext),
+              const DefaultDrawerDivider(),
+              const DrawerThemeButtons(),
+              const DefaultDrawerDivider(),
+              const DrawerAccountButtons(),
             ],
           ),
         ),

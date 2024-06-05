@@ -22,7 +22,7 @@ class UsernameInputField extends StatelessWidget {
       controller: usernameController,
       decoration: getTextInputFieldDecoration(
         labelText: 'Username',
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
+        context: context,
       ),
       validator: (value) {
         if (!validate) {

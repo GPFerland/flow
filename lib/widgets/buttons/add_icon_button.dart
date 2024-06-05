@@ -1,4 +1,4 @@
-import 'package:flow/modals/create_item_modal.dart';
+import 'package:flow/features/create_item/create_item_modal.dart';
 import 'package:flutter/material.dart';
 
 class AddIconButton extends StatelessWidget {

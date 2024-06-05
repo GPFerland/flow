@@ -19,9 +19,9 @@ class DescriptionInputField extends StatelessWidget {
       controller: descriptionController,
       decoration: getTextInputFieldDecoration(
         labelText: 'Description',
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
+        context: context,
       ),
-      style: getTitleMediumOnPrimaryContainer(context),
+      style: getTitleSmallOnPrimaryContainer(context),
       cursorHeight: cursorHeight,
     );
   }

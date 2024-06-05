@@ -17,6 +17,7 @@ class DrawerAccountButtons extends StatelessWidget {
             child: const Column(
               children: [
                 DrawerLogoutButton(),
+                SizedBox(height: 8),
                 DrawerAboutUsButton(),
               ],
             ));

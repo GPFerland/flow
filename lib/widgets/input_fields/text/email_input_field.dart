@@ -21,7 +21,7 @@ class EmailInputField extends StatelessWidget {
       controller: emailController,
       decoration: getTextInputFieldDecoration(
         labelText: 'Email',
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
+        context: context,
       ),
       validator: (value) {
         if (value == null || !EmailValidator.validate(value)) {

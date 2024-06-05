@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
 const double drawerTileHeight = 60;
-const double listTileHeight = 70;
-const double footerTileHeight = 85;
+const double listTileHeight = 80;
 
 TextStyle getTitleLargeOnPrimary(BuildContext context, {double? fontSize}) {
   return Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -60,6 +59,14 @@ TextStyle getBodyLargeOnPrimaryContainer(BuildContext context,
 TextStyle getBodyMediumOnPrimaryContainer(BuildContext context,
     {double? fontSize}) {
   return Theme.of(context).textTheme.bodyMedium!.copyWith(
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
+        fontSize: fontSize,
+      );
+}
+
+TextStyle getBodySmallOnPrimaryContainer(BuildContext context,
+    {double? fontSize}) {
+  return Theme.of(context).textTheme.bodySmall!.copyWith(
         color: Theme.of(context).colorScheme.onPrimaryContainer,
         fontSize: fontSize,
       );

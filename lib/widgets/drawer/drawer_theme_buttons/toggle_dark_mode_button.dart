@@ -1,4 +1,4 @@
-import 'package:flow/providers/theme/dark_mode_provider.dart';
+import 'package:flow/data/providers/theme/dark_mode_provider.dart';
 import 'package:flow/utils/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

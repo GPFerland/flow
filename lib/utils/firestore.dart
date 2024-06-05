@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flow/models/occurrence.dart';
-import 'package:flow/models/routine.dart';
-import 'package:flow/models/task.dart';
+import 'package:flow/data/models/occurrence.dart';
+import 'package:flow/data/models/routine.dart';
+import 'package:flow/data/models/task.dart';
 
 final _firebaseAuth = FirebaseAuth.instance;
 

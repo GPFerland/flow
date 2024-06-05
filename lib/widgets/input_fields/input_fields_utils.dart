@@ -1,19 +1,18 @@
+import 'package:flow/utils/style.dart';
 import 'package:flutter/material.dart';
 
 const double cursorHeight = 25;
 
 InputDecoration getTextInputFieldDecoration({
   required String labelText,
-  required Color color,
+  required BuildContext context,
 }) {
   return InputDecoration(
     labelText: labelText,
-    labelStyle: TextStyle(
-      color: color,
-    ),
+    labelStyle: getTitleSmallOnPrimaryContainer(context),
     enabledBorder: UnderlineInputBorder(
       borderSide: BorderSide(
-        color: color,
+        color: Theme.of(context).colorScheme.onPrimaryContainer,
       ),
     ),
     contentPadding: const EdgeInsets.only(

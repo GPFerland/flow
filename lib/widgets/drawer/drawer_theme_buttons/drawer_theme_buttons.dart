@@ -17,6 +17,7 @@ class DrawerThemeButtons extends StatelessWidget {
           child: const Column(
             children: [
               SelectPrimaryColorButton(),
+              SizedBox(height: 8),
               ToggleDarkModeButton(),
             ],
           ),

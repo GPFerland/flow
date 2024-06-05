@@ -1,4 +1,4 @@
-import 'package:flow/models/routine.dart';
+import 'package:flow/data/models/routine.dart';
 import 'package:flutter/material.dart';
 
 class DividerForRoutine extends StatelessWidget {

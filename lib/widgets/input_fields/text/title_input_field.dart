@@ -19,9 +19,9 @@ class TitleInputField extends StatelessWidget {
       controller: titleController,
       decoration: getTextInputFieldDecoration(
         labelText: 'Title',
-        color: Theme.of(context).colorScheme.onPrimaryContainer,
+        context: context,
       ),
-      style: getTitleMediumOnPrimaryContainer(context),
+      style: getTitleSmallOnPrimaryContainer(context),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return 'Please add a title.';

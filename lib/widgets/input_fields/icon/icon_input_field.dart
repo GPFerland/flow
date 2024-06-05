@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 
+//todo - this does not work because the icons are not included in the deployment
 class IconInputField extends StatelessWidget {
   const IconInputField({
     super.key,

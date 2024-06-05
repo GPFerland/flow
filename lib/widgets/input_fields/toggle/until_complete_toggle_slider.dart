@@ -13,17 +13,37 @@ class UntilCompletedToggleSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: const EdgeInsets.all(0),
-      title: Text(
-        'Show Until Completed',
-        style: getBodyLargeOnPrimaryContainer(context),
-      ),
-      trailing: Switch(
-        value: untilCompleted,
-        onChanged: (value) {
-          updateUntilCompleted(value);
-        },
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                Text(
+                  'Show Until Completed',
+                  style: getTitleSmallOnPrimaryContainer(context),
+                ),
+                //todo - this isnt working like I would expect???
+                // const SizedBox(width: 8),
+                // Tooltip(
+                //   message: 'Test.',
+                //   triggerMode: TooltipTriggerMode.tap,
+                //   child: IconButton(
+                //     icon: const Icon(Icons.info, size: 18),
+                //     onPressed: () {},
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+          Switch(
+            value: untilCompleted,
+            onChanged: (value) {
+              updateUntilCompleted(value);
+            },
+          ),
+        ],
       ),
     );
   }

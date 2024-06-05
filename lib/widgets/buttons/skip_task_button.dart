@@ -1,6 +1,6 @@
-import 'package:flow/models/occurrence.dart';
-import 'package:flow/models/task.dart';
-import 'package:flow/providers/models/occurrences_provider.dart';
+import 'package:flow/data/models/occurrence.dart';
+import 'package:flow/data/models/task.dart';
+import 'package:flow/data/providers/models/occurrences_provider.dart';
 import 'package:flow/utils/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
