@@ -1,5 +1,4 @@
 import 'package:flow/src/common_widgets/drawer/drawer_account_buttons/drawer_about_us_button.dart';
-import 'package:flow/src/common_widgets/drawer/drawer_account_buttons/drawer_logout_button.dart';
 import 'package:flutter/material.dart';
 
 class DrawerAccountButtons extends StatelessWidget {
@@ -16,7 +15,6 @@ class DrawerAccountButtons extends StatelessWidget {
             width: buttonsWidth,
             child: const Column(
               children: [
-                DrawerLogoutButton(),
                 SizedBox(height: 8),
                 DrawerAboutUsButton(),
               ],

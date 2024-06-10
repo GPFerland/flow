@@ -1,5 +1,5 @@
-import 'package:ecommerce_app/src/features/authentication/domain/app_user.dart';
-import 'package:ecommerce_app/src/utils/in_memory_store.dart';
+import 'package:flow/src/features/authentication/domain/app_user.dart';
+import 'package:flow/src/utils/in_memory_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FakeAuthRepository {

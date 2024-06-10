@@ -1,4 +1,3 @@
-import 'package:flow/src/common_widgets/FUCK/providers/date/selected_date_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -10,9 +9,7 @@ class ShowPreviousDayButton extends ConsumerWidget {
     return FloatingActionButton(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
-      onPressed: () {
-        ref.read(dateProvider.notifier).previousDate();
-      },
+      onPressed: () {},
       heroTag: "showPreviousDay",
       child: const Icon(
         Icons.navigate_before_rounded,

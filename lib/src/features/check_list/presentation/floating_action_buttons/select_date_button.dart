@@ -1,4 +1,3 @@
-import 'package:flow/src/common_widgets/FUCK/providers/date/selected_date_provider.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flow/src/utils/style.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,7 @@ class SelectDateButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    DateTime selectedDate = ref.watch(dateProvider);
+    DateTime date = getDateNoTimeToday();
 
     return FloatingActionButton.extended(
       backgroundColor: Theme.of(context).colorScheme.primaryContainer,
@@ -20,19 +19,17 @@ class SelectDateButton extends ConsumerWidget {
           return ScaleTransition(scale: animation, child: child);
         },
         child: Text(
-          getFormattedDateString(selectedDate),
-          key: ValueKey<String>(getFormattedDateString(selectedDate)),
+          getFormattedDateString(date),
+          key: ValueKey<String>(getFormattedDateString(date)),
           style: getTitleLargeOnPrimaryContainer(context),
         ),
       ),
       onPressed: () async {
         DateTime? newDate = await selectDate(
           context: context,
-          initialDate: selectedDate,
+          initialDate: date,
         );
-        if (newDate != null) {
-          ref.read(dateProvider.notifier).selectDate(newDate);
-        }
+        if (newDate != null) {}
       },
     );
   }
