@@ -55,8 +55,8 @@
 
 import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/common_widgets/empty_placeholder_widget.dart';
-import 'package:flow/src/common_widgets/forms/form_utils.dart';
-import 'package:flow/src/common_widgets/forms/task_form.dart';
+import 'package:flow/src/utils/form_utils.dart';
+import 'package:flow/src/features/tasks/presentation/task_form.dart';
 import 'package:flow/src/common_widgets/responsive_center.dart';
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/features/tasks/data/test_tasks_repository.dart';

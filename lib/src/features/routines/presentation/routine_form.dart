@@ -1,11 +1,11 @@
 import 'package:flow/src/features/routines/domain/routine.dart';
 import 'package:flow/src/utils/style.dart';
-import 'package:flow/src/common_widgets/dividers/divider_on_primary_container.dart';
+import 'package:flow/src/common_widgets/divider_on_primary_container.dart';
 import 'package:flow/src/common_widgets/input_fields/color/color_input_field.dart';
 import 'package:flow/src/common_widgets/input_fields/icon/icon_input_field.dart';
 import 'package:flow/src/common_widgets/input_fields/text/description_input_field.dart';
 import 'package:flow/src/common_widgets/input_fields/text/title_input_field.dart';
-import 'package:flow/src/common_widgets/forms/form_utils.dart';
+import 'package:flow/src/utils/form_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

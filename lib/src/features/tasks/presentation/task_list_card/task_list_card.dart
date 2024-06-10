@@ -1,4 +1,4 @@
-import 'package:flow/src/common_widgets/list_card_components/task_list_card_components/task_list_card_icon.dart';
+import 'package:flow/src/features/tasks/presentation/task_list_card/task_list_card_components/task_list_card_icon.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/routing/app_router.dart';
 import 'package:flutter/material.dart';

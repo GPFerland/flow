@@ -1,8 +1,13 @@
 import 'package:flow/src/constants/test_tasks.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
+import 'package:flow/src/utils/delay.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:collection/collection.dart';
 
-class FakeTasksRepository {
+class TestTasksRepository {
+  TestTasksRepository({this.addDelay = true});
+
+  final bool addDelay;
   final List<Task> _tasks = kTestTasks;
 
   List<Task> getTasksList() {
@@ -10,27 +15,28 @@ class FakeTasksRepository {
   }
 
   Task? getTask(String id) {
-    return _tasks.firstWhere((task) => task.id == id);
+    return _tasks.firstWhereOrNull((task) => task.id == id);
   }
 
   Future<List<Task>> fetchTasksList() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await delay(addDelay);
     return Future.value(_tasks);
   }
 
   Stream<List<Task>> watchTasksList() async* {
-    await Future.delayed(const Duration(seconds: 2));
+    await delay(addDelay);
     yield _tasks;
   }
 
   Stream<Task?> watchTask(String id) {
-    return watchTasksList()
-        .map((tasks) => tasks.firstWhere((task) => task.id == id));
+    return watchTasksList().map(
+      (tasks) => tasks.firstWhereOrNull((task) => task.id == id),
+    );
   }
 }
 
-final tasksRepositoryProvider = Provider<FakeTasksRepository>((ref) {
-  return FakeTasksRepository();
+final tasksRepositoryProvider = Provider<TestTasksRepository>((ref) {
+  return TestTasksRepository();
 });
 
 final tasksListStreamProvider = StreamProvider.autoDispose<List<Task>>((ref) {

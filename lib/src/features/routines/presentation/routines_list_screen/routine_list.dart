@@ -2,7 +2,7 @@ import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/features/routines/data/test_routines_repository.dart';
 import 'package:flow/src/features/routines/domain/routine.dart';
-import 'package:flow/src/features/routines/presentation/routines_list_screen/routine_list_card.dart';
+import 'package:flow/src/features/routines/presentation/routine_list_card/routine_list_card.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

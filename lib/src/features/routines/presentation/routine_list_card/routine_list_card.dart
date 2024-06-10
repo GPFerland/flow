@@ -1,4 +1,4 @@
-import 'package:flow/src/common_widgets/list_card_components/routine_list_card_components/routine_list_card_icon.dart';
+import 'package:flow/src/features/routines/presentation/routine_list_card/routine_list_card_components/routine_list_card_icon.dart';
 import 'package:flow/src/features/routines/domain/routine.dart';
 import 'package:flow/src/routing/app_router.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
-import 'package:flow/src/common_widgets/dividers/divider_on_primary_container.dart';
-import 'package:flow/src/common_widgets/forms/form_utils.dart';
+import 'package:flow/src/common_widgets/divider_on_primary_container.dart';
+import 'package:flow/src/utils/form_utils.dart';
 import 'package:flow/src/common_widgets/input_fields/color/color_input_field.dart';
 import 'package:flow/src/common_widgets/input_fields/icon/icon_input_field.dart';
 import 'package:flow/src/common_widgets/input_fields/text/description_input_field.dart';

@@ -21,4 +21,34 @@ class Task {
   final Color color;
   final String description;
   final bool showUntilCompleted;
+
+  @override
+  String toString() {
+    return 'Task(id: $id, title: $title,)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Task &&
+        other.id == id &&
+        other.createdOn == createdOn &&
+        other.title == title &&
+        other.icon == icon &&
+        other.color == color &&
+        other.description == description &&
+        other.showUntilCompleted == showUntilCompleted;
+  }
+
+  @override
+  int get hashCode {
+    return id.hashCode ^
+        createdOn.hashCode ^
+        title.hashCode ^
+        icon.hashCode ^
+        color.hashCode ^
+        description.hashCode ^
+        showUntilCompleted.hashCode;
+  }
 }

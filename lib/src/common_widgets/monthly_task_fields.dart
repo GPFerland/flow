@@ -1,6 +1,6 @@
 import 'package:flow/src/utils/date.dart';
 import 'package:flow/src/utils/style.dart';
-import 'package:flow/src/common_widgets/dividers/divider_on_primary_container.dart';
+import 'package:flow/src/common_widgets/divider_on_primary_container.dart';
 import 'package:flutter/material.dart';
 
 class MonthlyTaskFields extends StatefulWidget {

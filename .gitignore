@@ -4,6 +4,7 @@
 .dart_tool/
 .packages
 build/
+
 # If you're building an application, you may want to check-in your pubspec.lock
 pubspec.lock
 
@@ -32,7 +33,7 @@ doc/api/
 /ios/Runner/GoogleService-Info.plist
 /lib/firebase_options.dart
 
-#Generated firebase files
+# Generated firebase files
 /.firebase/hosting.*.cache
 /.firebaserc
 /lib/firebase_options.dart
@@ -44,3 +45,6 @@ doc/api/
 /flow.iml
 /.github/*
 /android/app/*/*.aab
+
+# Ignore test coverage file
+coverage/lcov.info
