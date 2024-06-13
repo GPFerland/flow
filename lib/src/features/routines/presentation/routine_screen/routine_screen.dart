@@ -55,13 +55,13 @@
 
 import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/common_widgets/empty_placeholder_widget.dart';
-import 'package:flow/src/utils/form_utils.dart';
-import 'package:flow/src/features/routines/presentation/routine_form.dart';
 import 'package:flow/src/common_widgets/responsive_center.dart';
 import 'package:flow/src/constants/app_sizes.dart';
-import 'package:flow/src/features/routines/data/test_routines_repository.dart';
+import 'package:flow/src/features/routines/data/local/local_routines_repository.dart';
 import 'package:flow/src/features/routines/domain/routine.dart';
+import 'package:flow/src/features/routines/presentation/routine_form.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
+import 'package:flow/src/utils/form_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -73,7 +73,7 @@ class RoutineScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final routineValue = ref.watch(routineStreamProvider(routineId));
+    final routineValue = ref.watch(localRoutineStreamProvider(routineId));
     return Scaffold(
       appBar: AppBar(
         title: routineValue.value == null

@@ -1,4 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flow/src/features/routines/data/local/local_routines_repository.dart';
+import 'package:flow/src/features/routines/data/local/sembast_routines_repository.dart';
+import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/data/local/sembast_task_instances_repository.dart';
+import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
+import 'package:flow/src/features/tasks/data/local/sembast_tasks_repository.dart';
 import 'package:flow/src/flow_app.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
 import 'package:flutter/foundation.dart';
@@ -19,9 +25,27 @@ void main() async {
   // * Register error handlers. For more info, see:
   // * https://docs.flutter.dev/testing/errors
   registerErrorHandlers();
+  // * Create local repositories
+  final sembastTasksRepository = await SembastTasksRepository.makeDefault();
+  final sembastTaskInstancesRepository =
+      await SembastTaskInstancesRepository.makeDefault();
+  final sembastRoutinesRepository =
+      await SembastRoutinesRepository.makeDefault();
+  // * Entry point of the app
   runApp(
-    const ProviderScope(
-      child: FlowApp(),
+    ProviderScope(
+      overrides: [
+        localTasksRepositoryProvider.overrideWithValue(
+          sembastTasksRepository,
+        ),
+        localTaskInstancesRepositoryProvider.overrideWithValue(
+          sembastTaskInstancesRepository,
+        ),
+        localRoutinesRepositoryProvider.overrideWithValue(
+          sembastRoutinesRepository,
+        ),
+      ],
+      child: const FlowApp(),
     ),
   );
 }

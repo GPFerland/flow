@@ -48,6 +48,16 @@ class MoreMenuButton extends StatelessWidget {
               ]
             : <PopupMenuEntry<PopupMenuOption>>[
                 PopupMenuItem(
+                  key: tasksKey,
+                  value: PopupMenuOption.tasks,
+                  child: Text('Tasks'.hardcoded),
+                ),
+                PopupMenuItem(
+                  key: routinesKey,
+                  value: PopupMenuOption.routines,
+                  child: Text('Routines'.hardcoded),
+                ),
+                PopupMenuItem(
                   key: signInKey,
                   value: PopupMenuOption.signIn,
                   child: Text('Sign In'.hardcoded),

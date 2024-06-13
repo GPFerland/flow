@@ -445,3 +445,41 @@
 //     );
 //   }
 // }
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class CheckList extends ConsumerWidget {
+  const CheckList({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return const Placeholder();
+
+    // final checkListValue = ref.watch(checkListStreamProvider);
+    // return AsyncValueWidget<List<TaskInstance>>(
+    //   value: checkListValue,
+    //   data: (routines) => routines.isEmpty
+    //       ? Center(
+    //           child: Text(
+    //             'No routines found'.hardcoded,
+    //             style: Theme.of(context).textTheme.headlineMedium,
+    //           ),
+    //         )
+    //       : Padding(
+    //           padding: const EdgeInsets.only(top: Sizes.p8),
+    //           child: ListView.builder(
+    //             //todo - this is not good, figure out the good way to do this.
+    //             shrinkWrap: true,
+    //             itemCount: routines.length,
+    //             itemBuilder: (context, index) {
+    //               final routine = routines[index];
+    //               return RoutineListCard(
+    //                 routine: routine,
+    //               );
+    //             },
+    //           ),
+    //         ),
+    // );
+  }
+}

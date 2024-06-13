@@ -2,18 +2,18 @@ import 'package:flow/src/common_widgets/action_text_button.dart';
 import 'package:flow/src/features/check_list/presentation/check_list_app_bar/check_list_title.dart';
 import 'package:flow/src/features/check_list/presentation/check_list_app_bar/more_menu_button.dart';
 import 'package:flow/src/constants/breakpoints.dart';
-import 'package:flow/src/features/authentication/data/fake_auth_repository.dart';
+import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
 import 'package:flow/src/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-/// Custom [AppBar] widget that is reused by the [ProductsListScreen] and
-/// [ProductScreen].
+/// Custom [AppBar] widget that is reused by the [CheckListScreen] and
+/// [TaskScreen].
 /// It shows the following actions, depending on the application state:
-/// - [ShoppingCartIcon]
-/// - Orders button
+/// - Tasks button
+/// - Routines button
 /// - Account or Sign-in button
 class CheckListAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const CheckListAppBar({super.key});
@@ -40,17 +40,17 @@ class CheckListAppBar extends ConsumerWidget implements PreferredSizeWidget {
       return AppBar(
         title: const CheckListTitle(),
         actions: [
+          ActionTextButton(
+            key: MoreMenuButton.tasksKey,
+            text: 'Tasks'.hardcoded,
+            onPressed: () => context.goNamed(AppRoute.tasks.name),
+          ),
+          ActionTextButton(
+            key: MoreMenuButton.routinesKey,
+            text: 'Routines'.hardcoded,
+            onPressed: () => context.goNamed(AppRoute.routines.name),
+          ),
           if (user != null) ...[
-            ActionTextButton(
-              key: MoreMenuButton.tasksKey,
-              text: 'Tasks'.hardcoded,
-              onPressed: () => context.goNamed(AppRoute.tasks.name),
-            ),
-            ActionTextButton(
-              key: MoreMenuButton.routinesKey,
-              text: 'Routines'.hardcoded,
-              onPressed: () => context.goNamed(AppRoute.routines.name),
-            ),
             ActionTextButton(
               key: MoreMenuButton.accountKey,
               text: 'Account'.hardcoded,

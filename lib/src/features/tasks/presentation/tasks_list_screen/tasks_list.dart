@@ -1,7 +1,7 @@
 import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/constants/app_sizes.dart';
-import 'package:flow/src/features/tasks/data/test_tasks_repository.dart';
-import 'package:flow/src/features/tasks/domain/task.dart';
+import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
+import 'package:flow/src/features/tasks/domain/tasks.dart';
 import 'package:flow/src/features/tasks/presentation/task_list_card/task_list_card.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
@@ -12,10 +12,10 @@ class TasksList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tasksListValue = ref.watch(tasksListStreamProvider);
-    return AsyncValueWidget<List<Task>>(
+    final tasksListValue = ref.watch(localTasksStreamProvider);
+    return AsyncValueWidget<Tasks>(
       value: tasksListValue,
-      data: (tasks) => tasks.isEmpty
+      data: (tasks) => tasks.tasksList.isEmpty
           ? Center(
               child: Text(
                 'No tasks found'.hardcoded,
@@ -27,9 +27,9 @@ class TasksList extends ConsumerWidget {
               child: ListView.builder(
                 //todo - this is not good, figure out the good way to do this.
                 shrinkWrap: true,
-                itemCount: tasks.length,
+                itemCount: tasks.tasksList.length,
                 itemBuilder: (context, index) {
-                  final task = tasks[index];
+                  final task = tasks.tasksList[index];
                   return TaskListCard(
                     task: task,
                   );

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 /// * The task identifier is an important concept and can have its own type.
@@ -24,7 +26,7 @@ class Task {
 
   @override
   String toString() {
-    return 'Task(id: $id, title: $title,)';
+    return 'Task(id: $id, title: $title)';
   }
 
   @override
@@ -51,4 +53,32 @@ class Task {
         description.hashCode ^
         showUntilCompleted.hashCode;
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'createdOn': createdOn.millisecondsSinceEpoch,
+      'title': title,
+      'icon': icon.codePoint,
+      'color': color.value,
+      'description': description,
+      'showUntilCompleted': showUntilCompleted,
+    };
+  }
+
+  factory Task.fromMap(Map<String, dynamic> map) {
+    return Task(
+      id: map['id'],
+      createdOn: DateTime.fromMillisecondsSinceEpoch(map['createdOn']),
+      title: map['title'] ?? '',
+      icon: IconData(map['icon'], fontFamily: 'MaterialIcons'),
+      color: Color(map['color']),
+      description: map['description'] ?? '',
+      showUntilCompleted: map['showUntilCompleted'] ?? false,
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Task.fromJson(String source) => Task.fromMap(json.decode(source));
 }

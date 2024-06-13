@@ -93,8 +93,9 @@
 //   }
 // }
 
-import 'package:flow/src/features/authentication/data/fake_auth_repository.dart';
+import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/check_list/presentation/check_list_app_bar/check_list_app_bar.dart';
+import 'package:flow/src/features/check_list/presentation/check_list_screen/check_list.dart';
 import 'package:flow/src/features/check_list/presentation/check_list_screen/check_list_screen_controller.dart';
 import 'package:flow/src/utils/async_value_ui.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +117,7 @@ class CheckListScreen extends ConsumerWidget {
       appBar: const CheckListAppBar(),
       body: user == null
           ? const Center(child: Text('Sign In to add tasks.'))
-          : const Placeholder(),
+          : const CheckList(),
     );
   }
 }

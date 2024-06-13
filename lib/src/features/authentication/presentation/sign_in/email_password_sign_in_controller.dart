@@ -1,4 +1,4 @@
-import 'package:flow/src/features/authentication/data/fake_auth_repository.dart';
+import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,7 +8,7 @@ class EmailPasswordSignInController
     required EmailPasswordSignInFormType formType,
     required this.authRepository,
   }) : super(EmailPasswordSignInState(formType: formType));
-  final FakeAuthRepository authRepository;
+  final TestAuthRepository authRepository;
 
   Future<bool> submit(String email, String password) async {
     state = state.copyWith(value: const AsyncValue.loading());

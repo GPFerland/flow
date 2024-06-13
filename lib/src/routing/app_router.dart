@@ -1,4 +1,4 @@
-import 'package:flow/src/features/authentication/data/fake_auth_repository.dart';
+import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/authentication/presentation/account/account_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
@@ -36,7 +36,9 @@ final goRouterProvider = Provider<GoRouter>((ref) {
           return '/';
         }
       } else {
-        return '/${AppRoute.signIn.name}';
+        if (path == '/${AppRoute.account.name}') {
+          return '/';
+        }
       }
       return null;
     },
