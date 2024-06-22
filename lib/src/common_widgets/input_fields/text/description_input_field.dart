@@ -7,10 +7,12 @@ class DescriptionInputField extends StatelessWidget {
     super.key,
     required this.descriptionKey,
     required this.descriptionController,
+    this.readOnly = false,
   });
 
-  final GlobalKey<FormFieldState> descriptionKey;
+  final Key descriptionKey;
   final TextEditingController descriptionController;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +25,7 @@ class DescriptionInputField extends StatelessWidget {
       ),
       style: getTitleSmallOnPrimaryContainer(context),
       cursorHeight: cursorHeight,
+      readOnly: readOnly,
     );
   }
 }

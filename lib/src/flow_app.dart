@@ -76,6 +76,7 @@ class FlowApp extends ConsumerWidget {
           backgroundColor: Colors.black87,
           foregroundColor: Colors.white,
           elevation: 0,
+          centerTitle: true,
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(

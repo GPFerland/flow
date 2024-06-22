@@ -1,8 +1,7 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
+import 'package:flutter/foundation.dart';
 
 class TaskInstances {
   TaskInstances({required this.taskInstancesList});
@@ -25,14 +24,14 @@ class TaskInstances {
 
   Map<String, dynamic> toMap() {
     return {
-      'taskInstancesList': taskInstancesList.map((x) => x.toMap()).toList(),
+      'taskInstances': taskInstancesList.map((x) => x.toMap()).toList(),
     };
   }
 
   factory TaskInstances.fromMap(Map<String, dynamic> map) {
     return TaskInstances(
       taskInstancesList: List<TaskInstance>.from(
-          map['taskInstancesList']?.map((x) => TaskInstance.fromMap(x))),
+          map['taskInstances']?.map((x) => TaskInstance.fromMap(x))),
     );
   }
 

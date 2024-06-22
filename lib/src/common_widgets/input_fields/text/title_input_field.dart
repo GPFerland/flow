@@ -7,10 +7,12 @@ class TitleInputField extends StatelessWidget {
     super.key,
     required this.titleKey,
     required this.titleController,
+    this.readOnly = false,
   });
 
-  final GlobalKey<FormFieldState> titleKey;
+  final Key titleKey;
   final TextEditingController titleController;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -29,6 +31,7 @@ class TitleInputField extends StatelessWidget {
         return null;
       },
       cursorHeight: cursorHeight,
+      readOnly: readOnly,
     );
   }
 }

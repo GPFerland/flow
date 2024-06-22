@@ -1,10 +1,18 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flow/src/features/routines/data/local/local_routines_repository.dart';
 import 'package:flow/src/features/routines/data/local/sembast_routines_repository.dart';
+import 'package:flow/src/features/routines/data/remote/remote_routine_repository.dart';
+import 'package:flow/src/features/routines/data/remote/test_remote_routines_repository.dart';
+import 'package:flow/src/features/task_instances/application/task_instances_sync_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/local/sembast_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/data/remote/test_remote_task_instances_repository.dart';
+import 'package:flow/src/features/tasks/application/tasks_sync_service.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/local/sembast_tasks_repository.dart';
+import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
+import 'package:flow/src/features/tasks/data/remote/test_remote_tasks_repository.dart';
 import 'package:flow/src/flow_app.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
 import 'package:flutter/foundation.dart';
@@ -31,20 +39,40 @@ void main() async {
       await SembastTaskInstancesRepository.makeDefault();
   final sembastRoutinesRepository =
       await SembastRoutinesRepository.makeDefault();
+  // * Create remote repositories
+  final remoteTasksRepository = TestRemoteTasksRepository();
+  final remoteTaskInstancesRepository = TestRemoteTaskInstancesRepository();
+  final remoteRoutinesRepository = TestRemoteRoutinesRepository();
+  // * Create provider container to override providers
+  final providerContainer = ProviderContainer(
+    overrides: [
+      localTasksRepositoryProvider.overrideWithValue(
+        sembastTasksRepository,
+      ),
+      remoteTasksRepositoryProvider.overrideWithValue(
+        remoteTasksRepository,
+      ),
+      localTaskInstancesRepositoryProvider.overrideWithValue(
+        sembastTaskInstancesRepository,
+      ),
+      remoteTaskInstancesRepositoryProvider.overrideWithValue(
+        remoteTaskInstancesRepository,
+      ),
+      localRoutinesRepositoryProvider.overrideWithValue(
+        sembastRoutinesRepository,
+      ),
+      remoteRoutinesRepositoryProvider.overrideWithValue(
+        remoteRoutinesRepository,
+      ),
+    ],
+  );
+  // * Initialize Sync listeners
+  providerContainer.read(tasksSyncServiceProvider);
+  providerContainer.read(taskInstancesSyncServiceProvider);
   // * Entry point of the app
   runApp(
-    ProviderScope(
-      overrides: [
-        localTasksRepositoryProvider.overrideWithValue(
-          sembastTasksRepository,
-        ),
-        localTaskInstancesRepositoryProvider.overrideWithValue(
-          sembastTaskInstancesRepository,
-        ),
-        localRoutinesRepositoryProvider.overrideWithValue(
-          sembastRoutinesRepository,
-        ),
-      ],
+    UncontrolledProviderScope(
+      container: providerContainer,
       child: const FlowApp(),
     ),
   );

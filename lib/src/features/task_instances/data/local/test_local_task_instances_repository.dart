@@ -3,19 +3,23 @@ import 'package:flow/src/constants/test_task_instances.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flow/src/features/task_instances/domain/task_instances.dart';
-import 'package:flow/src/utils/delay.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TestLocalTaskInstancesRepository implements LocalTaskInstancesRepository {
-  TestLocalTaskInstancesRepository({this.addDelay = true});
-
-  final bool addDelay;
+  TestLocalTaskInstancesRepository();
   TaskInstances _taskInstances = kTestTaskInstances;
 
   @override
   Future<TaskInstances> fetchTaskInstances() async {
-    await delay(addDelay);
     return Future.value(_taskInstances);
+  }
+
+  @override
+  Future<TaskInstance?> fetchTaskInstance(String id) async {
+    return Future.value(
+      _taskInstances.taskInstancesList
+          .firstWhereOrNull((taskInstance) => taskInstance.id == id),
+    );
   }
 
   @override
@@ -25,16 +29,19 @@ class TestLocalTaskInstancesRepository implements LocalTaskInstancesRepository {
 
   @override
   Stream<TaskInstances> watchTaskInstances() async* {
-    await delay(addDelay);
+    yield _taskInstances;
+  }
+
+  @override
+  Stream<TaskInstances> watchDateTaskInstances(DateTime date) async* {
     yield _taskInstances;
   }
 
   @override
   Stream<TaskInstance?> watchTaskInstance(String id) {
     return watchTaskInstances().map(
-      (tasks) => tasks.taskInstancesList.firstWhereOrNull(
-        (task) => task.id == id,
-      ),
+      (taskInstances) => taskInstances.taskInstancesList
+          .firstWhereOrNull((taskInstance) => taskInstance.id == id),
     );
   }
 }

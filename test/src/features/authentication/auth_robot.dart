@@ -5,7 +5,7 @@ import 'package:flow/src/features/authentication/data/test_auth_repository.dart'
 import 'package:flow/src/features/authentication/presentation/account/account_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
-import 'package:flow/src/features/check_list/presentation/check_list_app_bar/more_menu_button.dart';
+import 'package:flow/src/features/date_check_list/presentation/check_list_screen/check_list_app_bar/more_menu_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

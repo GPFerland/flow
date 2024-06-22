@@ -2,10 +2,12 @@ import 'package:flow/src/features/authentication/data/test_auth_repository.dart'
 import 'package:flow/src/features/authentication/presentation/account/account_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
-import 'package:flow/src/features/check_list/presentation/check_list_screen/check_list_screen.dart';
-import 'package:flow/src/features/routines/presentation/routine_screen/routine_screen.dart';
+import 'package:flow/src/features/date_check_list/presentation/check_list_screen/check_list_screen.dart';
+import 'package:flow/src/features/routines/presentation/routine_screen/create_routine_screen.dart';
+import 'package:flow/src/features/routines/presentation/routine_screen/edit_routine_screen.dart';
 import 'package:flow/src/features/routines/presentation/routines_list_screen/routines_list_screen.dart';
-import 'package:flow/src/features/tasks/presentation/task_screen/task_screen.dart';
+import 'package:flow/src/features/tasks/presentation/create_task_screen/create_task_screen.dart';
+import 'package:flow/src/features/tasks/presentation/edit_task_screen/edit_task_screen.dart';
 import 'package:flow/src/features/tasks/presentation/tasks_list_screen/tasks_list_screen.dart';
 import 'package:flow/src/routing/go_router_refresh_stream.dart';
 import 'package:flow/src/routing/not_found_screen.dart';
@@ -16,9 +18,11 @@ import 'package:go_router/go_router.dart';
 enum AppRoute {
   checkList,
   tasks,
-  task,
+  editTask,
+  createTask,
   routines,
-  routine,
+  editRoutine,
+  createRoutine,
   account,
   signIn,
 }
@@ -56,12 +60,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: 'task/:id',
-                name: AppRoute.task.name,
+                name: AppRoute.editTask.name,
                 pageBuilder: (context, state) {
                   final taskId = state.pathParameters['id']!;
                   return MaterialPage(
                     fullscreenDialog: true,
-                    child: TaskScreen(taskId: taskId),
+                    child: EditTaskScreen(taskId: taskId),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'createTask',
+                name: AppRoute.createTask.name,
+                pageBuilder: (context, state) {
+                  return const MaterialPage(
+                    fullscreenDialog: true,
+                    child: CreateTaskScreen(),
                   );
                 },
               ),
@@ -74,12 +88,22 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             routes: [
               GoRoute(
                 path: 'routine/:id',
-                name: AppRoute.routine.name,
+                name: AppRoute.editRoutine.name,
                 pageBuilder: (context, state) {
                   final routineId = state.pathParameters['id']!;
                   return MaterialPage(
                     fullscreenDialog: true,
-                    child: RoutineScreen(routineId: routineId),
+                    child: EditRoutineScreen(routineId: routineId),
+                  );
+                },
+              ),
+              GoRoute(
+                path: 'createRoutine',
+                name: AppRoute.createRoutine.name,
+                pageBuilder: (context, state) {
+                  return const MaterialPage(
+                    fullscreenDialog: true,
+                    child: CreateRoutineScreen(),
                   );
                 },
               ),

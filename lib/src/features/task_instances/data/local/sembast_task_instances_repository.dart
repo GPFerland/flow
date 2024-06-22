@@ -29,6 +29,18 @@ class SembastTaskInstancesRepository implements LocalTaskInstancesRepository {
   static const taskInstancesKey = 'taskInstancesKey';
 
   @override
+  Future<TaskInstance?> fetchTaskInstance(String id) async {
+    final taskInstancesJson =
+        await store.record(taskInstancesKey).get(db) as String?;
+    if (taskInstancesJson != null) {
+      return TaskInstances.fromJson(taskInstancesJson)
+          .taskInstancesList
+          .firstWhereOrNull((taskInstance) => taskInstance.id == id);
+    }
+    return null;
+  }
+
+  @override
   Future<TaskInstances> fetchTaskInstances() async {
     final taskInstancesJson =
         await store.record(taskInstancesKey).get(db) as String?;
@@ -51,7 +63,7 @@ class SembastTaskInstancesRepository implements LocalTaskInstancesRepository {
       if (snapshot != null) {
         return TaskInstances.fromJson(snapshot.value as String)
             .taskInstancesList
-            .firstWhereOrNull((task) => task.id == id);
+            .firstWhereOrNull((taskInstance) => taskInstance.id == id);
       } else {
         return null;
       }
@@ -64,6 +76,33 @@ class SembastTaskInstancesRepository implements LocalTaskInstancesRepository {
     return record.onSnapshot(db).map((snapshot) {
       if (snapshot != null) {
         return TaskInstances.fromJson(snapshot.value as String);
+      } else {
+        return TaskInstances(taskInstancesList: []);
+      }
+    });
+  }
+
+  @override
+  Stream<TaskInstances> watchDateTaskInstances(DateTime date) {
+    final record = store.record(taskInstancesKey);
+    return record.onSnapshot(db).map((snapshot) {
+      if (snapshot != null) {
+        final taskInstances = TaskInstances.fromJson(snapshot.value as String);
+        final taskInstancesList = taskInstances.taskInstancesList;
+        List<TaskInstance> dateTaskInstancesList = List.empty(growable: true);
+
+        for (TaskInstance taskInstance in taskInstancesList) {
+          if (date == taskInstance.completedDate ||
+              date == taskInstance.skippedDate ||
+              date == taskInstance.rescheduledDate) {
+            dateTaskInstancesList.add(taskInstance);
+          } else if (date == taskInstance.initialDate &&
+              taskInstance.rescheduledDate == null) {
+            dateTaskInstancesList.add(taskInstance);
+          }
+        }
+
+        return TaskInstances(taskInstancesList: dateTaskInstancesList);
       } else {
         return TaskInstances(taskInstancesList: []);
       }

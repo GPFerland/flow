@@ -1,14 +1,16 @@
 import 'dart:convert';
 
-/// * The task identifier is an important concept and can have its own type.
+import 'package:flutter/widgets.dart';
+
+import 'package:flow/src/features/tasks/domain/task.dart';
+
+/// * The task instance identifier is an important concept and can have its own type.
 typedef TaskInstanceId = String;
 
 class TaskInstance {
   TaskInstance({
     required this.id,
     required this.taskId,
-    required this.taskPriority,
-    this.routineId,
     this.completed = false,
     this.completedDate,
     this.skipped = false,
@@ -18,9 +20,7 @@ class TaskInstance {
   });
 
   final TaskInstanceId id;
-  final String taskId;
-  final int taskPriority;
-  final String? routineId;
+  final TaskId taskId;
   final bool completed;
   final DateTime? completedDate;
   final bool skipped;
@@ -30,7 +30,7 @@ class TaskInstance {
 
   @override
   String toString() {
-    return 'TaskInstance(id: $id, taskId: $taskId, taskPriority: $taskPriority, routineId: $routineId, completed: $completed, completedDate: $completedDate, skipped: $skipped, skippedDate: $skippedDate, initialDate: $initialDate, rescheduledDate: $rescheduledDate)';
+    return 'TaskInstance(id: $id, taskId: $taskId, completed: $completed, completedDate: $completedDate, skipped: $skipped, skippedDate: $skippedDate, initialDate: $initialDate, rescheduledDate: $rescheduledDate)';
   }
 
   @override
@@ -40,8 +40,6 @@ class TaskInstance {
     return other is TaskInstance &&
         other.id == id &&
         other.taskId == taskId &&
-        other.taskPriority == taskPriority &&
-        other.routineId == routineId &&
         other.completed == completed &&
         other.completedDate == completedDate &&
         other.skipped == skipped &&
@@ -54,8 +52,6 @@ class TaskInstance {
   int get hashCode {
     return id.hashCode ^
         taskId.hashCode ^
-        taskPriority.hashCode ^
-        routineId.hashCode ^
         completed.hashCode ^
         completedDate.hashCode ^
         skipped.hashCode ^
@@ -68,8 +64,6 @@ class TaskInstance {
     return {
       'id': id,
       'taskId': taskId,
-      'taskPriority': taskPriority,
-      'routineId': routineId,
       'completed': completed,
       'completedDate': completedDate?.millisecondsSinceEpoch,
       'skipped': skipped,
@@ -82,9 +76,7 @@ class TaskInstance {
   factory TaskInstance.fromMap(Map<String, dynamic> map) {
     return TaskInstance(
       id: map['id'],
-      taskId: map['taskId'] ?? '',
-      taskPriority: map['taskPriority']?.toInt() ?? 0,
-      routineId: map['routineId'],
+      taskId: map['taskId'],
       completed: map['completed'] ?? false,
       completedDate: map['completedDate'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['completedDate'])
@@ -104,4 +96,28 @@ class TaskInstance {
 
   factory TaskInstance.fromJson(String source) =>
       TaskInstance.fromMap(json.decode(source));
+
+  TaskInstance copyWith({
+    TaskInstanceId? id,
+    TaskId? taskId,
+    bool? completed,
+    ValueGetter<DateTime?>? completedDate,
+    bool? skipped,
+    ValueGetter<DateTime?>? skippedDate,
+    DateTime? initialDate,
+    ValueGetter<DateTime?>? rescheduledDate,
+  }) {
+    return TaskInstance(
+      id: id ?? this.id,
+      taskId: taskId ?? this.taskId,
+      completed: completed ?? this.completed,
+      completedDate:
+          completedDate != null ? completedDate() : this.completedDate,
+      skipped: skipped ?? this.skipped,
+      skippedDate: skippedDate != null ? skippedDate() : this.skippedDate,
+      initialDate: initialDate ?? this.initialDate,
+      rescheduledDate:
+          rescheduledDate != null ? rescheduledDate() : this.rescheduledDate,
+    );
+  }
 }

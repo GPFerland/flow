@@ -25,7 +25,9 @@ class EmailPasswordSignInScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Center(child: Text('Sign In'.hardcoded))),
+      appBar: AppBar(
+        title: Text('Sign In'.hardcoded),
+      ),
       body: EmailPasswordSignInContents(
         formType: formType,
       ),

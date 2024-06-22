@@ -8,16 +8,16 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets('Sign in and sign out flow', (tester) async {
     final r = Robot(tester);
-    await r.pumpMyApp();
+    await r.pumpFlowApp();
     r.expectFindAllProductCards();
     await r.openPopupMenu();
-    await r.auth.openEmailPasswordSignInScreen();
-    await r.auth.signInWithEmailAndPassword();
+    await r.authRobot.openEmailPasswordSignInScreen();
+    await r.authRobot.signInWithEmailAndPassword();
     r.expectFindAllProductCards();
     await r.openPopupMenu();
-    await r.auth.openAccountScreen();
-    await r.auth.tapLogoutButton();
-    await r.auth.tapDialogLogoutButton();
+    await r.authRobot.openAccountScreen();
+    await r.authRobot.tapLogoutButton();
+    await r.authRobot.tapDialogLogoutButton();
     r.expectFindAllProductCards();
   });
 }

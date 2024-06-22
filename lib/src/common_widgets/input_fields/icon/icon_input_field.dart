@@ -5,28 +5,35 @@ import 'package:flutter_iconpicker/flutter_iconpicker.dart';
 class IconInputField extends StatelessWidget {
   const IconInputField({
     super.key,
+    required this.iconKey,
     this.selectedIcon,
     this.selectedColor,
     required this.selectIcon,
+    this.readOnly = false,
   });
 
+  final Key iconKey;
   final IconData? selectedIcon;
   final Color? selectedColor;
-  final void Function(IconData?) selectIcon;
+  final void Function(IconData) selectIcon;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () async {
-        IconData? icon = await showIconPicker(
-          context,
-          iconColor: selectedColor,
-          title: const Text('Select Icon'),
-        );
-        if (icon != null) {
-          selectIcon(icon);
-        }
-      },
+      key: iconKey,
+      onTap: readOnly
+          ? null
+          : () async {
+              IconData? icon = await showIconPicker(
+                context,
+                iconColor: selectedColor,
+                title: const Text('Select Icon'),
+              );
+              if (icon != null) {
+                selectIcon(icon);
+              }
+            },
       child: Container(
         height: 44,
         width: 44,

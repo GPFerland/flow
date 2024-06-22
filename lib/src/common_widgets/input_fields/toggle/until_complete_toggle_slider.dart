@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 class UntilCompletedToggleSlider extends StatelessWidget {
   const UntilCompletedToggleSlider({
     super.key,
+    required this.untilCompletedKey,
     required this.untilCompleted,
     required this.updateUntilCompleted,
+    this.readOnly = false,
   });
 
+  final Key untilCompletedKey;
   final bool untilCompleted;
   final Function(bool) updateUntilCompleted;
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +42,13 @@ class UntilCompletedToggleSlider extends StatelessWidget {
             ),
           ),
           Switch(
+            key: untilCompletedKey,
             value: untilCompleted,
-            onChanged: (value) {
-              updateUntilCompleted(value);
-            },
+            onChanged: readOnly
+                ? null
+                : (value) {
+                    updateUntilCompleted(value);
+                  },
           ),
         ],
       ),

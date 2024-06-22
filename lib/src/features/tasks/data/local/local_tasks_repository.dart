@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 abstract class LocalTasksRepository {
   Future<Tasks> fetchTasks();
 
+  Future<Task?> fetchTask(String id);
+
   Future<void> setTasks(Tasks tasks);
 
   Stream<Tasks> watchTasks();
@@ -32,4 +34,10 @@ final localTaskStreamProvider =
     StreamProvider.autoDispose.family<Task?, String>((ref, id) {
   final tasksRepository = ref.watch(localTasksRepositoryProvider);
   return tasksRepository.watchTask(id);
+});
+
+final localTaskFutureProvider =
+    FutureProvider.autoDispose.family<Task?, String>((ref, id) {
+  final tasksRepository = ref.watch(localTasksRepositoryProvider);
+  return tasksRepository.fetchTask(id);
 });

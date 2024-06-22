@@ -6,11 +6,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 abstract class LocalTaskInstancesRepository {
   Future<TaskInstances> fetchTaskInstances();
 
+  Future<TaskInstance?> fetchTaskInstance(String id);
+
   Future<void> setTaskInstances(TaskInstances taskInstances);
 
   Stream<TaskInstances> watchTaskInstances();
 
   Stream<TaskInstance?> watchTaskInstance(String id);
+
+  Stream<TaskInstances> watchDateTaskInstances(DateTime date);
 }
 
 final localTaskInstancesRepositoryProvider =
@@ -21,18 +25,28 @@ final localTaskInstancesRepositoryProvider =
 
 final localTaskInstancesStreamProvider =
     StreamProvider.autoDispose<TaskInstances>((ref) {
-  final tasksRepository = ref.watch(localTaskInstancesRepositoryProvider);
-  return tasksRepository.watchTaskInstances();
+  final taskInstancesRepository =
+      ref.watch(localTaskInstancesRepositoryProvider);
+  return taskInstancesRepository.watchTaskInstances();
 });
 
 final localTaskInstancesFutureProvider =
     FutureProvider.autoDispose<TaskInstances>((ref) {
-  final tasksRepository = ref.watch(localTaskInstancesRepositoryProvider);
-  return tasksRepository.fetchTaskInstances();
+  final taskInstancesRepository =
+      ref.watch(localTaskInstancesRepositoryProvider);
+  return taskInstancesRepository.fetchTaskInstances();
 });
 
 final localTaskInstanceStreamProvider =
     StreamProvider.autoDispose.family<TaskInstance?, String>((ref, id) {
-  final tasksRepository = ref.watch(localTaskInstancesRepositoryProvider);
-  return tasksRepository.watchTaskInstance(id);
+  final taskInstancesRepository =
+      ref.watch(localTaskInstancesRepositoryProvider);
+  return taskInstancesRepository.watchTaskInstance(id);
+});
+
+final localTaskInstanceFutureProvider =
+    FutureProvider.autoDispose.family<TaskInstance?, String>((ref, id) {
+  final taskInstancesRepository =
+      ref.watch(localTaskInstancesRepositoryProvider);
+  return taskInstancesRepository.fetchTaskInstance(id);
 });

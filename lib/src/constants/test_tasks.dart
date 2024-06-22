@@ -1,5 +1,6 @@
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/features/tasks/domain/tasks.dart';
+import 'package:flow/src/utils/date.dart';
 import 'package:flutter/material.dart';
 
 /// Test tasks to be used until a data source is implemented
@@ -13,6 +14,10 @@ final kTestTasks = Tasks(
       color: Colors.blue,
       description: 'Brush Teeth in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '2',
@@ -22,6 +27,10 @@ final kTestTasks = Tasks(
       color: Colors.blue,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '3',
@@ -32,6 +41,10 @@ final kTestTasks = Tasks(
       color: Colors.green,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '4',
@@ -41,6 +54,10 @@ final kTestTasks = Tasks(
       color: Colors.lightBlue,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '5',
@@ -51,6 +68,10 @@ final kTestTasks = Tasks(
       color: Colors.orange,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '6',
@@ -61,6 +82,10 @@ final kTestTasks = Tasks(
       color: Colors.purple,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '7',
@@ -71,6 +96,10 @@ final kTestTasks = Tasks(
       color: Colors.pink,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '8',
@@ -80,6 +109,10 @@ final kTestTasks = Tasks(
       color: Colors.teal,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '9',
@@ -90,6 +123,10 @@ final kTestTasks = Tasks(
       color: Colors.amber,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '10',
@@ -100,6 +137,10 @@ final kTestTasks = Tasks(
       color: Colors.indigo,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '11',
@@ -109,6 +150,10 @@ final kTestTasks = Tasks(
       color: Colors.deepPurple,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     ),
     Task(
       id: '12',
@@ -119,6 +164,10 @@ final kTestTasks = Tasks(
       color: Colors.brown,
       description: 'Floss in the Morning',
       showUntilCompleted: false,
+      frequencyType: FrequencyType.daily,
+      date: getDateNoTimeToday(),
+      weekdays: [],
+      monthdays: [],
     )
   ],
 );

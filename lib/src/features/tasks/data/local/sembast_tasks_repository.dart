@@ -29,6 +29,17 @@ class SembastTasksRepository implements LocalTasksRepository {
   static const tasksKey = 'tasksKey';
 
   @override
+  Future<Task?> fetchTask(String id) async {
+    final tasksJson = await store.record(tasksKey).get(db) as String?;
+    if (tasksJson != null) {
+      return Tasks.fromJson(tasksJson)
+          .tasksList
+          .firstWhereOrNull((task) => task.id == id);
+    }
+    return null;
+  }
+
+  @override
   Future<Tasks> fetchTasks() async {
     final tasksJson = await store.record(tasksKey).get(db) as String?;
     if (tasksJson != null) {

@@ -3,19 +3,22 @@ import 'package:flow/src/constants/test_tasks.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/features/tasks/domain/tasks.dart';
-import 'package:flow/src/utils/delay.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TestLocalTasksRepository implements LocalTasksRepository {
-  TestLocalTasksRepository({this.addDelay = true});
-
-  final bool addDelay;
+  TestLocalTasksRepository();
   Tasks _tasks = kTestTasks;
 
   @override
   Future<Tasks> fetchTasks() async {
-    await delay(addDelay);
     return Future.value(_tasks);
+  }
+
+  @override
+  Future<Task?> fetchTask(String id) async {
+    return Future.value(
+      _tasks.tasksList.firstWhereOrNull((task) => task.id == id),
+    );
   }
 
   @override
@@ -25,7 +28,6 @@ class TestLocalTasksRepository implements LocalTasksRepository {
 
   @override
   Stream<Tasks> watchTasks() async* {
-    await delay(addDelay);
     yield _tasks;
   }
 

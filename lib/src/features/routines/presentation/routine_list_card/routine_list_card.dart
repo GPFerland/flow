@@ -21,7 +21,7 @@ class RoutineListCard extends StatelessWidget {
       ),
       onTap: () {
         context.goNamed(
-          AppRoute.routine.name,
+          AppRoute.editRoutine.name,
           pathParameters: {'id': routine.id},
         );
       },

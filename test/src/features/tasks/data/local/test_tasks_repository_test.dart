@@ -3,9 +3,7 @@ import 'package:flow/src/features/tasks/data/local/test_local_tasks_repository.d
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  TestLocalTasksRepository makeTasksRepository() => TestLocalTasksRepository(
-        addDelay: false,
-      );
+  TestLocalTasksRepository makeTasksRepository() => TestLocalTasksRepository();
 
   group('TestTasksRepository', () {
     test('fetchTasksList returns global list', () async {

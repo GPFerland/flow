@@ -3,19 +3,16 @@ import 'package:flow/src/constants/test_tasks.dart';
 import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/features/tasks/domain/tasks.dart';
-import 'package:flow/src/utils/delay.dart';
 import 'package:flow/src/utils/remote_item.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TestRemoteTasksRepository implements RemoteTasksRepository {
-  TestRemoteTasksRepository({this.addDelay = true});
+  TestRemoteTasksRepository();
 
-  final bool addDelay;
   Tasks _tasks = kTestTasks;
 
   @override
   Future<Tasks> fetchTasks(String uid) async {
-    await delay(addDelay);
     return Future.value(_tasks);
   }
 
@@ -26,7 +23,6 @@ class TestRemoteTasksRepository implements RemoteTasksRepository {
 
   @override
   Stream<Tasks> watchTasks(String uid) async* {
-    await delay(addDelay);
     yield _tasks;
   }
 

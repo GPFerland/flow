@@ -17,9 +17,11 @@
 //   }
 // }
 
+import 'package:flow/src/common_widgets/add_item_icon_button.dart';
 import 'package:flow/src/common_widgets/responsive_center.dart';
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/features/routines/presentation/routines_list_screen/routine_list.dart';
+import 'package:flow/src/routing/app_router.dart';
 import 'package:flutter/material.dart';
 
 class RoutinesListScreen extends StatelessWidget {
@@ -27,15 +29,19 @@ class RoutinesListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            title: Center(
-              child: Text('Routines'),
-            ),
+            title: const Text('Routines'),
+            centerTitle: true,
+            actions: [
+              AddItemIconButton(
+                namedRoute: AppRoute.createRoutine.name,
+              ),
+            ],
           ),
-          ResponsiveSliverCenter(
+          const ResponsiveSliverCenter(
             padding: EdgeInsets.all(Sizes.p16),
             child: RoutinesList(),
           ),
