@@ -11,6 +11,7 @@ import '../../../../utils.dart';
 
 void main() {
   late MockTasksService tasksService;
+  late MockTaskInstancesService taskInstancesService;
   late TaskFormController taskFormController;
 
   setUpAll(() {
@@ -19,8 +20,10 @@ void main() {
 
   setUp(() {
     tasksService = MockTasksService();
+    taskInstancesService = MockTaskInstancesService();
     taskFormController = TaskFormController(
       tasksService: tasksService,
+      taskInstancesService: taskInstancesService,
     );
   });
 
@@ -50,7 +53,7 @@ void main() {
       verify(() => tasksService.setTask(expectedTask)).called(1);
     });
 
-    test('signOut failure', () async {
+    test('submitTask failure', () async {
       // setup
       final expectedTask = createTestTask();
       final exception = Exception('Connection failed');

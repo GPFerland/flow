@@ -172,6 +172,94 @@ void main() {
           r.expectCreateAccountButtonNotFound();
         });
       });
+
+      group('focus changes when editing is complete', () {
+        testWidgets('''
+        Given formType is sign in
+        When a valid email has been entered
+        And the user presses enter, indicating that editing is complete
+        Then the focus changes to the password field
+        ''', (tester) async {
+          final r = AuthRobot(tester);
+          await r.pumpEmailPasswordSignInContents(
+            authRepository: authRepository,
+            formType: EmailPasswordSignInFormType.signIn,
+          );
+          await r.enterEmailAndPressEnter(testEmail);
+        });
+
+        testWidgets('''
+        Given formType is sign in
+        When an invalid email has been entered
+        And the user presses enter, indicating that editing is complete
+        Then the focus DOES NOT changes to the password field
+        ''', (tester) async {
+          final r = AuthRobot(tester);
+          await r.pumpEmailPasswordSignInContents(
+            authRepository: authRepository,
+            formType: EmailPasswordSignInFormType.signIn,
+          );
+          await r.enterEmailAndPressEnter('bad-email');
+        });
+
+        testWidgets('''
+        Given formType is sign in
+        When a valid email has been entered
+        And a valid password has been entered
+        And the user presses enter, indicating that editing is complete
+        Then the form submits and the user is signed in
+        ''', (tester) async {
+          bool didSignIn = false;
+          final r = AuthRobot(tester);
+          when(() => authRepository.signInWithEmailAndPassword(
+                testEmail,
+                testPassword,
+              )).thenAnswer((_) => Future.value());
+          await r.pumpEmailPasswordSignInContents(
+            authRepository: authRepository,
+            formType: EmailPasswordSignInFormType.signIn,
+            onSignedIn: () => didSignIn = true,
+          );
+          await r.enterEmailAndPressEnter(testEmail);
+          await r.enterPasswordAndPressEnter(testPassword);
+          verify(() => authRepository.signInWithEmailAndPassword(
+                testEmail,
+                testPassword,
+              )).called(1);
+          r.expectErrorAlertNotFound();
+          expect(didSignIn, true);
+        });
+
+        testWidgets('''
+        Given formType is sign in
+        When an invalid email has been entered
+        And a valid password has been entered
+        And the user presses enter, indicating that editing is complete
+        Then the focus changes back to the email field
+        And the form is not submitted
+        And the user is not signed in
+        ''', (tester) async {
+          bool didSignIn = false;
+          final r = AuthRobot(tester);
+          when(() => authRepository.signInWithEmailAndPassword(
+                testEmail,
+                testPassword,
+              )).thenAnswer((_) => Future.value());
+          await r.pumpEmailPasswordSignInContents(
+            authRepository: authRepository,
+            formType: EmailPasswordSignInFormType.signIn,
+            onSignedIn: () => didSignIn = true,
+          );
+          await r.enterEmailAndPressEnter('bad-email');
+          await r.enterPasswordAndPressEnter(testPassword);
+          verifyNever(() => authRepository.signInWithEmailAndPassword(
+                any(),
+                any(),
+              ));
+          r.expectErrorAlertNotFound();
+          expect(didSignIn, false);
+        });
+      });
     },
   );
 }

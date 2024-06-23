@@ -36,4 +36,26 @@ extension MutableTaskInstances on TaskInstances {
     copy.remove(taskInstance);
     return TaskInstances(taskInstancesList: copy);
   }
+
+  /// remove all task instances that have the provided task id
+  TaskInstances removeTaskInstances(String taskId) {
+    final copy = List<TaskInstance>.from(taskInstancesList);
+    final loopCopy = List<TaskInstance>.from(taskInstancesList);
+    for (final taskInstance in loopCopy) {
+      if (taskInstance.taskId == taskId) {
+        copy.remove(taskInstance);
+      }
+    }
+    return TaskInstances(taskInstancesList: copy);
+  }
+
+  TaskInstances sortTaskInstances() {
+    final copy = List<TaskInstance>.from(taskInstancesList);
+    copy.sort((a, b) {
+      int aWeight = a.skipped ? 2 : (a.completed ? 1 : 0);
+      int bWeight = b.skipped ? 2 : (b.completed ? 1 : 0);
+      return aWeight.compareTo(bWeight);
+    });
+    return TaskInstances(taskInstancesList: copy);
+  }
 }

@@ -1,11 +1,11 @@
 import 'package:flow/src/common_widgets/alert_dialogs.dart';
-import 'package:flow/src/common_widgets/custom_text_button.dart';
-import 'package:flow/src/common_widgets/primary_button.dart';
+import 'package:flow/src/common_widgets/buttons/custom_text_button.dart';
+import 'package:flow/src/common_widgets/buttons/primary_button.dart';
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/authentication/presentation/account/account_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
-import 'package:flow/src/features/date_check_list/presentation/check_list_screen/check_list_app_bar/more_menu_button.dart';
+import 'package:flow/src/features/date_check_list/presentation/check_list_app_bar/more_menu_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -63,10 +63,20 @@ class AuthRobot {
     await tester.enterText(emailField, email);
   }
 
+  Future<void> enterEmailAndPressEnter(String email) async {
+    await enterEmail(email);
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+  }
+
   Future<void> enterPassword(String password) async {
     final passwordField = find.byKey(EmailPasswordSignInScreen.passwordKey);
     expect(passwordField, findsOneWidget);
     await tester.enterText(passwordField, password);
+  }
+
+  Future<void> enterPasswordAndPressEnter(String password) async {
+    await enterPassword(password);
+    await tester.testTextInput.receiveAction(TextInputAction.done);
   }
 
   void expectCreateAccountButtonFound() {

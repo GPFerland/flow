@@ -1,11 +1,13 @@
-import 'package:flow/src/common_widgets/primary_button.dart';
+import 'package:flow/src/common_widgets/buttons/add_item_icon_button.dart';
+import 'package:flow/src/common_widgets/buttons/primary_button.dart';
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
-import 'package:flow/src/features/date_check_list/presentation/check_list_screen/check_list_app_bar/more_menu_button.dart';
+import 'package:flow/src/features/date_check_list/presentation/check_list_app_bar/more_menu_button.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/local/test_local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/remote/test_remote_tasks_repository.dart';
+import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/features/tasks/presentation/task_form/task_form.dart';
 import 'package:flow/src/features/tasks/presentation/tasks_list_screen/tasks_list_screen.dart';
 import 'package:flutter/material.dart';
@@ -94,15 +96,8 @@ class TasksRobot {
     );
   }
 
-  Future<void> tapBackButton() async {
-    final backButton = find.byType(IconButton);
-    expect(backButton, findsOneWidget);
-    await widgetTester.tap(backButton);
-    await widgetTester.pumpAndSettle();
-  }
-
   Future<void> tapAddButton() async {
-    final addButton = find.byType(IconButton);
+    final addButton = find.byKey(AddItemIconButton.addItemIconButtonKey);
     expect(addButton, findsOneWidget);
     await widgetTester.tap(addButton);
     await widgetTester.pumpAndSettle();
@@ -136,11 +131,16 @@ class TasksRobot {
     await widgetTester.tap(untilCompletedSlider);
   }
 
-  Future<void> tapCreateButton() async {
+  Future<void> tapCreateTaskButton() async {
     final createButton = find.byType(PrimaryButton);
     expect(createButton, findsOneWidget);
     await widgetTester.tap(createButton);
     await widgetTester.pumpAndSettle();
+  }
+
+  void expectFindTaskListCard(Task task) {
+    final finder = find.text(task.title);
+    expect(finder, findsOneWidget);
   }
 
   void expectErrorAlertFound() {

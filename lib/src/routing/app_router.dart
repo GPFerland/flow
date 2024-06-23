@@ -2,10 +2,7 @@ import 'package:flow/src/features/authentication/data/test_auth_repository.dart'
 import 'package:flow/src/features/authentication/presentation/account/account_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
-import 'package:flow/src/features/date_check_list/presentation/check_list_screen/check_list_screen.dart';
-import 'package:flow/src/features/routines/presentation/routine_screen/create_routine_screen.dart';
-import 'package:flow/src/features/routines/presentation/routine_screen/edit_routine_screen.dart';
-import 'package:flow/src/features/routines/presentation/routines_list_screen/routines_list_screen.dart';
+import 'package:flow/src/features/date_check_list/presentation/date_check_list_screen.dart';
 import 'package:flow/src/features/tasks/presentation/create_task_screen/create_task_screen.dart';
 import 'package:flow/src/features/tasks/presentation/edit_task_screen/edit_task_screen.dart';
 import 'package:flow/src/features/tasks/presentation/tasks_list_screen/tasks_list_screen.dart';
@@ -20,9 +17,6 @@ enum AppRoute {
   tasks,
   editTask,
   createTask,
-  routines,
-  editRoutine,
-  createRoutine,
   account,
   signIn,
 }
@@ -51,7 +45,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/',
         name: AppRoute.checkList.name,
-        builder: (context, state) => const CheckListScreen(),
+        builder: (context, state) => const DateCheckListScreen(),
         routes: [
           GoRoute(
             path: 'tasks',
@@ -76,34 +70,6 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   return const MaterialPage(
                     fullscreenDialog: true,
                     child: CreateTaskScreen(),
-                  );
-                },
-              ),
-            ],
-          ),
-          GoRoute(
-            path: 'routines',
-            name: AppRoute.routines.name,
-            builder: (context, state) => const RoutinesListScreen(),
-            routes: [
-              GoRoute(
-                path: 'routine/:id',
-                name: AppRoute.editRoutine.name,
-                pageBuilder: (context, state) {
-                  final routineId = state.pathParameters['id']!;
-                  return MaterialPage(
-                    fullscreenDialog: true,
-                    child: EditRoutineScreen(routineId: routineId),
-                  );
-                },
-              ),
-              GoRoute(
-                path: 'createRoutine',
-                name: AppRoute.createRoutine.name,
-                pageBuilder: (context, state) {
-                  return const MaterialPage(
-                    fullscreenDialog: true,
-                    child: CreateRoutineScreen(),
                   );
                 },
               ),

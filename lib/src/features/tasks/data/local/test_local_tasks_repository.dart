@@ -1,13 +1,19 @@
+import 'dart:async';
+
 import 'package:collection/collection.dart';
-import 'package:flow/src/constants/test_tasks.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/features/tasks/domain/tasks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:rxdart/rxdart.dart';
 
 class TestLocalTasksRepository implements LocalTasksRepository {
   TestLocalTasksRepository();
-  Tasks _tasks = kTestTasks;
+  Tasks _tasks = Tasks(tasksList: []);
+
+  final _tasksStreamController = BehaviorSubject<Tasks>.seeded(
+    Tasks(tasksList: []),
+  );
 
   @override
   Future<Tasks> fetchTasks() async {
@@ -24,11 +30,12 @@ class TestLocalTasksRepository implements LocalTasksRepository {
   @override
   Future<void> setTasks(Tasks tasks) async {
     _tasks = tasks;
+    _tasksStreamController.add(tasks);
   }
 
   @override
-  Stream<Tasks> watchTasks() async* {
-    yield _tasks;
+  Stream<Tasks> watchTasks() {
+    return _tasksStreamController.stream;
   }
 
   @override

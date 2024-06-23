@@ -35,6 +35,7 @@ class TaskInstancesService {
   /// save the taskInstances to the local or remote repository
   /// depending on the user auth state
   Future<void> setTaskInstances(TaskInstances taskInstances) async {
+    debugPrint('Setting task Instance');
     final user = authRepository.currentUser;
     if (user != null) {
       await remoteTaskInstancesRepository.setTaskInstances(
@@ -65,6 +66,13 @@ class TaskInstancesService {
   Future<void> removeTaskInstance(TaskInstance taskInstance) async {
     final taskInstances = await fetchAllTaskInstances();
     final updated = taskInstances.removeTaskInstance(taskInstance);
+    await setTaskInstances(updated);
+  }
+
+  /// removes all task instances associated with the provided task id
+  Future<void> removeTaskInstances(String taskId) async {
+    final taskInstances = await fetchAllTaskInstances();
+    final updated = taskInstances.removeTaskInstances(taskId);
     await setTaskInstances(updated);
   }
 
@@ -210,10 +218,8 @@ class TaskInstancesService {
   bool _isTaskInstanceMatch(DateTime date, TaskInstance taskInstance) {
     if (date == taskInstance.completedDate ||
         date == taskInstance.skippedDate ||
-        date == taskInstance.rescheduledDate) {
-      return true;
-    } else if (date == taskInstance.initialDate &&
-        taskInstance.rescheduledDate == null) {
+        date == taskInstance.rescheduledDate ||
+        date == taskInstance.initialDate) {
       return true;
     }
     return false;

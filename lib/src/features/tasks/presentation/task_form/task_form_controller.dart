@@ -1,11 +1,15 @@
+import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskFormController extends StateNotifier<AsyncValue<void>> {
-  TaskFormController({required this.tasksService})
-      : super(const AsyncData(null));
+  TaskFormController({
+    required this.tasksService,
+    required this.taskInstancesService,
+  }) : super(const AsyncData(null));
   final TasksService tasksService;
+  final TaskInstancesService taskInstancesService;
 
   Future<bool> submitTask(Task task) async {
     state = const AsyncLoading<void>();
@@ -30,6 +34,18 @@ class TaskFormController extends StateNotifier<AsyncValue<void>> {
     state = value;
     return state.hasError == false;
   }
+
+  Future<bool> deleteTaskInstances(Task task) async {
+    state = const AsyncLoading<void>();
+    final value = await AsyncValue.guard(
+      () => taskInstancesService.removeTaskInstances(task.id),
+    );
+    if (value.hasValue && !value.hasError) {
+      return true;
+    }
+    state = value;
+    return state.hasError == false;
+  }
 }
 
 final taskFormControllerProvider =
@@ -37,6 +53,7 @@ final taskFormControllerProvider =
   (ref) {
     return TaskFormController(
       tasksService: ref.watch(tasksServiceProvider),
+      taskInstancesService: ref.watch(taskInstancesServiceProvider),
     );
   },
 );

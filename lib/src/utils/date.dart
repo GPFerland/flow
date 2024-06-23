@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+/// Date formatter to be used in the app.
+final kDateFormatter = DateFormat('E, MMM d');
+
 enum Weekday {
   sun(
     shorthand: 'Sun',
@@ -203,7 +206,7 @@ String getDisplayDateString(DateTime date) {
   } else if (formattedDate == getDateNoTimeYesterday()) {
     return 'Yesterday';
   } else {
-    return DateFormat('E, MMM d').format(formattedDate);
+    return kDateFormatter.format(formattedDate);
   }
 }
 
@@ -252,26 +255,3 @@ Future<DateTime?> selectDate({
 
   return null;
 }
-
-
-
-
-// List<String> sortDaysList(List<String> selectedDays) {
-//   return selectedDays.toList()
-//     ..sort(
-//       (a, b) => shorthandWeekdays.indexOf(a).compareTo(
-//             shorthandWeekdays.indexOf(b),
-//           ),
-//     );
-// }
-
-// Map<String, bool> sortDaysMap(Map<String, bool> selectedDays) {
-//   List<String> sortedKeys = selectedDays.keys.toList()
-//     ..sort(
-//       (a, b) => shorthandWeekdays.indexOf(a).compareTo(
-//             shorthandWeekdays.indexOf(b),
-//           ),
-//     );
-
-//   return {for (var key in sortedKeys) key: selectedDays[key]!};
-// }

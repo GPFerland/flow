@@ -1,7 +1,9 @@
-import 'package:flow/src/features/date_check_list/data/date_repository.dart';
-import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
-import 'package:flow/src/features/tasks/application/tasks_service.dart';
-import 'package:flow/src/features/tasks/domain/task.dart';
+import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
+import 'package:flow/src/features/authentication/domain/app_user.dart';
+import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/domain/mutable_task_instances.dart';
+import 'package:flow/src/features/task_instances/domain/task_instances.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskInstancesSyncService {
@@ -12,25 +14,39 @@ class TaskInstancesSyncService {
   final Ref ref;
 
   void _init() {
-    ref.listen<AsyncValue<DateTime>>(
-      dateStateChangesProvider,
+    ref.listen<AsyncValue<AppUser?>>(
+      authStateChangesProvider,
       (previous, next) {
-        if (next.value != null && previous?.value != next.value) {
-          _createTaskInstances(next.value!);
-          _createTaskInstances(next.value!.subtract(const Duration(days: 1)));
-          _createTaskInstances(next.value!.add(const Duration(days: 1)));
+        final previousUser = previous?.value;
+        final user = next.value;
+        if (previousUser == null && user != null) {
+          _moveTaskInstancesToRemoteRepository(user.uid);
         }
       },
     );
   }
 
-  Future<void> _createTaskInstances(DateTime date) async {
-    final tasksService = ref.read(tasksServiceProvider);
-    final tasks = await tasksService.fetchTasks();
-    for (Task task in tasks.tasksList) {
-      await ref
-          .read(taskInstancesServiceProvider)
-          .createTaskInstance(task, date);
+  Future<void> _moveTaskInstancesToRemoteRepository(String uid) async {
+    // Get the local taskInstances data
+    final localTaskInstancesRepository =
+        ref.read(localTaskInstancesRepositoryProvider);
+    final localTaskInstances =
+        await localTaskInstancesRepository.fetchTaskInstances();
+    if (localTaskInstances.taskInstancesList.isNotEmpty) {
+      // Get the remote taskInstances data
+      final remoteTaskInstancesRepository =
+          ref.read(remoteTaskInstancesRepositoryProvider);
+      final remoteTaskInstances =
+          await remoteTaskInstancesRepository.fetchTaskInstances(uid);
+      // Add all of the local taskInstances to the remote taskInstances
+      final updatedRemoteTaskInstances = remoteTaskInstances
+          .addTaskInstances(localTaskInstances.taskInstancesList);
+      // Write the updated remote taskInstances datea to the repository
+      await remoteTaskInstancesRepository.setTaskInstances(
+          uid, updatedRemoteTaskInstances);
+      // Remove all taskInstances from the local taskInstances repository
+      await localTaskInstancesRepository
+          .setTaskInstances(TaskInstances(taskInstancesList: []));
     }
   }
 }

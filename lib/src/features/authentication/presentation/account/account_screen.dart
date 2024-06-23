@@ -1,4 +1,4 @@
-import 'package:flow/src/common_widgets/action_text_button.dart';
+import 'package:flow/src/common_widgets/buttons/action_text_button.dart';
 import 'package:flow/src/common_widgets/alert_dialogs.dart';
 import 'package:flow/src/common_widgets/responsive_center.dart';
 import 'package:flow/src/constants/app_sizes.dart';

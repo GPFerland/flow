@@ -87,22 +87,6 @@ extension EmailPasswordSignInStateX on EmailPasswordSignInState {
     }
   }
 
-  String get errorAlertTitle {
-    if (formType == EmailPasswordSignInFormType.register) {
-      return 'Registration failed'.hardcoded;
-    } else {
-      return 'Sign in failed'.hardcoded;
-    }
-  }
-
-  String get title {
-    if (formType == EmailPasswordSignInFormType.register) {
-      return 'Register'.hardcoded;
-    } else {
-      return 'Sign in'.hardcoded;
-    }
-  }
-
   bool canSubmitEmail(String email) {
     return emailSubmitValidator.isValid(email);
   }

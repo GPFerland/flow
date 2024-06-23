@@ -43,9 +43,9 @@ class TestAuthRepository {
 }
 
 final authRepositoryProvider = Provider<TestAuthRepository>((ref) {
-  final auth = TestAuthRepository();
-  ref.onDispose(() => auth.dispose());
-  return auth;
+  final authRepository = TestAuthRepository();
+  ref.onDispose(() => authRepository.dispose());
+  return authRepository;
 });
 
 final authStateChangesProvider = StreamProvider<AppUser?>((ref) {

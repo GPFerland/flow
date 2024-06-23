@@ -1,4 +1,4 @@
-import 'package:flow/src/common_widgets/primary_button.dart';
+import 'package:flow/src/common_widgets/buttons/primary_button.dart';
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
 import 'package:flow/src/routing/app_router.dart';

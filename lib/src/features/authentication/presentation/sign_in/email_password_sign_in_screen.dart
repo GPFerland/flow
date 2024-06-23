@@ -1,5 +1,5 @@
-import 'package:flow/src/common_widgets/custom_text_button.dart';
-import 'package:flow/src/common_widgets/primary_button.dart';
+import 'package:flow/src/common_widgets/buttons/custom_text_button.dart';
+import 'package:flow/src/common_widgets/buttons/primary_button.dart';
 import 'package:flow/src/common_widgets/responsive_scrollable_card.dart';
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_controller.dart';
@@ -26,7 +26,7 @@ class EmailPasswordSignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign In'.hardcoded),
+        title: Text('Sign in'.hardcoded),
       ),
       body: EmailPasswordSignInContents(
         formType: formType,
@@ -131,7 +131,6 @@ class _EmailPasswordSignInContentsState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              gapH8,
               // Email field
               TextFormField(
                 key: EmailPasswordSignInScreen.emailKey,
@@ -151,7 +150,8 @@ class _EmailPasswordSignInContentsState
                 onEditingComplete: () => _emailEditingComplete(state),
                 inputFormatters: <TextInputFormatter>[
                   ValidatorInputFormatter(
-                      editingValidator: EmailEditingRegexValidator()),
+                    editingValidator: EmailEditingRegexValidator(),
+                  ),
                 ],
               ),
               gapH8,
@@ -173,7 +173,7 @@ class _EmailPasswordSignInContentsState
                 keyboardAppearance: Brightness.light,
                 onEditingComplete: () => _passwordEditingComplete(state),
               ),
-              gapH8,
+              gapH12,
               PrimaryButton(
                 text: state.primaryButtonText,
                 isLoading: state.isLoading,

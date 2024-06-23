@@ -2,10 +2,10 @@ import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter/material.dart';
 
-Task createTestTask() {
+Task createTestTask({String id = '1'}) {
   return Task(
-    id: '1',
-    createdOn: DateTime.now(),
+    id: id,
+    createdOn: getDateNoTimeToday(),
     title: 'Brush Teeth',
     icon: Icons.abc,
     color: Colors.blue,

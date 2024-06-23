@@ -1,8 +1,4 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flow/src/features/routines/data/local/local_routines_repository.dart';
-import 'package:flow/src/features/routines/data/local/sembast_routines_repository.dart';
-import 'package:flow/src/features/routines/data/remote/remote_routine_repository.dart';
-import 'package:flow/src/features/routines/data/remote/test_remote_routines_repository.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_sync_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/local/sembast_task_instances_repository.dart';
@@ -37,12 +33,9 @@ void main() async {
   final sembastTasksRepository = await SembastTasksRepository.makeDefault();
   final sembastTaskInstancesRepository =
       await SembastTaskInstancesRepository.makeDefault();
-  final sembastRoutinesRepository =
-      await SembastRoutinesRepository.makeDefault();
   // * Create remote repositories
   final remoteTasksRepository = TestRemoteTasksRepository();
   final remoteTaskInstancesRepository = TestRemoteTaskInstancesRepository();
-  final remoteRoutinesRepository = TestRemoteRoutinesRepository();
   // * Create provider container to override providers
   final providerContainer = ProviderContainer(
     overrides: [
@@ -57,12 +50,6 @@ void main() async {
       ),
       remoteTaskInstancesRepositoryProvider.overrideWithValue(
         remoteTaskInstancesRepository,
-      ),
-      localRoutinesRepositoryProvider.overrideWithValue(
-        sembastRoutinesRepository,
-      ),
-      remoteRoutinesRepositoryProvider.overrideWithValue(
-        remoteRoutinesRepository,
       ),
     ],
   );

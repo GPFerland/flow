@@ -3,7 +3,7 @@ import 'package:flow/src/common_widgets/input_fields/icon/icon_input_field.dart'
 import 'package:flow/src/common_widgets/input_fields/text/description_input_field.dart';
 import 'package:flow/src/common_widgets/input_fields/text/title_input_field.dart';
 import 'package:flow/src/common_widgets/input_fields/toggle/until_complete_toggle_slider.dart';
-import 'package:flow/src/common_widgets/primary_button.dart';
+import 'package:flow/src/common_widgets/buttons/primary_button.dart';
 import 'package:flow/src/common_widgets/responsive_scrollable_card.dart';
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/features/date_check_list/data/date_repository.dart';

@@ -18,6 +18,7 @@ class DeleteTaskButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Future<void> onDeletePressed() async {
+      ref.read(taskFormControllerProvider.notifier).deleteTaskInstances(task);
       ref.read(taskFormControllerProvider.notifier).deleteTask(task);
       context.pop(true);
     }
