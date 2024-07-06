@@ -1,17 +1,18 @@
+import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 
-class DailyTaskFields extends StatefulWidget {
+class DailyTaskFields extends StatelessWidget {
   const DailyTaskFields({
     super.key,
   });
 
   @override
-  State<DailyTaskFields> createState() => _DailyTaskFieldsState();
-}
-
-class _DailyTaskFieldsState extends State<DailyTaskFields> {
-  @override
   Widget build(BuildContext context) {
-    return const Center(child: Text('Everyday'));
+    return const Padding(
+      padding: EdgeInsets.all(Sizes.p12),
+      child: Center(
+        child: Text('Everyday'),
+      ),
+    );
   }
 }

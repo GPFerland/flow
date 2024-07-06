@@ -15,73 +15,82 @@ class DeleteTaskButton extends ConsumerWidget {
 
   final Task task;
 
+  // * Keys for testing using find.byKey()
+  static const deleteTaskIconButtonKey = Key('deleteTaskIconButton');
+  static const deleteTaskDialogButtonKey = Key('deleteTaskDialogButton');
+  static const cancelDialogButtonKey = Key('cancelDialogButton');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Future<void> onDeletePressed() async {
-      ref.read(taskFormControllerProvider.notifier).deleteTaskInstances(task);
+    Future<void> onDeleteDialogButtonPressed() async {
+      ref.read(taskFormControllerProvider.notifier).deleteTasksInstances(task);
       ref.read(taskFormControllerProvider.notifier).deleteTask(task);
       context.pop(true);
+    }
+
+    Future<void> showDeleteDialog() async {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Dialog(
+            child: Container(
+              padding: const EdgeInsets.all(Sizes.p16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    'Confirm',
+                    style: getTitleLargeOnPrimaryContainer(context),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  gapH16,
+                  Text(
+                    'Delete ${(task).title}',
+                    textAlign: TextAlign.center,
+                    style: getBodyLargeOnPrimaryContainer(context),
+                  ),
+                  gapH24,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: <Widget>[
+                      OutlinedButton(
+                        key: cancelDialogButtonKey,
+                        onPressed: () {
+                          context.pop(false);
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        key: deleteTaskDialogButtonKey,
+                        onPressed: onDeleteDialogButtonPressed,
+                        child: const Text('Delete'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ).then((value) {
+        if (value == true) {
+          context.pop();
+        }
+      });
     }
 
     ref.listen<AsyncValue>(
       taskFormControllerProvider,
       (_, state) => state.showAlertDialogOnError(context),
     );
+
     final state = ref.watch(taskFormControllerProvider);
 
     return IconButton(
+      key: deleteTaskIconButtonKey,
       icon: const Icon(Icons.delete),
       iconSize: 28,
-      onPressed: state.isLoading
-          ? null
-          : () {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return Dialog(
-                    child: Container(
-                      padding: const EdgeInsets.all(Sizes.p16),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          Text(
-                            'Confirm',
-                            style: getTitleLargeOnPrimaryContainer(context),
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          gapH16,
-                          Text(
-                            'Delete ${(task).title}',
-                            textAlign: TextAlign.center,
-                            style: getBodyLargeOnPrimaryContainer(context),
-                          ),
-                          gapH24,
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              OutlinedButton(
-                                onPressed: () {
-                                  context.pop(false);
-                                },
-                                child: const Text('Cancel'),
-                              ),
-                              ElevatedButton(
-                                onPressed: onDeletePressed,
-                                child: const Text('Delete'),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ).then((value) {
-                if (value == true) {
-                  context.pop();
-                }
-              });
-            },
+      onPressed: state.isLoading ? null : () => showDeleteDialog(),
     );
   }
 }

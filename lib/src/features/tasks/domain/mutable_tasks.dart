@@ -3,14 +3,14 @@ import 'package:flow/src/features/tasks/domain/tasks.dart';
 
 /// Helper extension used to mutate the items in the tasks list.
 extension MutableTasks on Tasks {
-  /// add an item to the task
+  /// add a task
   Tasks addTask(Task task) {
     final copy = List<Task>.from(tasksList);
     copy.add(task);
     return Tasks(tasksList: copy);
   }
 
-  /// add a list of tasks to the task list
+  /// add a list of tasks
   Tasks addTasks(List<Task> tasksToAdd) {
     final copy = List<Task>.from(tasksList);
     for (Task task in tasksToAdd) {
@@ -19,6 +19,7 @@ extension MutableTasks on Tasks {
     return Tasks(tasksList: copy);
   }
 
+  /// set task if a match exists or create new task
   Tasks setTask(Task task) {
     final copy = List<Task>.from(tasksList);
     final index = copy.indexWhere((t) => t.id == task.id);
@@ -30,7 +31,7 @@ extension MutableTasks on Tasks {
     return Tasks(tasksList: copy);
   }
 
-  /// if the task is found, remove it
+  /// remove task if it exists
   Tasks removeTask(Task task) {
     final copy = List<Task>.from(tasksList);
     copy.remove(task);

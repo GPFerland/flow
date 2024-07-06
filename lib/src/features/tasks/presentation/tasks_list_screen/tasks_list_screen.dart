@@ -35,7 +35,7 @@ class TasksListScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final tasksValue = ref.watch(tasksProvider);
+    final tasksValue = ref.watch(tasksStreamProvider);
 
     return Scaffold(
       body: AsyncValueWidget<Tasks>(
@@ -47,7 +47,9 @@ class TasksListScreen extends ConsumerWidget {
                 title: const Text('Tasks'),
                 centerTitle: true,
                 actions: [
-                  AddItemIconButton(namedRoute: AppRoute.createTask.name),
+                  AddItemIconButton(
+                    namedRoute: AppRoute.createTask.name,
+                  ),
                 ],
               ),
               SliverPadding(

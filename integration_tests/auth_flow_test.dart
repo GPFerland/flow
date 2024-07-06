@@ -1,3 +1,4 @@
+import 'package:flow/src/features/date_check_list/presentation/date_app_bar/date_app_bar.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -10,14 +11,16 @@ void main() {
     final r = Robot(tester);
     await r.pumpFlowApp();
     //r.expectFindAllProductCards();
-    await r.openPopupMenu();
-    await r.authRobot.openEmailPasswordSignInScreen();
-    await r.authRobot.signInWithEmailAndPassword();
+    await r.dateCheckListRobot.openPopupMenu();
+    await r.tapKey(DateAppBar.signInMenuButtonKey);
+    await r.authRobot.enterEmail('test@email.com');
+    await r.authRobot.enterPassword('password');
+    await r.tapText('Create');
     //r.expectFindAllProductCards();
-    await r.openPopupMenu();
-    await r.authRobot.openAccountScreen();
-    await r.authRobot.tapLogoutButton();
-    await r.authRobot.tapDialogLogoutButton();
+    await r.dateCheckListRobot.openPopupMenu();
+    await r.tapKey(DateAppBar.accountMenuButtonKey);
+    await r.tapText('Logout');
+    await r.tapText('Logout');
     //r.expectFindAllProductCards();
   });
 }

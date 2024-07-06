@@ -1,3 +1,4 @@
+import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flow/src/utils/style.dart';
 import 'package:flutter/material.dart';
@@ -33,8 +34,8 @@ class _OnceTaskFieldsState extends State<OnceTaskFields> {
       onTap: _selectDate,
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: 12,
-          vertical: 8,
+          horizontal: Sizes.p12,
+          vertical: Sizes.p8,
         ),
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
@@ -51,7 +52,7 @@ class _OnceTaskFieldsState extends State<OnceTaskFields> {
                         Icons.calendar_today,
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
-                      const SizedBox(width: 8),
+                      gapW8,
                       Text(
                         'Select Date',
                         style: getBodyMediumOnPrimaryContainer(context),
@@ -64,13 +65,13 @@ class _OnceTaskFieldsState extends State<OnceTaskFields> {
                 const Spacer(),
                 Container(
                   width: maxWidth,
-                  padding: const EdgeInsets.all(8),
+                  padding: const EdgeInsets.all(Sizes.p8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   child: Text(
-                    getDisplayDateString(widget.selectedDate),
+                    getTitleDateString(widget.selectedDate),
                     style: getBodyMediumOnPrimary(context),
                     textAlign: TextAlign.center,
                     maxLines: 1,

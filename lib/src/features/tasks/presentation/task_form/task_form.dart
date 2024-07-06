@@ -200,6 +200,7 @@ class _TaskFormState extends ConsumerState<TaskForm>
       taskFormControllerProvider,
       (_, state) => state.showAlertDialogOnError(context),
     );
+
     final state = ref.watch(taskFormControllerProvider);
 
     _selectedColor = Theme.of(context).colorScheme.primary;
@@ -253,6 +254,7 @@ class _TaskFormState extends ConsumerState<TaskForm>
                     controller: _frequencyTypeTabController,
                     tabs: FrequencyType.values.map((frequencyType) {
                       return Tab(
+                        key: frequencyType.tabKey,
                         child: Text(
                           frequencyType.shorthand,
                           overflow: TextOverflow.fade,
@@ -283,7 +285,7 @@ class _TaskFormState extends ConsumerState<TaskForm>
             ),
             gapH8,
             PrimaryButton(
-              text: widget.task != null ? 'Edit Task' : 'Create Task',
+              text: 'Submit',
               isLoading: state.isLoading,
               onPressed: _submitTask,
             ),

@@ -1,11 +1,9 @@
 import 'package:flow/src/features/authentication/domain/app_user.dart';
-import 'package:flow/src/utils/delay.dart';
 import 'package:flow/src/utils/in_memory_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TestAuthRepository {
-  TestAuthRepository({this.addDelay = true});
-  final bool addDelay;
+  TestAuthRepository();
 
   final _authState = InMemoryStore<AppUser?>(null);
 
@@ -13,7 +11,6 @@ class TestAuthRepository {
   AppUser? get currentUser => _authState.value;
 
   Future<void> signInWithEmailAndPassword(String email, String password) async {
-    await delay(addDelay);
     if (currentUser == null) {
       _createNewUser(email);
     }
@@ -21,14 +18,12 @@ class TestAuthRepository {
 
   Future<void> createUserWithEmailAndPassword(
       String email, String password) async {
-    await delay(addDelay);
     if (currentUser == null) {
       _createNewUser(email);
     }
   }
 
   Future<void> signOut() async {
-    await delay(addDelay);
     _authState.value = null;
   }
 

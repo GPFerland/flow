@@ -75,5 +75,99 @@ void main() {
       expect(result, false);
       verify(() => tasksService.setTask(expectedTask)).called(1);
     });
+
+    test('deleteTask success', () async {
+      // setup
+      final expectedTask = createTestTask();
+      when(() => tasksService.removeTask(expectedTask)).thenAnswer(
+        (_) => Future.value(),
+      );
+      // expect later
+      expectLater(
+        taskFormController.stream,
+        emitsInOrder(const [
+          AsyncLoading<void>(),
+        ]),
+      );
+      // run
+      bool result = await taskFormController.deleteTask(expectedTask);
+      // verify
+      expect(result, true);
+      verify(() => tasksService.removeTask(expectedTask)).called(1);
+    });
+
+    test('deleteTask failure', () async {
+      // setup
+      final expectedTask = createTestTask();
+      final exception = Exception('Connection failed');
+      when(() => tasksService.removeTask(expectedTask)).thenThrow(exception);
+      // expect later
+      expectLater(
+        taskFormController.stream,
+        emitsInOrder([
+          const AsyncLoading<void>(),
+          predicate<AsyncValue<void>>((value) {
+            expect(value.hasError, true);
+            return true;
+          }),
+        ]),
+      );
+      // run
+      bool result = await taskFormController.deleteTask(expectedTask);
+      // verify
+      expect(result, false);
+      verify(() => tasksService.removeTask(expectedTask)).called(1);
+    });
+
+    test('deleteTaskInstances success', () async {
+      // setup
+      final expectedTask = createTestTask();
+      when(
+        () => taskInstancesService.removeTasksInstances(expectedTask.id),
+      ).thenAnswer(
+        (_) => Future.value(),
+      );
+      // expect later
+      expectLater(
+        taskFormController.stream,
+        emitsInOrder(const [
+          AsyncLoading<void>(),
+        ]),
+      );
+      // run
+      bool result = await taskFormController.deleteTasksInstances(expectedTask);
+      // verify
+      expect(result, true);
+      verify(
+        () => taskInstancesService.removeTasksInstances(expectedTask.id),
+      ).called(1);
+    });
+
+    test('deleteTaskInstances failure', () async {
+      // setup
+      final expectedTask = createTestTask();
+      final exception = Exception('Connection failed');
+      when(
+        () => taskInstancesService.removeTasksInstances(expectedTask.id),
+      ).thenThrow(exception);
+      // expect later
+      expectLater(
+        taskFormController.stream,
+        emitsInOrder([
+          const AsyncLoading<void>(),
+          predicate<AsyncValue<void>>((value) {
+            expect(value.hasError, true);
+            return true;
+          }),
+        ]),
+      );
+      // run
+      bool result = await taskFormController.deleteTasksInstances(expectedTask);
+      // verify
+      expect(result, false);
+      verify(
+        () => taskInstancesService.removeTasksInstances(expectedTask.id),
+      ).called(1);
+    });
   });
 }

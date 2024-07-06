@@ -1,4 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:flow/src/features/task_instances/application/task_instances_creation_service.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_sync_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/local/sembast_task_instances_repository.dart';
@@ -17,13 +17,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // ignore: depend_on_referenced_packages
 import 'package:flutter_web_plugins/url_strategy.dart';
 
-import 'firebase_options.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
   // * Remove # from URLs on web
   usePathUrlStrategy();
   // * Register error handlers. For more info, see:
@@ -56,6 +51,7 @@ void main() async {
   // * Initialize Sync listeners
   providerContainer.read(tasksSyncServiceProvider);
   providerContainer.read(taskInstancesSyncServiceProvider);
+  providerContainer.read(taskInstancesCreationServiceProvider);
   // * Entry point of the app
   runApp(
     UncontrolledProviderScope(

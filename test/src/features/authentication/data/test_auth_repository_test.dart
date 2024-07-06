@@ -9,9 +9,7 @@ void main() {
     uid: testEmail.split('').reversed.join(),
     email: testEmail,
   );
-  TestAuthRepository makeAuthRepository() => TestAuthRepository(
-        addDelay: false,
-      );
+  TestAuthRepository makeAuthRepository() => TestAuthRepository();
   group('TestAuthRepository', () {
     test('currentUser is null', () {
       final authRepository = makeAuthRepository();

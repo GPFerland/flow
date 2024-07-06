@@ -26,7 +26,7 @@ class EmailPasswordSignInScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign in'.hardcoded),
+        title: Text('Sign In'.hardcoded),
       ),
       body: EmailPasswordSignInContents(
         formType: formType,
@@ -44,13 +44,14 @@ class EmailPasswordSignInContents extends ConsumerStatefulWidget {
     this.onSignedIn,
     required this.formType,
   });
-  final VoidCallback? onSignedIn;
 
-  /// The default form type to use.
+  final VoidCallback? onSignedIn;
   final EmailPasswordSignInFormType formType;
+
   @override
-  ConsumerState<EmailPasswordSignInContents> createState() =>
-      _EmailPasswordSignInContentsState();
+  ConsumerState<EmailPasswordSignInContents> createState() {
+    return _EmailPasswordSignInContentsState();
+  }
 }
 
 class _EmailPasswordSignInContentsState
@@ -71,7 +72,6 @@ class _EmailPasswordSignInContentsState
 
   @override
   void dispose() {
-    // * TextEditingControllers should be always disposed
     _node.dispose();
     _emailController.dispose();
     _passwordController.dispose();
@@ -80,10 +80,10 @@ class _EmailPasswordSignInContentsState
 
   Future<void> _submit(EmailPasswordSignInState state) async {
     setState(() => _submitted = true);
-    // only submit the form if validation passes
     if (_formKey.currentState!.validate()) {
       final controller = ref.read(
-          emailPasswordSignInControllerProvider(widget.formType).notifier);
+        emailPasswordSignInControllerProvider(widget.formType).notifier,
+      );
       final success = await controller.submit(email, password);
       if (success) {
         widget.onSignedIn?.call();
@@ -121,8 +121,11 @@ class _EmailPasswordSignInContentsState
           .select((state) => state.value),
       (_, state) => state.showAlertDialogOnError(context),
     );
-    final state =
-        ref.watch(emailPasswordSignInControllerProvider(widget.formType));
+
+    final state = ref.watch(
+      emailPasswordSignInControllerProvider(widget.formType),
+    );
+
     return ResponsiveScrollableCard(
       child: FocusScope(
         node: _node,

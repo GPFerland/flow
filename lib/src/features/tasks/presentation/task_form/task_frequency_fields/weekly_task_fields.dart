@@ -22,7 +22,10 @@ class _WeeklyTaskFieldsState extends State<WeeklyTaskFields> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: 18, right: 6),
+          padding: const EdgeInsets.only(
+            left: Sizes.p20,
+            right: Sizes.p8,
+          ),
           child: Row(
             children: [
               const Icon(Icons.calendar_today),
@@ -44,9 +47,9 @@ class _WeeklyTaskFieldsState extends State<WeeklyTaskFields> {
                 child: const Text('All'),
               ),
               Container(
-                width: 2, // Adjust width as needed
-                height: 20, // Adjust height as needed
-                color: Colors.grey, // Set color of the line
+                width: 2,
+                height: Sizes.p20,
+                color: Colors.grey,
               ),
               gapW4,
               TextButton(
@@ -64,7 +67,7 @@ class _WeeklyTaskFieldsState extends State<WeeklyTaskFields> {
           builder: (BuildContext context, BoxConstraints constraints) {
             final buttonWidth = constraints.maxWidth / 8;
             return ToggleButtons(
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(Sizes.p8),
               borderWidth: 2,
               constraints: BoxConstraints.tight(Size.square(buttonWidth)),
               textStyle: Theme.of(context).textTheme.bodySmall,

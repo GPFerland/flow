@@ -27,24 +27,24 @@ class TaskInstancesSyncService {
   }
 
   Future<void> _moveTaskInstancesToRemoteRepository(String uid) async {
-    // Get the local taskInstances data
+    // Get the local task instances data
     final localTaskInstancesRepository =
         ref.read(localTaskInstancesRepositoryProvider);
     final localTaskInstances =
         await localTaskInstancesRepository.fetchTaskInstances();
     if (localTaskInstances.taskInstancesList.isNotEmpty) {
-      // Get the remote taskInstances data
+      // Get the remote task instances data
       final remoteTaskInstancesRepository =
           ref.read(remoteTaskInstancesRepositoryProvider);
       final remoteTaskInstances =
           await remoteTaskInstancesRepository.fetchTaskInstances(uid);
-      // Add all of the local taskInstances to the remote taskInstances
+      // Add all of the local task instances to the remote task instances
       final updatedRemoteTaskInstances = remoteTaskInstances
           .addTaskInstances(localTaskInstances.taskInstancesList);
-      // Write the updated remote taskInstances datea to the repository
+      // Write the updated remote task instances data to the repository
       await remoteTaskInstancesRepository.setTaskInstances(
           uid, updatedRemoteTaskInstances);
-      // Remove all taskInstances from the local taskInstances repository
+      // Remove all task instances from the local task instances repository
       await localTaskInstancesRepository
           .setTaskInstances(TaskInstances(taskInstancesList: []));
     }

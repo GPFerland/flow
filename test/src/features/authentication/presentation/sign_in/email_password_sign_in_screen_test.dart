@@ -1,9 +1,11 @@
+import 'package:flow/src/common_widgets/buttons/custom_text_button.dart';
+import 'package:flow/src/common_widgets/buttons/primary_button.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 import '../../../../mocks.dart';
-import '../../auth_robot.dart';
+import '../../../../robot.dart';
 
 void main() {
   const testEmail = 'test@test.com';
@@ -21,12 +23,12 @@ void main() {
         When tap on the sign-in button
         Then signInWithEmailAndPassword is not called
         ''', (tester) async {
-          final r = AuthRobot(tester);
-          await r.pumpEmailPasswordSignInContents(
+          final r = Robot(tester);
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.signIn,
           );
-          await r.tapEmailAndPasswordSubmitButton();
+          await r.tapType(PrimaryButton);
           verifyNever(() => authRepository.signInWithEmailAndPassword(
                 any(),
                 any(),
@@ -42,24 +44,24 @@ void main() {
         And error alert is not shown
         ''', (tester) async {
           var didSignIn = false;
-          final r = AuthRobot(tester);
+          final r = Robot(tester);
           when(() => authRepository.signInWithEmailAndPassword(
                 testEmail,
                 testPassword,
               )).thenAnswer((_) => Future.value());
-          await r.pumpEmailPasswordSignInContents(
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.signIn,
             onSignedIn: () => didSignIn = true,
           );
-          await r.enterEmail(testEmail);
-          await r.enterPassword(testPassword);
-          await r.tapEmailAndPasswordSubmitButton();
+          await r.authRobot.enterEmail(testEmail);
+          await r.authRobot.enterPassword(testPassword);
+          await r.tapType(PrimaryButton);
           verify(() => authRepository.signInWithEmailAndPassword(
                 testEmail,
                 testPassword,
               )).called(1);
-          r.expectErrorAlertNotFound();
+          r.authRobot.expectErrorAlertNotFound();
           expect(didSignIn, true);
         });
       });
@@ -70,12 +72,12 @@ void main() {
         When tap on the sign-in button
         Then createUserWithEmailAndPassword is not called
         ''', (tester) async {
-          final r = AuthRobot(tester);
-          await r.pumpEmailPasswordSignInContents(
+          final r = Robot(tester);
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.register,
           );
-          await r.tapEmailAndPasswordSubmitButton();
+          await r.tapType(PrimaryButton);
           verifyNever(() => authRepository.createUserWithEmailAndPassword(
                 any(),
                 any(),
@@ -91,18 +93,18 @@ void main() {
         And onSignedIn callback is called
         And error alert is not shown
         ''', (tester) async {
-          final r = AuthRobot(tester);
+          final r = Robot(tester);
           when(() => authRepository.createUserWithEmailAndPassword(
                 testEmail,
                 testPassword,
               )).thenAnswer((_) => Future.value());
-          await r.pumpEmailPasswordSignInContents(
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.register,
           );
-          await r.enterEmail(testEmail);
-          await r.enterPassword(testPassword);
-          await r.tapEmailAndPasswordSubmitButton();
+          await r.authRobot.enterEmail(testEmail);
+          await r.authRobot.enterPassword(testPassword);
+          await r.tapType(PrimaryButton);
           verifyNever(() => authRepository.createUserWithEmailAndPassword(
                 any(),
                 any(),
@@ -119,26 +121,26 @@ void main() {
         And error alert is not shown
         ''', (tester) async {
           var didSignIn = false;
-          final r = AuthRobot(tester);
+          final r = Robot(tester);
           const password =
               'test1234'; // at least 8 characters to pass validation
           when(() => authRepository.createUserWithEmailAndPassword(
                 testEmail,
                 password,
               )).thenAnswer((_) => Future.value());
-          await r.pumpEmailPasswordSignInContents(
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.register,
             onSignedIn: () => didSignIn = true,
           );
-          await r.enterEmail(testEmail);
-          await r.enterPassword(password);
-          await r.tapEmailAndPasswordSubmitButton();
+          await r.authRobot.enterEmail(testEmail);
+          await r.authRobot.enterPassword(password);
+          await r.tapType(PrimaryButton);
           verify(() => authRepository.createUserWithEmailAndPassword(
                 testEmail,
                 password,
               )).called(1);
-          r.expectErrorAlertNotFound();
+          r.authRobot.expectErrorAlertNotFound();
           expect(didSignIn, true);
         });
       });
@@ -149,13 +151,13 @@ void main() {
         When tap on the form toggle button
         Then create account button is found
         ''', (tester) async {
-          final r = AuthRobot(tester);
-          await r.pumpEmailPasswordSignInContents(
+          final r = Robot(tester);
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.signIn,
           );
-          await r.tapFormToggleButton();
-          r.expectCreateAccountButtonFound();
+          await r.tapType(CustomTextButton);
+          r.authRobot.expectCreateAccountButtonFound();
         });
 
         testWidgets('''
@@ -163,13 +165,13 @@ void main() {
         When tap on the form toggle button
         Then create account button is found
         ''', (tester) async {
-          final r = AuthRobot(tester);
-          await r.pumpEmailPasswordSignInContents(
+          final r = Robot(tester);
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.register,
           );
-          await r.tapFormToggleButton();
-          r.expectCreateAccountButtonNotFound();
+          await r.tapType(CustomTextButton);
+          r.authRobot.expectCreateAccountButtonNotFound();
         });
       });
 
@@ -180,12 +182,12 @@ void main() {
         And the user presses enter, indicating that editing is complete
         Then the focus changes to the password field
         ''', (tester) async {
-          final r = AuthRobot(tester);
-          await r.pumpEmailPasswordSignInContents(
+          final r = Robot(tester);
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.signIn,
           );
-          await r.enterEmailAndPressEnter(testEmail);
+          await r.authRobot.enterEmailAndPressEnter(testEmail);
         });
 
         testWidgets('''
@@ -194,12 +196,12 @@ void main() {
         And the user presses enter, indicating that editing is complete
         Then the focus DOES NOT changes to the password field
         ''', (tester) async {
-          final r = AuthRobot(tester);
-          await r.pumpEmailPasswordSignInContents(
+          final r = Robot(tester);
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.signIn,
           );
-          await r.enterEmailAndPressEnter('bad-email');
+          await r.authRobot.enterEmailAndPressEnter('bad-email');
         });
 
         testWidgets('''
@@ -210,23 +212,23 @@ void main() {
         Then the form submits and the user is signed in
         ''', (tester) async {
           bool didSignIn = false;
-          final r = AuthRobot(tester);
+          final r = Robot(tester);
           when(() => authRepository.signInWithEmailAndPassword(
                 testEmail,
                 testPassword,
               )).thenAnswer((_) => Future.value());
-          await r.pumpEmailPasswordSignInContents(
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.signIn,
             onSignedIn: () => didSignIn = true,
           );
-          await r.enterEmailAndPressEnter(testEmail);
-          await r.enterPasswordAndPressEnter(testPassword);
+          await r.authRobot.enterEmailAndPressEnter(testEmail);
+          await r.authRobot.enterPasswordAndPressEnter(testPassword);
           verify(() => authRepository.signInWithEmailAndPassword(
                 testEmail,
                 testPassword,
               )).called(1);
-          r.expectErrorAlertNotFound();
+          r.authRobot.expectErrorAlertNotFound();
           expect(didSignIn, true);
         });
 
@@ -240,23 +242,23 @@ void main() {
         And the user is not signed in
         ''', (tester) async {
           bool didSignIn = false;
-          final r = AuthRobot(tester);
+          final r = Robot(tester);
           when(() => authRepository.signInWithEmailAndPassword(
                 testEmail,
                 testPassword,
               )).thenAnswer((_) => Future.value());
-          await r.pumpEmailPasswordSignInContents(
+          await r.authRobot.pumpEmailPasswordSignInContents(
             authRepository: authRepository,
             formType: EmailPasswordSignInFormType.signIn,
             onSignedIn: () => didSignIn = true,
           );
-          await r.enterEmailAndPressEnter('bad-email');
-          await r.enterPasswordAndPressEnter(testPassword);
+          await r.authRobot.enterEmailAndPressEnter('bad-email');
+          await r.authRobot.enterPasswordAndPressEnter(testPassword);
           verifyNever(() => authRepository.signInWithEmailAndPassword(
                 any(),
                 any(),
               ));
-          r.expectErrorAlertNotFound();
+          r.authRobot.expectErrorAlertNotFound();
           expect(didSignIn, false);
         });
       });

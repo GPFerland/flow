@@ -22,11 +22,5 @@
       "program": "lib/main.dart",
       "flutterMode": "release"
     },
-    {
-      "name": "Flutter: Test Coverage",
-      "command": "flutter test --coverage",
-      "request": "launch",
-      "type": "node-terminal"
-    }
   ]
 }

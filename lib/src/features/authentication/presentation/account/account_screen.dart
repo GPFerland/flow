@@ -19,7 +19,9 @@ class AccountScreen extends ConsumerWidget {
       accountScreenControllerProvider,
       (_, state) => state.showAlertDialogOnError(context),
     );
+
     final state = ref.watch(accountScreenControllerProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: state.isLoading
@@ -59,7 +61,10 @@ class UserDataTable extends ConsumerWidget {
   const UserDataTable({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
     final style = Theme.of(context).textTheme.titleSmall!;
     final user = ref.watch(authStateChangesProvider).value;
     return DataTable(
@@ -92,7 +97,11 @@ class UserDataTable extends ConsumerWidget {
     );
   }
 
-  DataRow _makeDataRow(String name, String value, TextStyle style) {
+  DataRow _makeDataRow(
+    String name,
+    String value,
+    TextStyle style,
+  ) {
     return DataRow(
       cells: [
         DataCell(

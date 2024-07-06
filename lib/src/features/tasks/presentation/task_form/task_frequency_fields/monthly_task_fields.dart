@@ -1,4 +1,4 @@
-import 'package:flow/src/common_widgets/divider_on_primary_container.dart';
+import 'package:flow/src/common_widgets/dividers/divider_on_primary_container.dart';
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +13,11 @@ class MonthlyTaskFields extends StatefulWidget {
   final List<Monthday> selectedMonthdays;
   final Function(List<Monthday>) selectMonthdays;
 
+  // * Keys for testing using find.byKey()
+  static const ordinalDropdownKey = Key('ordinalDropdown');
+  static const weekdayDropdownKey = Key('weekdayDropdown');
+  static const plusIconButtonKey = Key('plusIconButton');
+
   @override
   State<MonthlyTaskFields> createState() => _MonthlyTaskFieldsState();
 }
@@ -21,6 +26,7 @@ class _MonthlyTaskFieldsState extends State<MonthlyTaskFields> {
   Ordinal ordinal = Ordinal.first;
   Weekday weekday = Weekday.day;
 
+  //todo - this is all a lil fucked up
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -34,10 +40,9 @@ class _MonthlyTaskFieldsState extends State<MonthlyTaskFields> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(
-                    width: 12,
-                  ),
+                  gapW12,
                   DropdownButton<Ordinal>(
+                    key: MonthlyTaskFields.ordinalDropdownKey,
                     value: ordinal,
                     onChanged: (Ordinal? selectedOrdinal) {
                       setState(() {
@@ -53,6 +58,7 @@ class _MonthlyTaskFieldsState extends State<MonthlyTaskFields> {
                   ),
                   gapW12,
                   DropdownButton<Weekday>(
+                    key: MonthlyTaskFields.weekdayDropdownKey,
                     value: weekday,
                     onChanged: (Weekday? selectedWeekday) {
                       setState(() {
@@ -67,18 +73,23 @@ class _MonthlyTaskFieldsState extends State<MonthlyTaskFields> {
                     }).toList(),
                   ),
                   IconButton(
+                    key: MonthlyTaskFields.plusIconButtonKey,
                     onPressed: () {
                       setState(() {
-                        widget.selectedMonthdays.add(Monthday(
-                          weekday: weekday,
-                          ordinal: ordinal,
-                        ));
-                        widget.selectMonthdays(widget.selectedMonthdays);
+                        widget.selectedMonthdays.add(
+                          Monthday(
+                            weekday: weekday,
+                            ordinal: ordinal,
+                          ),
+                        );
+                        widget.selectMonthdays(
+                          widget.selectedMonthdays,
+                        );
                       });
                     },
                     icon: Icon(
                       Icons.add,
-                      size: 24,
+                      size: Sizes.p24,
                       color: Theme.of(context).colorScheme.onPrimaryContainer,
                     ),
                   ),
@@ -86,7 +97,7 @@ class _MonthlyTaskFieldsState extends State<MonthlyTaskFields> {
               ),
               if (widget.selectedMonthdays.isNotEmpty)
                 const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  padding: EdgeInsets.symmetric(horizontal: Sizes.p8),
                   child: DividerOnPrimaryContainer(),
                 ),
               if (widget.selectedMonthdays.isNotEmpty)
@@ -94,7 +105,12 @@ class _MonthlyTaskFieldsState extends State<MonthlyTaskFields> {
                   children: [
                     for (Monthday selectedMonthday in widget.selectedMonthdays)
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+                        padding: const EdgeInsets.fromLTRB(
+                          Sizes.p16,
+                          0,
+                          Sizes.p8,
+                          0,
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [

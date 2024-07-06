@@ -1,5 +1,8 @@
+import 'package:flow/src/common_widgets/alert_dialogs.dart';
+import 'package:flow/src/common_widgets/buttons/add_item_icon_button.dart';
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
-import 'package:flow/src/features/date_check_list/presentation/check_list_app_bar/more_menu_button.dart';
+import 'package:flow/src/features/date_check_list/presentation/date_app_bar/date_app_bar.dart';
+import 'package:flow/src/features/task_instances/application/task_instances_creation_service.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_sync_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/local/test_local_task_instances_repository.dart';
@@ -12,6 +15,7 @@ import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart
 import 'package:flow/src/features/tasks/data/remote/test_remote_tasks_repository.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/flow_app.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -31,7 +35,7 @@ class Robot {
 
   Future<void> pumpFlowApp() async {
     // Override repositories
-    final authRepository = TestAuthRepository(addDelay: false);
+    final authRepository = TestAuthRepository();
     final localTasksRepository = TestLocalTasksRepository();
     final remoteTasksRepository = TestRemoteTasksRepository();
     final localTaskInstancesRepository = TestLocalTaskInstancesRepository();
@@ -57,6 +61,7 @@ class Robot {
     // Initialize Sync listeners
     providerContainer.read(tasksSyncServiceProvider);
     providerContainer.read(taskInstancesSyncServiceProvider);
+    providerContainer.read(taskInstancesCreationServiceProvider);
     // Entry point of the app
     await widgetTester.pumpWidget(
       UncontrolledProviderScope(
@@ -67,46 +72,91 @@ class Robot {
     await widgetTester.pumpAndSettle();
   }
 
-  Future<void> openPopupMenu() async {
-    final finder = find.byType(MoreMenuButton);
-    final matches = finder.evaluate();
-    // if an item is found, it means that we're running
-    // on a small window and can tap to reveal the menu
-    if (matches.isNotEmpty) {
-      await widgetTester.tap(finder);
-      await widgetTester.pumpAndSettle();
-    }
-    // else no-op, as the items are already visible
+  // flows
+  Future<void> signInFromDateCheckList() async {
+    await dateCheckListRobot.openPopupMenu();
+    await tapKey(DateAppBar.signInMenuButtonKey);
+    await authRobot.enterEmail('test@email.com');
+    await authRobot.enterPassword('password');
+    await tapText('Submit');
   }
 
-  Future<void> createTaskFromDateCheckListScreen(Task task) async {
-    await openPopupMenu();
-    await tasksRobot.openTasksScreen();
-    await tasksRobot.tapAddButton();
+  Future<void> logoutFromDateCheckList() async {
+    await dateCheckListRobot.openPopupMenu();
+    await tapKey(DateAppBar.accountMenuButtonKey);
+    await tapText('Logout');
+    await tapKey(kDialogDefaultKey);
+  }
+
+  Future<void> createTaskFromDateCheckList(Task task) async {
+    await goToCreateTaskFromDateCheckList();
     await tasksRobot.enterTitle(task.title);
     await tasksRobot.enterDescription(task.description);
-    await tasksRobot.tapCreateTaskButton();
+    await tapText('Submit');
     await goBack();
   }
 
-  Future<void> navigateToCreateTasksScreen() async {
-    await openPopupMenu();
-    await tasksRobot.openTasksScreen();
-    await tasksRobot.tapAddButton();
+  Future<void> goToCreateTaskFromDateCheckList() async {
+    await dateCheckListRobot.openPopupMenu();
+    await tapKey(DateAppBar.tasksMenuButtonKey);
+    await tapType(AddItemIconButton);
   }
 
-  // navigation
+  Future<void> rescheduleTask(String taskTitle, String date) async {
+    await tapText(taskTitle);
+    await tapText('Scheduled');
+    await tapText(date);
+    await tapText('OK');
+    await tapText('Save');
+  }
+
+  Future<void> skipTask(String taskTitle) async {
+    await tapText(taskTitle);
+    await tapText('Skip');
+  }
+
+  // basic actions
   Future<void> closePage() async {
-    final finder = find.byTooltip('Close');
+    await tapTooltip('Close');
+  }
+
+  Future<void> goBack() async {
+    await tapTooltip('Back');
+  }
+
+  // generic actions
+  Future<void> tapText(String text) async {
+    final finder = find.text(text);
     expect(finder, findsOneWidget);
     await widgetTester.tap(finder);
     await widgetTester.pumpAndSettle();
   }
 
-  Future<void> goBack() async {
-    final finder = find.byTooltip('Back');
+  Future<void> tapTooltip(String tooltip) async {
+    final finder = find.byTooltip(tooltip);
     expect(finder, findsOneWidget);
     await widgetTester.tap(finder);
+    await widgetTester.pumpAndSettle();
+  }
+
+  Future<void> tapKey(Key key) async {
+    final finder = find.byKey(key);
+    expect(finder, findsOneWidget);
+    await widgetTester.tap(finder);
+    await widgetTester.pumpAndSettle();
+  }
+
+  Future<void> tapType(Type type) async {
+    final finder = find.byType(type);
+    expect(finder, findsOneWidget);
+    await widgetTester.tap(finder);
+    await widgetTester.pumpAndSettle();
+  }
+
+  Future<void> longPressText(String text) async {
+    final finder = find.text(text);
+    expect(finder, findsOneWidget);
+    await widgetTester.longPress(finder);
     await widgetTester.pumpAndSettle();
   }
 }

@@ -8,6 +8,7 @@ class TaskFormController extends StateNotifier<AsyncValue<void>> {
     required this.tasksService,
     required this.taskInstancesService,
   }) : super(const AsyncData(null));
+
   final TasksService tasksService;
   final TaskInstancesService taskInstancesService;
 
@@ -35,10 +36,10 @@ class TaskFormController extends StateNotifier<AsyncValue<void>> {
     return state.hasError == false;
   }
 
-  Future<bool> deleteTaskInstances(Task task) async {
+  Future<bool> deleteTasksInstances(Task task) async {
     state = const AsyncLoading<void>();
     final value = await AsyncValue.guard(
-      () => taskInstancesService.removeTaskInstances(task.id),
+      () => taskInstancesService.removeTasksInstances(task.id),
     );
     if (value.hasValue && !value.hasError) {
       return true;

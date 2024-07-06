@@ -454,7 +454,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DateCheckList extends ConsumerWidget {
-  const DateCheckList({super.key, required this.date});
+  const DateCheckList({
+    super.key,
+    required this.date,
+  });
 
   final DateTime date;
 
@@ -480,11 +483,23 @@ class DateCheckList extends ConsumerWidget {
           child: ListView.builder(
             //todo - this is not good, figure out the good way to do this.
             shrinkWrap: true,
-            itemCount: sortedTaskInstances.taskInstancesList.length,
+            // add one to display toggle button at the end of the list
+            itemCount: sortedTaskInstances.taskInstancesList.length + 1,
             itemBuilder: (context, index) {
-              return TaskInstanceListCard(
-                taskInstance: sortedTaskInstances.taskInstancesList[index],
-              );
+              if (index < sortedTaskInstances.taskInstancesList.length) {
+                return TaskInstanceListCard(
+                  taskInstance: sortedTaskInstances.taskInstancesList[index],
+                );
+              } else if (index ==
+                  sortedTaskInstances.taskInstancesList.length) {
+                //return toggleShowAllTaskInstances();
+                return TextButton(
+                  onPressed: () {},
+                  child: const Text('toggle tasks'),
+                );
+              } else {
+                return null;
+              }
             },
           ),
         );

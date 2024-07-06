@@ -1,4 +1,5 @@
 import 'package:flow/src/common_widgets/async_value_widget.dart';
+import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/features/date_check_list/presentation/reschedule_dialog/reschedule_dialog.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
@@ -21,15 +22,15 @@ class TaskInstanceListCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final taskValue = ref.watch(taskProvider(taskInstance.taskId));
+    final taskValue = ref.watch(taskStreamProvider(taskInstance.taskId));
 
     return AsyncValueWidget<Task?>(
       value: taskValue,
       data: (task) {
         return InkWell(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(Sizes.p12),
           customBorder: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
+            borderRadius: BorderRadius.circular(Sizes.p12),
           ),
           onTap: () {
             showRescheduleDialog(
@@ -38,12 +39,13 @@ class TaskInstanceListCard extends ConsumerWidget {
             );
           },
           onLongPress: () {
-            context.goNamed(
+            context.pushNamed(
               AppRoute.editTask.name,
               pathParameters: {'id': task.id},
             );
           },
           child: Card(
+            //todo - this is fucked
             color: taskInstance.completed || taskInstance.skipped
                 ? taskInstance.completed
                     ? Colors.grey[400]
@@ -51,15 +53,15 @@ class TaskInstanceListCard extends ConsumerWidget {
                 : null,
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                vertical: 12,
-                horizontal: 16,
+                vertical: Sizes.p12,
+                horizontal: Sizes.p16,
               ),
               child: Row(
                 children: [
                   TaskListCardIcon(
                     task: task!,
                   ),
-                  const SizedBox(width: 16),
+                  gapW16,
                   Expanded(
                     child: Text(
                       task.title,

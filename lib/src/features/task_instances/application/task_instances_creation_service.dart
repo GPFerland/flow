@@ -26,11 +26,12 @@ class TaskInstancesCreationService {
 
   Future<void> _createTaskInstances(DateTime date) async {
     final tasksService = ref.read(tasksServiceProvider);
+    final taskInstancesService = ref.read(taskInstancesServiceProvider);
+
     final tasks = await tasksService.fetchTasks();
+
     for (Task task in tasks.tasksList) {
-      await ref
-          .read(taskInstancesServiceProvider)
-          .createTaskInstance(task, date);
+      await taskInstancesService.createTaskInstance(task, date);
     }
   }
 }

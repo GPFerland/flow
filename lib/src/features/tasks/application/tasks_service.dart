@@ -19,7 +19,7 @@ class TasksService {
 
   /// fetch the tasks from the local or remote repository
   /// depending on the user auth state
-  Future<Tasks> fetchTasks() {
+  Future<Tasks> _fetchTasks() {
     final user = authRepository.currentUser;
     if (user != null) {
       return remoteTasksRepository.fetchTasks(user.uid);
@@ -30,7 +30,7 @@ class TasksService {
 
   /// save the tasks to the local or remote repository
   /// depending on the user auth state
-  Future<void> setTasks(Tasks tasks) async {
+  Future<void> _setTasks(Tasks tasks) async {
     final user = authRepository.currentUser;
     if (user != null) {
       await remoteTasksRepository.setTasks(user.uid, tasks);
@@ -39,26 +39,34 @@ class TasksService {
     }
   }
 
-  /// adds a task in the local or remote task depending on the user auth state
+  /// fetch tasks from the local or remote repository
+  /// depending on the user auth state
+  Future<Tasks> fetchTasks() async {
+    return await _fetchTasks();
+  }
+
+  /// adds a task in the local or remote repository
+  /// depending on the user auth state
   Future<void> addTask(Task task) async {
-    final tasks = await fetchTasks();
+    final tasks = await _fetchTasks();
     final updated = tasks.addTask(task);
-    await setTasks(updated);
+    await _setTasks(updated);
   }
 
-  /// sets a task in the local or remote task depending on the user auth state
+  /// sets a task in the local or remote repository
+  /// depending on the user auth state
   Future<void> setTask(Task task) async {
-    final tasks = await fetchTasks();
+    final tasks = await _fetchTasks();
     final updated = tasks.setTask(task);
-    await setTasks(updated);
+    await _setTasks(updated);
   }
 
-  /// removes a task from the local or remote task depending on the user auth
-  /// state
+  /// removes a task from the local or remote repository
+  /// depending on the user auth state
   Future<void> removeTask(Task task) async {
-    final tasks = await fetchTasks();
+    final tasks = await _fetchTasks();
     final updated = tasks.removeTask(task);
-    await setTasks(updated);
+    await _setTasks(updated);
   }
 }
 
@@ -78,7 +86,7 @@ final tasksServiceProvider = Provider<TasksService>(
   },
 );
 
-final tasksProvider = StreamProvider<Tasks>(
+final tasksStreamProvider = StreamProvider<Tasks>(
   (ref) {
     final user = ref.watch(authStateChangesProvider).value;
     if (user != null) {
@@ -89,7 +97,7 @@ final tasksProvider = StreamProvider<Tasks>(
   },
 );
 
-final taskProvider = StreamProvider.family<Task?, String>(
+final taskStreamProvider = StreamProvider.family<Task?, String>(
   (ref, taskId) {
     final user = ref.watch(authStateChangesProvider).value;
     if (user != null) {

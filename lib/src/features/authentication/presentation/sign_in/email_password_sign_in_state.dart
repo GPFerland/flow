@@ -67,7 +67,7 @@ extension EmailPasswordSignInStateX on EmailPasswordSignInState {
     if (formType == EmailPasswordSignInFormType.register) {
       return 'Create an account'.hardcoded;
     } else {
-      return 'Sign in'.hardcoded;
+      return 'Submit'.hardcoded;
     }
   }
 

@@ -166,27 +166,33 @@ enum FrequencyType {
   once(
     shorthand: 'Once',
     longhand: 'Once',
+    tabKey: Key('onceTab'),
   ),
   daily(
     shorthand: 'Daily',
     longhand: 'Daily',
+    tabKey: Key('dailyTab'),
   ),
   weekly(
     shorthand: 'Weekly',
     longhand: 'Weekly',
+    tabKey: Key('weeklyTab'),
   ),
   monthly(
     shorthand: 'Monthly',
     longhand: 'Monthly',
+    tabKey: Key('monthlyTab'),
   );
 
   const FrequencyType({
     required this.shorthand,
     required this.longhand,
+    required this.tabKey,
   });
 
   final String shorthand;
   final String longhand;
+  final Key tabKey;
 
   Map<String, dynamic> toMap() => {
         'frequencyType': name,
@@ -197,7 +203,7 @@ enum FrequencyType {
       );
 }
 
-String getDisplayDateString(DateTime date) {
+String getTitleDateString(DateTime date) {
   DateTime formattedDate = getDateNoTime(date);
   if (formattedDate == getDateNoTimeToday()) {
     return 'Today';
