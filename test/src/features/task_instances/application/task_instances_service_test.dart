@@ -16,7 +16,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(TaskInstances(taskInstancesList: []));
   });
-  const testUser = AppUser(uid: 'abc');
+  const testUser = AppUser(uid: 'abc', email: 'test@email.com');
 
   late MockAuthRepository authRepository;
   late MockLocalTaskInstancesRepository localTaskInstancesRepository;

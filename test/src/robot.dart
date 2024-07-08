@@ -1,5 +1,6 @@
 import 'package:flow/src/common_widgets/alert_dialogs.dart';
 import 'package:flow/src/common_widgets/buttons/add_item_icon_button.dart';
+import 'package:flow/src/common_widgets/buttons/custom_text_button.dart';
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/date_check_list/presentation/date_app_bar/date_app_bar.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_creation_service.dart';
@@ -79,6 +80,15 @@ class Robot {
     await authRobot.enterEmail('test@email.com');
     await authRobot.enterPassword('password');
     await tapText('Submit');
+  }
+
+  Future<void> createAccountFromDateCheckList() async {
+    await dateCheckListRobot.openPopupMenu();
+    await tapKey(DateAppBar.signInMenuButtonKey);
+    await tapType(CustomTextButton);
+    await authRobot.enterEmail('test@email.com');
+    await authRobot.enterPassword('password');
+    await tapText('Create an account');
   }
 
   Future<void> logoutFromDateCheckList() async {

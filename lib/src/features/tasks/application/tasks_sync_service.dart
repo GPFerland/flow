@@ -1,3 +1,4 @@
+import 'package:flow/src/exceptions/error_logger.dart';
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
@@ -27,19 +28,23 @@ class TasksSyncService {
   }
 
   Future<void> _moveTasksToRemoteRepository(String uid) async {
-    // Get the local tasks data
-    final localTasksRepository = ref.read(localTasksRepositoryProvider);
-    final localTasks = await localTasksRepository.fetchTasks();
-    if (localTasks.tasksList.isNotEmpty) {
-      // Get the remote tasks data
-      final remoteTasksRepository = ref.read(remoteTasksRepositoryProvider);
-      final remoteTasks = await remoteTasksRepository.fetchTasks(uid);
-      // Add all of the local tasks to the remote tasks
-      final updatedRemoteTasks = remoteTasks.addTasks(localTasks.tasksList);
-      // Write the updated remote tasks datea to the repository
-      await remoteTasksRepository.setTasks(uid, updatedRemoteTasks);
-      // Remove all tasks from the local tasks repository
-      await localTasksRepository.setTasks(Tasks(tasksList: []));
+    try {
+      // Get the local tasks data
+      final localTasksRepository = ref.read(localTasksRepositoryProvider);
+      final localTasks = await localTasksRepository.fetchTasks();
+      if (localTasks.tasksList.isNotEmpty) {
+        // Get the remote tasks data
+        final remoteTasksRepository = ref.read(remoteTasksRepositoryProvider);
+        final remoteTasks = await remoteTasksRepository.fetchTasks(uid);
+        // Add all of the local tasks to the remote tasks
+        final updatedRemoteTasks = remoteTasks.addTasks(localTasks.tasksList);
+        // Write the updated remote tasks datea to the repository
+        await remoteTasksRepository.setTasks(uid, updatedRemoteTasks);
+        // Remove all tasks from the local tasks repository
+        await localTasksRepository.setTasks(Tasks(tasksList: []));
+      }
+    } catch (exception, stackTrace) {
+      ref.read(errorLoggerProvider).logError(exception, stackTrace);
     }
   }
 }

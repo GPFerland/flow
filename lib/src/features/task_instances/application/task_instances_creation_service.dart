@@ -1,3 +1,4 @@
+import 'package:flow/src/exceptions/error_logger.dart';
 import 'package:flow/src/features/date_check_list/data/date_repository.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
@@ -25,13 +26,17 @@ class TaskInstancesCreationService {
   }
 
   Future<void> _createTaskInstances(DateTime date) async {
-    final tasksService = ref.read(tasksServiceProvider);
-    final taskInstancesService = ref.read(taskInstancesServiceProvider);
+    try {
+      final tasksService = ref.read(tasksServiceProvider);
+      final taskInstancesService = ref.read(taskInstancesServiceProvider);
 
-    final tasks = await tasksService.fetchTasks();
+      final tasks = await tasksService.fetchTasks();
 
-    for (Task task in tasks.tasksList) {
-      await taskInstancesService.createTaskInstance(task, date);
+      for (Task task in tasks.tasksList) {
+        await taskInstancesService.createTaskInstance(task, date);
+      }
+    } catch (exception, stackTrace) {
+      ref.read(errorLoggerProvider).logError(exception, stackTrace);
     }
   }
 }

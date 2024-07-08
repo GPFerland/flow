@@ -68,7 +68,7 @@ void main() {
       });
       test('non-null user, fetch tasks from remote tasks repo', () async {
         // setup
-        const testUser = AppUser(uid: 'abc');
+        const testUser = AppUser(uid: 'abc', email: 'test@email.com');
         final expectedTask = createTestTask();
         final expectedTasks = Tasks(
           tasksList: [expectedTask],
@@ -134,7 +134,7 @@ void main() {
       });
       test('non-null user, adds task to remote tasks repo', () async {
         // setup
-        const testUser = AppUser(uid: 'abc');
+        const testUser = AppUser(uid: 'abc', email: 'test@email.com');
         final expectedTask = createTestTask();
         final expectedTasks = Tasks(
           tasksList: [expectedTask],
@@ -195,7 +195,7 @@ void main() {
       });
       test('non-null user, adds task to remote tasks repo', () async {
         // setup
-        const testUser = AppUser(uid: 'abc');
+        const testUser = AppUser(uid: 'abc', email: 'test@email.com');
         final expectedTask = createTestTask();
         final expectedTasks = Tasks(
           tasksList: [expectedTask],
@@ -259,7 +259,7 @@ void main() {
       });
       test('non-null user, adds task to remote tasks repo', () async {
         // setup
-        const testUser = AppUser(uid: 'abc');
+        const testUser = AppUser(uid: 'abc', email: 'test@email.com');
         final existingTask = createTestTask();
         final existingTasks = Tasks(
           tasksList: [existingTask],

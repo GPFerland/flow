@@ -7,7 +7,7 @@ void main() {
   testWidgets('Sign in and sign out flow', (tester) async {
     final r = Robot(tester);
     await r.pumpFlowApp();
-    await r.signInFromDateCheckList();
+    await r.createAccountFromDateCheckList();
     r.dateCheckListRobot.expectFindXTaskInstanceListCards(
       kTestTaskInstances.taskInstancesList.length,
     );

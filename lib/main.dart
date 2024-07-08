@@ -1,3 +1,5 @@
+import 'package:flow/src/exceptions/async_error_logger.dart';
+import 'package:flow/src/exceptions/error_logger.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_creation_service.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_sync_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
@@ -21,9 +23,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // * Remove # from URLs on web
   usePathUrlStrategy();
-  // * Register error handlers. For more info, see:
-  // * https://docs.flutter.dev/testing/errors
-  registerErrorHandlers();
   // * Create local repositories
   final sembastTasksRepository = await SembastTasksRepository.makeDefault();
   final sembastTaskInstancesRepository =
@@ -47,11 +46,16 @@ void main() async {
         remoteTaskInstancesRepository,
       ),
     ],
+    observers: [AsyncErrorLogger()],
   );
-  // * Initialize Sync listeners
+  // * Initialize sync and creation listeners
   providerContainer.read(tasksSyncServiceProvider);
   providerContainer.read(taskInstancesSyncServiceProvider);
   providerContainer.read(taskInstancesCreationServiceProvider);
+  // * Register error handlers. For more info, see:
+  // * https://docs.flutter.dev/testing/errors
+  final errorLogger = providerContainer.read(errorLoggerProvider);
+  registerErrorHandlers(errorLogger);
   // * Entry point of the app
   runApp(
     UncontrolledProviderScope(
@@ -61,15 +65,15 @@ void main() async {
   );
 }
 
-void registerErrorHandlers() {
+void registerErrorHandlers(ErrorLogger errorLogger) {
   // * Show some error UI if any uncaught exception happens
   FlutterError.onError = (FlutterErrorDetails details) {
     FlutterError.presentError(details);
-    debugPrint(details.toString());
+    errorLogger.logError(details.exception, details.stack);
   };
   // * Handle errors from the underlying platform/OS
   PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
-    debugPrint(error.toString());
+    errorLogger.logError(error, stack);
     return true;
   };
   // * Show some error UI when any widget in the app fails to build
