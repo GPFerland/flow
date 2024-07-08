@@ -3,8 +3,7 @@ import 'package:flow/src/features/authentication/presentation/account/account_sc
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_screen.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
 import 'package:flow/src/features/date_check_list/presentation/date_check_list_screen.dart';
-import 'package:flow/src/features/tasks/presentation/create_task_screen/create_task_screen.dart';
-import 'package:flow/src/features/tasks/presentation/edit_task_screen/edit_task_screen.dart';
+import 'package:flow/src/features/tasks/presentation/task_screen/task_screen.dart';
 import 'package:flow/src/features/tasks/presentation/tasks_list_screen/tasks_list_screen.dart';
 import 'package:flow/src/routing/go_router_refresh_stream.dart';
 import 'package:flow/src/routing/not_found_screen.dart';
@@ -59,7 +58,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                   final taskId = state.pathParameters['id']!;
                   return MaterialPage(
                     fullscreenDialog: true,
-                    child: EditTaskScreen(taskId: taskId),
+                    child: TaskScreen(taskId: taskId),
                   );
                 },
               ),
@@ -69,7 +68,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
                 pageBuilder: (context, state) {
                   return const MaterialPage(
                     fullscreenDialog: true,
-                    child: CreateTaskScreen(),
+                    child: TaskScreen(),
                   );
                 },
               ),

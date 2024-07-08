@@ -1,6 +1,6 @@
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
-import 'package:flow/src/features/tasks/presentation/task_form/task_form_controller.dart';
+import 'package:flow/src/features/tasks/presentation/task_screen/task_controller.dart';
 import 'package:flow/src/utils/async_value_ui.dart';
 import 'package:flow/src/utils/style.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +23,15 @@ class DeleteTaskButton extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     Future<void> onDeleteDialogButtonPressed() async {
-      ref.read(taskFormControllerProvider.notifier).deleteTasksInstances(task);
-      ref.read(taskFormControllerProvider.notifier).deleteTask(task);
-      context.pop(true);
+      ref.read(taskFormControllerProvider.notifier).deleteTasksInstances(
+            task: task,
+            onSuccess: () {},
+          );
+      ref.read(taskFormControllerProvider.notifier).deleteTask(
+            task: task,
+            onSuccess: context.pop,
+          );
+      context.pop();
     }
 
     Future<void> showDeleteDialog() async {
@@ -56,7 +62,7 @@ class DeleteTaskButton extends ConsumerWidget {
                       OutlinedButton(
                         key: cancelDialogButtonKey,
                         onPressed: () {
-                          context.pop(false);
+                          context.pop();
                         },
                         child: const Text('Cancel'),
                       ),
@@ -72,11 +78,7 @@ class DeleteTaskButton extends ConsumerWidget {
             ),
           );
         },
-      ).then((value) {
-        if (value == true) {
-          context.pop();
-        }
-      });
+      );
     }
 
     ref.listen<AsyncValue>(

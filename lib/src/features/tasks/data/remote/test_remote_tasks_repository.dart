@@ -17,6 +17,13 @@ class TestRemoteTasksRepository implements RemoteTasksRepository {
   }
 
   @override
+  Future<Task?> fetchTask(String uid, String taskId) {
+    return Future.value(
+      _tasks.tasksList.firstWhereOrNull((task) => task.id == taskId),
+    );
+  }
+
+  @override
   Future<void> setTasks(String userId, Tasks tasks) async {
     _tasks = tasks;
   }

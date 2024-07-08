@@ -2,7 +2,7 @@ import 'package:flow/src/features/date_check_list/data/date_repository.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
-import 'package:flow/src/features/tasks/presentation/task_form/task_form.dart';
+import 'package:flow/src/features/tasks/presentation/task_screen/task_form/task_form.dart';
 import 'package:flow/src/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

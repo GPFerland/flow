@@ -9,6 +9,8 @@ class DateRepository {
 
   Stream<DateTime> dateStateChanges() => _dateState.stream;
   DateTime get date => _dateState.value;
+  DateTime get dateBefore => _dateState.value.subtract(const Duration(days: 1));
+  DateTime get dateAfter => _dateState.value.add(const Duration(days: 1));
 
   Future<void> selectDate(DateTime date) async {
     _selectDate(date);

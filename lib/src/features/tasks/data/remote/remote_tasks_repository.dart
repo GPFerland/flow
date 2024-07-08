@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 abstract class RemoteTasksRepository {
   Future<Tasks> fetchTasks(String uid);
 
+  Future<Task?> fetchTask(String uid, String taskId);
+
   Future<void> setTasks(String uid, Tasks tasks);
 
   Stream<Tasks> watchTasks(String uid);

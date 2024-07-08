@@ -97,13 +97,28 @@ final tasksStreamProvider = StreamProvider<Tasks>(
   },
 );
 
+final taskFutureProvider = FutureProvider.family<Task?, String>(
+  (ref, taskId) {
+    final user = ref.watch(authStateChangesProvider).value;
+    if (user != null) {
+      return ref.watch(remoteTasksRepositoryProvider).fetchTask(
+            user.uid,
+            taskId,
+          );
+    } else {
+      return ref.watch(localTasksRepositoryProvider).fetchTask(taskId);
+    }
+  },
+);
+
 final taskStreamProvider = StreamProvider.family<Task?, String>(
   (ref, taskId) {
     final user = ref.watch(authStateChangesProvider).value;
     if (user != null) {
-      return ref
-          .watch(remoteTasksRepositoryProvider)
-          .watchTask(user.uid, taskId);
+      return ref.watch(remoteTasksRepositoryProvider).watchTask(
+            user.uid,
+            taskId,
+          );
     } else {
       return ref.watch(localTasksRepositoryProvider).watchTask(taskId);
     }

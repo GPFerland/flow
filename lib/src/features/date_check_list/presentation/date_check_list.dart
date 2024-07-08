@@ -71,7 +71,7 @@
 //         }
 
 //         if (previousTaskInstance.rescheduledDate == date ||
-//             (!previousTaskInstance.completed && task.showUntilCompleted!)) {
+//             (!previousTaskInstance.completed && task.untilCompleted!)) {
 //           taskInstances.add(previousTaskInstance);
 //           _addRoutineInstance(previousTaskInstance, routineInstances, ref);
 //         }

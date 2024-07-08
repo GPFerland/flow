@@ -1,7 +1,7 @@
 @Timeout(Duration(milliseconds: 500))
 library;
 
-import 'package:flow/src/features/tasks/presentation/task_form/task_form_controller.dart';
+import 'package:flow/src/features/tasks/presentation/task_screen/task_controller.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -12,7 +12,8 @@ import '../../../../utils.dart';
 void main() {
   late MockTasksService tasksService;
   late MockTaskInstancesService taskInstancesService;
-  late TaskFormController taskFormController;
+  late MockDateRepository dateRepository;
+  late TaskController taskFormController;
 
   setUpAll(() {
     registerFallbackValue(createTestTask());
@@ -21,9 +22,11 @@ void main() {
   setUp(() {
     tasksService = MockTasksService();
     taskInstancesService = MockTaskInstancesService();
-    taskFormController = TaskFormController(
+    dateRepository = MockDateRepository();
+    taskFormController = TaskController(
       tasksService: tasksService,
       taskInstancesService: taskInstancesService,
+      dateRepository: dateRepository,
     );
   });
 
@@ -47,9 +50,12 @@ void main() {
         ]),
       );
       // run
-      bool result = await taskFormController.submitTask(expectedTask);
+      await taskFormController.submitTask(
+        task: expectedTask,
+        oldTask: null,
+        onSuccess: () {},
+      );
       // verify
-      expect(result, true);
       verify(() => tasksService.setTask(expectedTask)).called(1);
     });
 
@@ -70,9 +76,12 @@ void main() {
         ]),
       );
       // run
-      bool result = await taskFormController.submitTask(expectedTask);
+      await taskFormController.submitTask(
+        task: expectedTask,
+        oldTask: null,
+        onSuccess: () {},
+      );
       // verify
-      expect(result, false);
       verify(() => tasksService.setTask(expectedTask)).called(1);
     });
 
@@ -90,9 +99,11 @@ void main() {
         ]),
       );
       // run
-      bool result = await taskFormController.deleteTask(expectedTask);
+      await taskFormController.deleteTask(
+        task: expectedTask,
+        onSuccess: () {},
+      );
       // verify
-      expect(result, true);
       verify(() => tasksService.removeTask(expectedTask)).called(1);
     });
 
@@ -113,9 +124,11 @@ void main() {
         ]),
       );
       // run
-      bool result = await taskFormController.deleteTask(expectedTask);
+      await taskFormController.deleteTask(
+        task: expectedTask,
+        onSuccess: () {},
+      );
       // verify
-      expect(result, false);
       verify(() => tasksService.removeTask(expectedTask)).called(1);
     });
 
@@ -135,9 +148,11 @@ void main() {
         ]),
       );
       // run
-      bool result = await taskFormController.deleteTasksInstances(expectedTask);
+      await taskFormController.deleteTasksInstances(
+        task: expectedTask,
+        onSuccess: () {},
+      );
       // verify
-      expect(result, true);
       verify(
         () => taskInstancesService.removeTasksInstances(expectedTask.id),
       ).called(1);
@@ -162,9 +177,11 @@ void main() {
         ]),
       );
       // run
-      bool result = await taskFormController.deleteTasksInstances(expectedTask);
+      await taskFormController.deleteTasksInstances(
+        task: expectedTask,
+        onSuccess: () {},
+      );
       // verify
-      expect(result, false);
       verify(
         () => taskInstancesService.removeTasksInstances(expectedTask.id),
       ).called(1);

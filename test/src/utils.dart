@@ -11,7 +11,7 @@ Task createTestTask({String id = '1'}) {
     icon: Icons.check,
     color: Colors.deepPurple,
     description: 'Fart in the Morning',
-    showUntilCompleted: true,
+    untilCompleted: true,
     frequencyType: FrequencyType.once,
     date: getDateNoTimeToday(),
     weekdays: [],

@@ -1,6 +1,6 @@
 import 'package:flow/src/common_widgets/buttons/primary_button.dart';
 import 'package:flow/src/features/date_check_list/presentation/date_app_bar/date_title.dart';
-import 'package:flow/src/features/tasks/presentation/task_form/task_frequency_fields/monthly_task_fields.dart';
+import 'package:flow/src/features/tasks/presentation/task_screen/task_form/task_frequency_fields/monthly_task_fields.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter_test/flutter_test.dart';
 
