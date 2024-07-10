@@ -3,7 +3,7 @@ import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
-import 'package:flow/src/features/task_instances/domain/task_instances.dart';
+import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -14,7 +14,7 @@ import '../../../utils.dart';
 
 void main() {
   setUpAll(() {
-    registerFallbackValue(TaskInstances(taskInstancesList: []));
+    registerFallbackValue([]);
   });
   const testUser = AppUser(uid: 'abc', email: 'test@email.com');
 
@@ -50,12 +50,10 @@ void main() {
       test('null user, task instance added to local repo', () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
-        final testTaskInstances = TaskInstances(
-          taskInstancesList: [testTaskInstance],
-        );
+        final testTaskInstances = [testTaskInstance];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
-          (_) => Future.value(TaskInstances(taskInstancesList: [])),
+          (_) => Future.value([]),
         );
         when(
           () => localTaskInstancesRepository.setTaskInstances(
@@ -91,16 +89,14 @@ void main() {
       test('non-null user, task instance added to remote repo', () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
-        final testTaskInstances = TaskInstances(
-          taskInstancesList: [testTaskInstance],
-        );
+        final testTaskInstances = [testTaskInstance];
         when(() => authRepository.currentUser).thenReturn(testUser);
         when(
           () => remoteTaskInstancesRepository.fetchTaskInstances(
             testUser.uid,
           ),
         ).thenAnswer(
-          (_) => Future.value(TaskInstances(taskInstancesList: [])),
+          (_) => Future.value([]),
         );
         when(
           () => remoteTaskInstancesRepository.setTaskInstances(
@@ -139,15 +135,11 @@ void main() {
       test('null user, task instance set in local repo', () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
-        final testTaskInstances = TaskInstances(taskInstancesList: [
-          testTaskInstance,
-        ]);
+        final testTaskInstances = [testTaskInstance];
         final updatedTestTaskInstance = testTaskInstance.copyWith(
           completed: true,
         );
-        final updatedTestTaskInstances = TaskInstances(taskInstancesList: [
-          updatedTestTaskInstance,
-        ]);
+        final updatedTestTaskInstances = [updatedTestTaskInstance];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),
@@ -186,15 +178,11 @@ void main() {
       test('non-null user, task instance set in remote repo', () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
-        final testTaskInstances = TaskInstances(taskInstancesList: [
-          testTaskInstance,
-        ]);
+        final testTaskInstances = [testTaskInstance];
         final updatedTestTaskInstance = testTaskInstance.copyWith(
           completed: true,
         );
-        final updatedTestTaskInstances = TaskInstances(taskInstancesList: [
-          updatedTestTaskInstance,
-        ]);
+        final updatedTestTaskInstances = [updatedTestTaskInstance];
         when(() => authRepository.currentUser).thenReturn(testUser);
         when(
           () => remoteTaskInstancesRepository.fetchTaskInstances(
@@ -236,77 +224,12 @@ void main() {
         );
       });
     });
-    group('setTaskInstances', () {
-      test('null user, task instances set in local repo', () async {
-        // setup
-        final testTaskInstances = TaskInstances(taskInstancesList: [
-          createTestTaskInstance(id: '1'),
-          createTestTaskInstance(id: '2'),
-        ]);
-        when(() => authRepository.currentUser).thenReturn(null);
-        when(
-          () => localTaskInstancesRepository.setTaskInstances(
-            testTaskInstances,
-          ),
-        ).thenAnswer(
-          (_) => Future.value(),
-        );
-        final tasksService = makeTaskInstancesService();
-        // run
-        await tasksService.setTaskInstances(testTaskInstances);
-        // verify
-        verify(
-          () => localTaskInstancesRepository.setTaskInstances(
-            testTaskInstances,
-          ),
-        ).called(1);
-        verifyNever(
-          () => remoteTaskInstancesRepository.setTaskInstances(
-            any(),
-            any(),
-          ),
-        );
-      });
-      test('non-null user, task instances set to remote repo', () async {
-        // setup
-        final testTaskInstances = TaskInstances(taskInstancesList: [
-          createTestTaskInstance(id: '1'),
-          createTestTaskInstance(id: '2'),
-        ]);
-        when(() => authRepository.currentUser).thenReturn(testUser);
-        when(
-          () => remoteTaskInstancesRepository.setTaskInstances(
-            testUser.uid,
-            testTaskInstances,
-          ),
-        ).thenAnswer(
-          (_) => Future.value(),
-        );
-        final tasksService = makeTaskInstancesService();
-        // run
-        await tasksService.setTaskInstances(testTaskInstances);
-        // verify
-        verify(
-          () => remoteTaskInstancesRepository.setTaskInstances(
-            testUser.uid,
-            testTaskInstances,
-          ),
-        ).called(1);
-        verifyNever(
-          () => localTaskInstancesRepository.setTaskInstances(
-            testTaskInstances,
-          ),
-        );
-      });
-    });
     group('removeTaskInstance', () {
       test('null user, task instance removed from local repo', () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
-        final testTaskInstances = TaskInstances(taskInstancesList: [
-          testTaskInstance,
-        ]);
-        final updatedTestTaskInstances = TaskInstances(taskInstancesList: []);
+        final testTaskInstances = [testTaskInstance];
+        final updatedTestTaskInstances = <TaskInstance>[];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),
@@ -345,10 +268,8 @@ void main() {
       test('non-null user, task instance removed from remote repo', () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
-        final testTaskInstances = TaskInstances(taskInstancesList: [
-          testTaskInstance,
-        ]);
-        final updatedTestTaskInstances = TaskInstances(taskInstancesList: []);
+        final testTaskInstances = [testTaskInstance];
+        final updatedTestTaskInstances = <TaskInstance>[];
         when(() => authRepository.currentUser).thenReturn(testUser);
         when(
           () => remoteTaskInstancesRepository.fetchTaskInstances(
@@ -396,14 +317,12 @@ void main() {
         const testTaskId = 'removeId';
         final keepTaskInstance =
             createTestTaskInstance(id: '3').copyWith(taskId: 'keepId');
-        final testTaskInstances = TaskInstances(taskInstancesList: [
+        final testTaskInstances = [
           createTestTaskInstance(id: '1').copyWith(taskId: testTaskId),
           createTestTaskInstance(id: '2').copyWith(taskId: testTaskId),
           keepTaskInstance,
-        ]);
-        final updatedTestTaskInstances = TaskInstances(
-          taskInstancesList: [keepTaskInstance],
-        );
+        ];
+        final updatedTestTaskInstances = [keepTaskInstance];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),
@@ -444,14 +363,12 @@ void main() {
         const testTaskId = 'removeId';
         final keepTaskInstance =
             createTestTaskInstance(id: '3').copyWith(taskId: 'keepId');
-        final testTaskInstances = TaskInstances(taskInstancesList: [
+        final testTaskInstances = [
           createTestTaskInstance(id: '1').copyWith(taskId: testTaskId),
           createTestTaskInstance(id: '2').copyWith(taskId: testTaskId),
           keepTaskInstance,
-        ]);
-        final updatedTestTaskInstances = TaskInstances(
-          taskInstancesList: [keepTaskInstance],
-        );
+        ];
+        final updatedTestTaskInstances = [keepTaskInstance];
         when(() => authRepository.currentUser).thenReturn(testUser);
         when(
           () => remoteTaskInstancesRepository.fetchTaskInstances(
@@ -498,7 +415,7 @@ void main() {
         // setup
         final testDate = getDateNoTimeToday();
         final testTask = createTestTask().copyWith(
-          frequencyType: FrequencyType.once,
+          frequency: Frequency.once,
           date: getDateNoTimeYesterday(),
         );
         final tasksService = makeTaskInstancesService();
@@ -529,16 +446,14 @@ void main() {
         // setup
         final testDate = getDateNoTimeToday();
         final testTask = createTestTask().copyWith(
-          frequencyType: FrequencyType.once,
+          frequency: Frequency.once,
           date: testDate,
         );
         final testTaskInstance = createTestTaskInstance().copyWith(
           taskId: testTask.id,
           initialDate: testDate,
         );
-        final testTaskInstances = TaskInstances(
-          taskInstancesList: [testTaskInstance],
-        );
+        final testTaskInstances = [testTaskInstance];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),
@@ -568,10 +483,10 @@ void main() {
         // setup
         final testDate = getDateNoTimeToday();
         final testTask = createTestTask().copyWith(
-          frequencyType: FrequencyType.once,
+          frequency: Frequency.once,
           date: testDate,
         );
-        final testTaskInstances = TaskInstances(taskInstancesList: []);
+        final testTaskInstances = <TaskInstance>[];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),
@@ -593,9 +508,9 @@ void main() {
         // setup
         final testDate = getDateNoTimeToday();
         final testTask = createTestTask().copyWith(
-          frequencyType: FrequencyType.daily,
+          frequency: Frequency.daily,
         );
-        final testTaskInstances = TaskInstances(taskInstancesList: []);
+        final testTaskInstances = <TaskInstance>[];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),
@@ -617,14 +532,14 @@ void main() {
         // setup
         final testDate = getDateNoTimeToday();
         final testTask = createTestTask().copyWith(
-          frequencyType: FrequencyType.weekly,
+          frequency: Frequency.weekly,
           weekdays: [
             ...Weekday.values.where((weekday) {
               return weekday.weekdayIndex == testDate.weekday;
             }),
           ],
         );
-        final testTaskInstances = TaskInstances(taskInstancesList: []);
+        final testTaskInstances = <TaskInstance>[];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),
@@ -646,7 +561,7 @@ void main() {
         // setup
         final testDate = getDateNoTimeToday().copyWith(day: 1);
         final testTask = createTestTask().copyWith(
-          frequencyType: FrequencyType.monthly,
+          frequency: Frequency.monthly,
           monthdays: [
             const Monthday(
               weekday: Weekday.day,
@@ -654,7 +569,7 @@ void main() {
             )
           ],
         );
-        final testTaskInstances = TaskInstances(taskInstancesList: []);
+        final testTaskInstances = <TaskInstance>[];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),
@@ -677,7 +592,7 @@ void main() {
         final testDate = getDateNoTimeToday();
         final lastDayOfMonth = DateTime(testDate.year, testDate.month + 1, 0);
         final testTask = createTestTask().copyWith(
-          frequencyType: FrequencyType.monthly,
+          frequency: Frequency.monthly,
           monthdays: [
             const Monthday(
               weekday: Weekday.day,
@@ -685,7 +600,7 @@ void main() {
             )
           ],
         );
-        final testTaskInstances = TaskInstances(taskInstancesList: []);
+        final testTaskInstances = <TaskInstance>[];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),
@@ -715,7 +630,7 @@ void main() {
         }
         testDate = testDate.add(const Duration(days: 7));
         final testTask = createTestTask().copyWith(
-          frequencyType: FrequencyType.monthly,
+          frequency: Frequency.monthly,
           monthdays: [
             const Monthday(
               weekday: Weekday.tue,
@@ -723,7 +638,7 @@ void main() {
             )
           ],
         );
-        final testTaskInstances = TaskInstances(taskInstancesList: []);
+        final testTaskInstances = <TaskInstance>[];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),
@@ -752,7 +667,7 @@ void main() {
           testDate = testDate.subtract(const Duration(days: 1));
         }
         final testTask = createTestTask().copyWith(
-          frequencyType: FrequencyType.monthly,
+          frequency: Frequency.monthly,
           monthdays: [
             const Monthday(
               weekday: Weekday.sun,
@@ -760,7 +675,7 @@ void main() {
             )
           ],
         );
-        final testTaskInstances = TaskInstances(taskInstancesList: []);
+        final testTaskInstances = <TaskInstance>[];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTaskInstancesRepository.fetchTaskInstances).thenAnswer(
           (_) => Future.value(testTaskInstances),

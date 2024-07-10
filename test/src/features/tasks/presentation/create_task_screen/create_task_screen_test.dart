@@ -1,6 +1,6 @@
 import 'package:flow/src/common_widgets/buttons/primary_button.dart';
 import 'package:flow/src/features/date_check_list/presentation/date_app_bar/date_title.dart';
-import 'package:flow/src/features/tasks/presentation/task_screen/task_form/task_frequency_fields/monthly_task_fields.dart';
+import 'package:flow/src/features/tasks/presentation/task_screen/task_form/task_form_components/task_frequency/task_frequency_components/monthly_fields.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -119,7 +119,7 @@ void main() {
       await r.tasksRobot.enterTitle(testTask.title);
       await r.tasksRobot.enterDescription(testTask.description);
 
-      await r.tapKey(FrequencyType.daily.tabKey);
+      await r.tapKey(Frequency.daily.tabKey);
       await r.tapText('Everyday');
 
       await r.tapType(PrimaryButton);
@@ -162,7 +162,7 @@ void main() {
       await r.tasksRobot.enterTitle(testTask.title);
       await r.tasksRobot.enterDescription(testTask.description);
 
-      await r.tapKey(FrequencyType.weekly.tabKey);
+      await r.tapKey(Frequency.weekly.tabKey);
       await r.tapText('All');
 
       await r.tapType(PrimaryButton);
@@ -202,7 +202,7 @@ void main() {
       await r.tasksRobot.enterTitle(testTask.title);
       await r.tasksRobot.enterDescription(testTask.description);
 
-      await r.tapKey(FrequencyType.weekly.tabKey);
+      await r.tapKey(Frequency.weekly.tabKey);
       for (Weekday day in Weekday.values) {
         if (day.weekdayIndex == -1) {
           continue;
@@ -250,8 +250,8 @@ void main() {
       await r.tasksRobot.enterTitle(testTask.title);
       await r.tasksRobot.enterDescription(testTask.description);
 
-      await r.tapKey(FrequencyType.monthly.tabKey);
-      await r.tapKey(MonthlyTaskFields.plusIconButtonKey);
+      await r.tapKey(Frequency.monthly.tabKey);
+      await r.tapKey(MonthlyFields.plusIconButtonKey);
 
       await r.tapType(PrimaryButton);
       r.tasksRobot.expectFindTaskListCard(testTask);
@@ -280,12 +280,12 @@ void main() {
       await r.tasksRobot.enterTitle(testTask.title);
       await r.tasksRobot.enterDescription(testTask.description);
 
-      await r.tapKey(FrequencyType.monthly.tabKey);
+      await r.tapKey(Frequency.monthly.tabKey);
 
-      await r.tapKey(MonthlyTaskFields.ordinalDropdownKey);
+      await r.tapKey(MonthlyFields.ordinalDropdownKey);
       await r.tapText(Ordinal.fourth.longhand);
 
-      await r.tapKey(MonthlyTaskFields.plusIconButtonKey);
+      await r.tapKey(MonthlyFields.plusIconButtonKey);
 
       await r.tapType(PrimaryButton);
       r.tasksRobot.expectFindTaskListCard(testTask);

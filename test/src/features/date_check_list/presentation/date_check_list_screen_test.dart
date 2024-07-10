@@ -123,7 +123,7 @@ void main() {
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
           final Task task =
-              createTestTask().copyWith(frequencyType: FrequencyType.daily);
+              createTestTask().copyWith(frequency: Frequency.daily);
           await r.createTaskFromDateCheckList(task);
           r.dateCheckListRobot.expectFindXTaskInstanceListCards(1);
           await r.dateCheckListRobot.leftSwipeDateCheckListXTimes(2);

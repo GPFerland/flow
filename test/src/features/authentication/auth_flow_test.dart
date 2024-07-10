@@ -1,4 +1,3 @@
-import 'package:flow/src/constants/test_task_instances.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../robot.dart';
@@ -8,9 +7,7 @@ void main() {
     final r = Robot(tester);
     await r.pumpFlowApp();
     await r.createAccountFromDateCheckList();
-    r.dateCheckListRobot.expectFindXTaskInstanceListCards(
-      kTestTaskInstances.taskInstancesList.length,
-    );
+    r.dateCheckListRobot.expectFindXTaskInstanceListCards(0);
     await r.logoutFromDateCheckList();
     r.dateCheckListRobot.expectFindXTaskInstanceListCards(0);
   });

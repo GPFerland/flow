@@ -3,12 +3,12 @@ import 'package:flow/src/exceptions/error_logger.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_creation_service.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_sync_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
-import 'package:flow/src/features/task_instances/data/local/sembast_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/data/local/sembast_local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/test_remote_task_instances_repository.dart';
 import 'package:flow/src/features/tasks/application/tasks_sync_service.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
-import 'package:flow/src/features/tasks/data/local/sembast_tasks_repository.dart';
+import 'package:flow/src/features/tasks/data/local/sembast_local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/remote/test_remote_tasks_repository.dart';
 import 'package:flow/src/flow_app.dart';
@@ -24,26 +24,27 @@ void main() async {
   // * Remove # from URLs on web
   usePathUrlStrategy();
   // * Create local repositories
-  final sembastTasksRepository = await SembastTasksRepository.makeDefault();
-  final sembastTaskInstancesRepository =
-      await SembastTaskInstancesRepository.makeDefault();
+  final sembastLocalTasksRepository =
+      await SembastLocalTasksRepository.makeDefault();
+  final sembastLocalTaskInstancesRepository =
+      await SembastLocalTaskInstancesRepository.makeDefault();
   // * Create remote repositories
-  final remoteTasksRepository = TestRemoteTasksRepository();
-  final remoteTaskInstancesRepository = TestRemoteTaskInstancesRepository();
+  final testRemoteTasksRepository = TestRemoteTasksRepository();
+  final testRemoteTaskInstancesRepository = TestRemoteTaskInstancesRepository();
   // * Create provider container to override providers
   final providerContainer = ProviderContainer(
     overrides: [
       localTasksRepositoryProvider.overrideWithValue(
-        sembastTasksRepository,
+        sembastLocalTasksRepository,
       ),
       remoteTasksRepositoryProvider.overrideWithValue(
-        remoteTasksRepository,
+        testRemoteTasksRepository,
       ),
       localTaskInstancesRepositoryProvider.overrideWithValue(
-        sembastTaskInstancesRepository,
+        sembastLocalTaskInstancesRepository,
       ),
       remoteTaskInstancesRepositoryProvider.overrideWithValue(
-        remoteTaskInstancesRepository,
+        testRemoteTaskInstancesRepository,
       ),
     ],
     observers: [AsyncErrorLogger()],

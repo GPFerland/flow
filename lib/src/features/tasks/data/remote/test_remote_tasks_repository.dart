@@ -1,72 +1,53 @@
 import 'package:collection/collection.dart';
-import 'package:flow/src/constants/test_tasks.dart';
 import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
-import 'package:flow/src/features/tasks/domain/tasks.dart';
-import 'package:flow/src/utils/remote_item.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flow/src/utils/delay.dart';
+import 'package:flow/src/utils/in_memory_store.dart';
 
 class TestRemoteTasksRepository implements RemoteTasksRepository {
-  TestRemoteTasksRepository();
+  TestRemoteTasksRepository({this.addDelay = true});
 
-  Tasks _tasks = kTestTasks;
+  final bool addDelay;
+
+  /// An InMemoryStore containing the tasks data for all users, where:
+  /// key: uid of the user
+  /// value: tasks list of that user
+  final _tasks = InMemoryStore<Map<String, List<Task>>>({});
 
   @override
-  Future<Tasks> fetchTasks(String uid) async {
-    return Future.value(_tasks);
+  Future<void> setTasks(String uid, List<Task> userTasks) async {
+    await delay(addDelay);
+    // First, get the current tasks data for all users
+    final tasks = _tasks.value;
+    // Then, set the tasks for the given uid
+    tasks[uid] = userTasks;
+    // Finally, update the tasks data (will emit a new value)
+    _tasks.value = tasks;
   }
 
   @override
-  Future<Task?> fetchTask(String uid, String taskId) {
+  Future<List<Task>> fetchTasks(String uid) async {
+    await delay(addDelay);
+    return Future.value(_tasks.value[uid] ?? []);
+  }
+
+  @override
+  Future<Task?> fetchTask(String uid, String taskId) async {
+    final userTasks = await fetchTasks(uid);
     return Future.value(
-      _tasks.tasksList.firstWhereOrNull((task) => task.id == taskId),
+      userTasks.firstWhereOrNull((task) => task.id == taskId),
     );
   }
 
   @override
-  Future<void> setTasks(String userId, Tasks tasks) async {
-    _tasks = tasks;
+  Stream<List<Task>> watchTasks(String uid) {
+    return _tasks.stream.map((tasksData) => tasksData[uid] ?? []);
   }
 
   @override
-  Stream<Tasks> watchTasks(String uid) async* {
-    yield _tasks;
-  }
-
-  @override
-  Stream<Task?> watchTask(String uid, String id) {
+  Stream<Task?> watchTask(String uid, String taskId) {
     return watchTasks(uid).map(
-      (tasks) => tasks.tasksList.firstWhereOrNull((task) => task.id == id),
+      (tasks) => tasks.firstWhereOrNull((task) => task.id == taskId),
     );
   }
 }
-
-final testRemoteTasksRepositoryProvider = Provider<TestRemoteTasksRepository>(
-  (ref) {
-    return TestRemoteTasksRepository();
-  },
-);
-
-final testRemoteTasksListStreamProvider =
-    StreamProvider.autoDispose.family<Tasks, String>(
-  (ref, uid) {
-    final tasksRepository = ref.watch(testRemoteTasksRepositoryProvider);
-    return tasksRepository.watchTasks(uid);
-  },
-);
-
-final testRemoteTasksListFutureProvider =
-    FutureProvider.autoDispose.family<Tasks, String>(
-  (ref, uid) {
-    final tasksRepository = ref.watch(testRemoteTasksRepositoryProvider);
-    return tasksRepository.fetchTasks(uid);
-  },
-);
-
-final testRemoteTaskStreamProvider =
-    StreamProvider.autoDispose.family<Task?, RemoteItem>(
-  (ref, remoteItem) {
-    final tasksRepository = ref.watch(testRemoteTasksRepositoryProvider);
-    return tasksRepository.watchTask(remoteItem.userId, remoteItem.itemId);
-  },
-);

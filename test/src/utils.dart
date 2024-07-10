@@ -12,7 +12,7 @@ Task createTestTask({String id = '1'}) {
     color: Colors.deepPurple,
     description: 'Fart in the Morning',
     untilCompleted: true,
-    frequencyType: FrequencyType.once,
+    frequency: Frequency.once,
     date: getDateNoTimeToday(),
     weekdays: [],
     monthdays: [],

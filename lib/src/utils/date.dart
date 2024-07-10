@@ -11,52 +11,62 @@ enum Weekday {
     shorthand: 'Sun',
     longhand: 'Sunday',
     weekdayIndex: DateTime.sunday,
+    weekdayButtonKey: Key('sundayKey'),
   ),
   mon(
     shorthand: 'Mon',
     longhand: 'Monday',
     weekdayIndex: DateTime.monday,
+    weekdayButtonKey: Key('mondayKey'),
   ),
   tue(
     shorthand: 'Tue',
     longhand: 'Tuesday',
     weekdayIndex: DateTime.tuesday,
+    weekdayButtonKey: Key('tuesdayKey'),
   ),
   wed(
     shorthand: 'Wed',
     longhand: 'Wednesday',
     weekdayIndex: DateTime.wednesday,
+    weekdayButtonKey: Key('wednesdayKey'),
   ),
   thu(
     shorthand: 'Thu',
     longhand: 'Thursday',
     weekdayIndex: DateTime.thursday,
+    weekdayButtonKey: Key('thursdayKey'),
   ),
   fri(
     shorthand: 'Fri',
     longhand: 'Friday',
     weekdayIndex: DateTime.friday,
+    weekdayButtonKey: Key('fridayKey'),
   ),
   sat(
     shorthand: 'Sat',
     longhand: 'Saturday',
     weekdayIndex: DateTime.saturday,
+    weekdayButtonKey: Key('saturdayKey'),
   ),
   day(
     shorthand: 'Day',
     longhand: 'Day',
     weekdayIndex: -1,
+    weekdayButtonKey: Key('dayKey'),
   );
 
   const Weekday({
     required this.shorthand,
     required this.longhand,
     required this.weekdayIndex,
+    required this.weekdayButtonKey,
   });
 
   final String shorthand;
   final String longhand;
   final int weekdayIndex;
+  final Key weekdayButtonKey;
 
   Map<String, dynamic> toMap() => {
         'weekday': name,
@@ -162,7 +172,7 @@ enum Ordinal {
       );
 }
 
-enum FrequencyType {
+enum Frequency {
   once(
     shorthand: 'Once',
     longhand: 'Once',
@@ -184,7 +194,7 @@ enum FrequencyType {
     tabKey: Key('monthlyTab'),
   );
 
-  const FrequencyType({
+  const Frequency({
     required this.shorthand,
     required this.longhand,
     required this.tabKey,
@@ -195,11 +205,11 @@ enum FrequencyType {
   final Key tabKey;
 
   Map<String, dynamic> toMap() => {
-        'frequencyType': name,
+        'frequency': name,
       };
 
-  static FrequencyType fromMap(Map<String, dynamic> map) => values.byName(
-        map['frequencyType'],
+  static Frequency fromMap(Map<String, dynamic> map) => values.byName(
+        map['frequency'],
       );
 }
 

@@ -1,5 +1,4 @@
 import 'package:flow/src/features/tasks/data/local/test_local_tasks_repository.dart';
-import 'package:flow/src/features/tasks/domain/tasks.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -10,7 +9,7 @@ void main() {
       final tasksRepository = makeTasksRepository();
       expect(
         await tasksRepository.fetchTasks(),
-        Tasks(tasksList: []),
+        [],
       );
     });
 
@@ -18,7 +17,7 @@ void main() {
       final tasksRepository = makeTasksRepository();
       expect(
         tasksRepository.watchTasks(),
-        emits(Tasks(tasksList: [])),
+        emits([]),
       );
     });
 

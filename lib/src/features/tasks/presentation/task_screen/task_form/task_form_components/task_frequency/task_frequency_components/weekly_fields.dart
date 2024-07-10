@@ -2,21 +2,29 @@ import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter/material.dart';
 
-class WeeklyTaskFields extends StatefulWidget {
-  const WeeklyTaskFields({
+class WeeklyFields extends StatefulWidget {
+  const WeeklyFields({
     super.key,
-    required this.selectedWeekdays,
-    required this.selectWeekdays,
+    required this.weekdays,
+    required this.updateWeekdays,
   });
 
-  final List<Weekday> selectedWeekdays;
-  final Function(List<Weekday>) selectWeekdays;
+  final List<Weekday> weekdays;
+  final Function(List<Weekday>) updateWeekdays;
 
   @override
-  State<WeeklyTaskFields> createState() => _WeeklyTaskFieldsState();
+  State<WeeklyFields> createState() => _WeeklyFieldsState();
 }
 
-class _WeeklyTaskFieldsState extends State<WeeklyTaskFields> {
+class _WeeklyFieldsState extends State<WeeklyFields> {
+  late List<Weekday> weekdays;
+
+  @override
+  void initState() {
+    super.initState();
+    weekdays = widget.weekdays;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -39,9 +47,9 @@ class _WeeklyTaskFieldsState extends State<WeeklyTaskFields> {
               TextButton(
                 onPressed: () {
                   setState(() {
-                    widget.selectWeekdays(
-                      Weekday.values.take(Weekday.values.length - 1).toList(),
-                    );
+                    weekdays =
+                        Weekday.values.take(Weekday.values.length - 1).toList();
+                    widget.updateWeekdays(weekdays);
                   });
                 },
                 child: const Text('All'),
@@ -55,7 +63,8 @@ class _WeeklyTaskFieldsState extends State<WeeklyTaskFields> {
               TextButton(
                 onPressed: () {
                   setState(() {
-                    widget.selectWeekdays([]);
+                    weekdays = [];
+                    widget.updateWeekdays(weekdays);
                   });
                 },
                 child: const Text('Clear'),
@@ -73,7 +82,7 @@ class _WeeklyTaskFieldsState extends State<WeeklyTaskFields> {
               textStyle: Theme.of(context).textTheme.bodySmall,
               isSelected: Weekday.values
                   .take(Weekday.values.length - 1)
-                  .map((weekday) => widget.selectedWeekdays.contains(weekday))
+                  .map((weekday) => weekdays.contains(weekday))
                   .toList(),
               fillColor: Theme.of(context).colorScheme.primary,
               selectedColor: Theme.of(context).colorScheme.onPrimary,
@@ -81,12 +90,12 @@ class _WeeklyTaskFieldsState extends State<WeeklyTaskFields> {
               onPressed: (index) {
                 setState(() {
                   Weekday pressedWeekday = Weekday.values[index];
-                  if (widget.selectedWeekdays.contains(pressedWeekday)) {
-                    widget.selectedWeekdays.remove(pressedWeekday);
+                  if (weekdays.contains(pressedWeekday)) {
+                    weekdays.remove(pressedWeekday);
                   } else {
-                    widget.selectedWeekdays.add(pressedWeekday);
+                    weekdays.add(pressedWeekday);
                   }
-                  widget.selectWeekdays(widget.selectedWeekdays);
+                  widget.updateWeekdays(weekdays);
                 });
               },
               children: Weekday.values
@@ -94,6 +103,7 @@ class _WeeklyTaskFieldsState extends State<WeeklyTaskFields> {
                   .map(
                     (weekday) => Text(
                       weekday.shorthand,
+                      key: weekday.weekdayButtonKey,
                       overflow: TextOverflow.clip,
                       maxLines: 1,
                     ),

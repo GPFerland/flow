@@ -98,7 +98,7 @@
     "description": "Admin Dashboard page title"
   },
   "manageOrders": "Manage Orders",
-  "userId": "User ID",
+  "uid": "User ID",
   "userEmail": "User Email",
   "newProduct": "New Product",
   "editProduct": "Edit Product",

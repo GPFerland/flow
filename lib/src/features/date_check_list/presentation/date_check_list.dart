@@ -445,10 +445,9 @@
 
 import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/constants/app_sizes.dart';
-import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
-import 'package:flow/src/features/task_instances/domain/mutable_task_instances.dart';
-import 'package:flow/src/features/task_instances/domain/task_instances.dart';
 import 'package:flow/src/features/date_check_list/presentation/task_instance_list_card.dart';
+import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
+import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -465,10 +464,10 @@ class DateCheckList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final dateTaskInstancesValue = ref.watch(dateTaskInstancesProvider(date));
 
-    return AsyncValueWidget<TaskInstances>(
+    return AsyncValueWidget<List<TaskInstance>>(
       value: dateTaskInstancesValue,
       data: (dateTaskInstances) {
-        if (dateTaskInstances.taskInstancesList.isEmpty) {
+        if (dateTaskInstances.isEmpty) {
           return Center(
             child: Text(
               'No tasks found'.hardcoded,
@@ -476,7 +475,7 @@ class DateCheckList extends ConsumerWidget {
           );
         }
 
-        final sortedTaskInstances = dateTaskInstances.sortTaskInstances();
+        final sortedTaskInstances = dateTaskInstances;
 
         return Padding(
           padding: const EdgeInsets.only(top: Sizes.p8),
@@ -484,14 +483,13 @@ class DateCheckList extends ConsumerWidget {
             //todo - this is not good, figure out the good way to do this.
             shrinkWrap: true,
             // add one to display toggle button at the end of the list
-            itemCount: sortedTaskInstances.taskInstancesList.length + 1,
+            itemCount: sortedTaskInstances.length + 1,
             itemBuilder: (context, index) {
-              if (index < sortedTaskInstances.taskInstancesList.length) {
+              if (index < sortedTaskInstances.length) {
                 return TaskInstanceListCard(
-                  taskInstance: sortedTaskInstances.taskInstancesList[index],
+                  taskInstance: sortedTaskInstances[index],
                 );
-              } else if (index ==
-                  sortedTaskInstances.taskInstancesList.length) {
+              } else if (index == sortedTaskInstances.length) {
                 //return toggleShowAllTaskInstances();
                 return TextButton(
                   onPressed: () {},

@@ -3,7 +3,6 @@ import 'package:flow/src/features/task_instances/application/task_instances_crea
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
-import 'package:flow/src/features/tasks/domain/tasks.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -55,7 +54,7 @@ void main() {
         (_) => Stream.value(getDateNoTimeToday()),
       );
       when(tasksService.fetchTasks).thenAnswer(
-        (_) => Future.value(Tasks(tasksList: tasks)),
+        (_) => Future.value(tasks),
       );
       for (final task in tasks) {
         for (final date in testDates) {

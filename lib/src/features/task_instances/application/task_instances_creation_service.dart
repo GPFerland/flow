@@ -32,7 +32,7 @@ class TaskInstancesCreationService {
 
       final tasks = await tasksService.fetchTasks();
 
-      for (Task task in tasks.tasksList) {
+      for (Task task in tasks) {
         await taskInstancesService.createTaskInstance(task, date);
       }
     } catch (exception, stackTrace) {

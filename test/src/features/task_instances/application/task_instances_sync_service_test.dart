@@ -3,7 +3,7 @@ import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_sync_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
-import 'package:flow/src/features/task_instances/domain/task_instances.dart';
+import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -40,9 +40,9 @@ void main() {
 
   group('TaskInstancesSyncService', () {
     Future<void> runTaskInstancesSyncTest({
-      required TaskInstances localTaskInstances,
-      required TaskInstances remoteTaskInstances,
-      required TaskInstances expectedRemoteTaskInstances,
+      required List<TaskInstance> localTaskInstances,
+      required List<TaskInstance> remoteTaskInstances,
+      required List<TaskInstance> expectedRemoteTaskInstances,
     }) async {
       // setup
       const uid = '123';
@@ -67,7 +67,7 @@ void main() {
       );
       when(
         () => localTaskInstancesRepository.setTaskInstances(
-          TaskInstances(taskInstancesList: []),
+          [],
         ),
       ).thenAnswer(
         (_) => Future.value(),
@@ -77,7 +77,7 @@ void main() {
       // wait for all the stubbed methods to return a value
       await Future.delayed(const Duration());
       //verify
-      if (localTaskInstances.taskInstancesList.isNotEmpty) {
+      if (localTaskInstances.isNotEmpty) {
         verify(
           () => remoteTaskInstancesRepository.setTaskInstances(
             uid,
@@ -86,7 +86,7 @@ void main() {
         ).called(1);
         verify(
           () => localTaskInstancesRepository.setTaskInstances(
-            TaskInstances(taskInstancesList: []),
+            [],
           ),
         ).called(1);
       } else {
@@ -98,7 +98,7 @@ void main() {
         );
         verifyNever(
           () => localTaskInstancesRepository.setTaskInstances(
-            TaskInstances(taskInstancesList: []),
+            [],
           ),
         );
       }
@@ -106,50 +106,36 @@ void main() {
 
     test('local and remote empty, remote stays empty', () async {
       await runTaskInstancesSyncTest(
-        localTaskInstances: TaskInstances(taskInstancesList: []),
-        remoteTaskInstances: TaskInstances(taskInstancesList: []),
-        expectedRemoteTaskInstances: TaskInstances(taskInstancesList: []),
+        localTaskInstances: [],
+        remoteTaskInstances: [],
+        expectedRemoteTaskInstances: [],
       );
     });
 
     test('local empty, remote populated, remote is unchanged', () async {
       await runTaskInstancesSyncTest(
-        localTaskInstances: TaskInstances(taskInstancesList: []),
-        remoteTaskInstances: TaskInstances(
-          taskInstancesList: [createTestTaskInstance()],
-        ),
-        expectedRemoteTaskInstances: TaskInstances(
-          taskInstancesList: [createTestTaskInstance()],
-        ),
+        localTaskInstances: [],
+        remoteTaskInstances: [createTestTaskInstance()],
+        expectedRemoteTaskInstances: [createTestTaskInstance()],
       );
     });
 
     test('local populated, remote empty, local added to remote', () async {
       await runTaskInstancesSyncTest(
-        localTaskInstances: TaskInstances(
-          taskInstancesList: [createTestTaskInstance()],
-        ),
-        remoteTaskInstances: TaskInstances(
-          taskInstancesList: [],
-        ),
-        expectedRemoteTaskInstances: TaskInstances(
-          taskInstancesList: [createTestTaskInstance()],
-        ),
+        localTaskInstances: [createTestTaskInstance()],
+        remoteTaskInstances: [],
+        expectedRemoteTaskInstances: [createTestTaskInstance()],
       );
     });
 
     test('local and remote populated, local added to remote', () async {
       await runTaskInstancesSyncTest(
-        localTaskInstances: TaskInstances(
-          taskInstancesList: [createTestTaskInstance(id: '1')],
-        ),
-        remoteTaskInstances: TaskInstances(
-          taskInstancesList: [createTestTaskInstance(id: '2')],
-        ),
-        expectedRemoteTaskInstances: TaskInstances(taskInstancesList: [
+        localTaskInstances: [createTestTaskInstance(id: '1')],
+        remoteTaskInstances: [createTestTaskInstance(id: '2')],
+        expectedRemoteTaskInstances: [
           createTestTaskInstance(id: '2'),
           createTestTaskInstance(id: '1'),
-        ]),
+        ],
       );
     });
   });

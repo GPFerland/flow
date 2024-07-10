@@ -1,67 +1,51 @@
 import 'package:collection/collection.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
-import 'package:flow/src/features/task_instances/domain/task_instances.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flow/src/utils/delay.dart';
 import 'package:rxdart/rxdart.dart';
 
 class TestLocalTaskInstancesRepository implements LocalTaskInstancesRepository {
-  TestLocalTaskInstancesRepository();
-  TaskInstances _taskInstances = TaskInstances(taskInstancesList: []);
+  TestLocalTaskInstancesRepository({this.addDelay = true});
 
-  final _taskInstancesStreamController = BehaviorSubject<TaskInstances>.seeded(
-    TaskInstances(taskInstancesList: []),
-  );
+  final bool addDelay;
 
-  @override
-  Future<TaskInstances> fetchTaskInstances() async {
-    return Future.value(_taskInstances);
-  }
+  List<TaskInstance> _taskInstances = [];
+
+  final _taskInstancesStreamController =
+      BehaviorSubject<List<TaskInstance>>.seeded([]);
 
   @override
-  Future<TaskInstance?> fetchTaskInstance(String id) async {
-    return Future.value(
-      _taskInstances.taskInstancesList
-          .firstWhereOrNull((taskInstance) => taskInstance.id == id),
-    );
-  }
-
-  @override
-  Future<void> setTaskInstances(TaskInstances taskInstances) async {
+  Future<void> setTaskInstances(List<TaskInstance> taskInstances) async {
+    await delay(addDelay);
     _taskInstances = taskInstances;
     _taskInstancesStreamController.add(taskInstances);
   }
 
   @override
-  Stream<TaskInstances> watchTaskInstances() {
+  Future<List<TaskInstance>> fetchTaskInstances() async {
+    await delay(addDelay);
+    return Future.value(_taskInstances);
+  }
+
+  @override
+  Future<TaskInstance?> fetchTaskInstance(String taskInstanceId) async {
+    final taskInstances = await fetchTaskInstances();
+    return taskInstances.firstWhereOrNull(
+      (taskInstance) => taskInstance.id == taskInstanceId,
+    );
+  }
+
+  @override
+  Stream<List<TaskInstance>> watchTaskInstances() {
     return _taskInstancesStreamController.stream;
   }
 
   @override
-  Stream<TaskInstances> watchDateTaskInstances(DateTime date) {
-    return watchTaskInstances().map((taskInstances) {
-      final filteredInstances =
-          taskInstances.taskInstancesList.where((taskInstance) {
-        return date == taskInstance.completedDate ||
-            date == taskInstance.skippedDate ||
-            date == taskInstance.rescheduledDate ||
-            (date == taskInstance.initialDate &&
-                taskInstance.rescheduledDate == null);
-      }).toList();
-      return TaskInstances(taskInstancesList: filteredInstances);
-    });
-  }
-
-  @override
-  Stream<TaskInstance?> watchTaskInstance(String id) {
+  Stream<TaskInstance?> watchTaskInstance(String taskInstanceId) {
     return watchTaskInstances().map(
-      (taskInstances) => taskInstances.taskInstancesList
-          .firstWhereOrNull((taskInstance) => taskInstance.id == id),
+      (taskInstances) => taskInstances.firstWhereOrNull(
+        (taskInstance) => taskInstance.id == taskInstanceId,
+      ),
     );
   }
 }
-
-final testLocalTaskInstancesRepositoryProvider =
-    Provider<TestLocalTaskInstancesRepository>((ref) {
-  return TestLocalTaskInstancesRepository();
-});

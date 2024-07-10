@@ -1,27 +1,30 @@
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:flow/src/features/tasks/presentation/task_screen/task_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ColorInputField extends StatelessWidget {
-  const ColorInputField({
+class TaskColorInputField extends ConsumerWidget {
+  const TaskColorInputField({
     super.key,
-    required this.colorKey,
-    required this.selectedColor,
-    required this.selectColor,
-    this.readOnly = false,
+    required this.color,
+    required this.updateColor,
   });
 
-  final Key colorKey;
-  final Color selectedColor;
-  final void Function(BuildContext, Color) selectColor;
-  final bool readOnly;
+  final Color color;
+  final void Function(Color) updateColor;
+
+  // * Keys for testing using find.byKey()
+  static const taskColorKey = Key('taskColor');
 
   @override
-  Widget build(BuildContext context) {
-    Color tempColor = selectedColor;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(taskControllerProvider);
+
+    Color tempColor = color;
 
     return GestureDetector(
-      key: colorKey,
-      onTap: readOnly
+      key: taskColorKey,
+      onTap: state.isLoading
           ? null
           : () {
               showDialog(
@@ -49,7 +52,7 @@ class ColorInputField extends StatelessWidget {
                                   const Spacer(),
                                   IconButton(
                                     onPressed: () {
-                                      selectColor(context, tempColor);
+                                      updateColor(tempColor);
                                       Navigator.pop(context);
                                     },
                                     icon: const Icon(Icons.check),
@@ -64,9 +67,9 @@ class ColorInputField extends StatelessWidget {
                                 right: 6,
                                 bottom: 6,
                               ),
-                              color: selectedColor,
-                              onColorChanged: (Color color) {
-                                tempColor = color;
+                              color: tempColor,
+                              onColorChanged: (Color newColor) {
+                                tempColor = newColor;
                               },
                               subheading: Text(
                                 'Select color shade',
@@ -89,7 +92,7 @@ class ColorInputField extends StatelessWidget {
         width: 44,
         margin: const EdgeInsets.fromLTRB(8, 8, 0, 0),
         decoration: BoxDecoration(
-          color: selectedColor,
+          color: color,
           border: Border.all(
             width: 2.0,
             color: Theme.of(context).colorScheme.outline,

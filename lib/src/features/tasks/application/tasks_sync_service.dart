@@ -3,8 +3,6 @@ import 'package:flow/src/features/authentication/data/test_auth_repository.dart'
 import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
-import 'package:flow/src/features/tasks/domain/mutable_tasks.dart';
-import 'package:flow/src/features/tasks/domain/tasks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TasksSyncService {
@@ -29,19 +27,19 @@ class TasksSyncService {
 
   Future<void> _moveTasksToRemoteRepository(String uid) async {
     try {
-      // Get the local tasks data
+      // Get the local tasks
       final localTasksRepository = ref.read(localTasksRepositoryProvider);
       final localTasks = await localTasksRepository.fetchTasks();
-      if (localTasks.tasksList.isNotEmpty) {
+      if (localTasks.isNotEmpty) {
         // Get the remote tasks data
         final remoteTasksRepository = ref.read(remoteTasksRepositoryProvider);
         final remoteTasks = await remoteTasksRepository.fetchTasks(uid);
         // Add all of the local tasks to the remote tasks
-        final updatedRemoteTasks = remoteTasks.addTasks(localTasks.tasksList);
-        // Write the updated remote tasks datea to the repository
-        await remoteTasksRepository.setTasks(uid, updatedRemoteTasks);
+        remoteTasks.addAll(localTasks);
+        // Write the updated remote tasks data to the repository
+        await remoteTasksRepository.setTasks(uid, remoteTasks);
         // Remove all tasks from the local tasks repository
-        await localTasksRepository.setTasks(Tasks(tasksList: []));
+        await localTasksRepository.setTasks([]);
       }
     } catch (exception, stackTrace) {
       ref.read(errorLoggerProvider).logError(exception, stackTrace);

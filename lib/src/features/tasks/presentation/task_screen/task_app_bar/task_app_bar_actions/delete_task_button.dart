@@ -1,7 +1,6 @@
 import 'package:flow/src/constants/app_sizes.dart';
-import 'package:flow/src/features/tasks/domain/task.dart';
+import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/presentation/task_screen/task_controller.dart';
-import 'package:flow/src/utils/async_value_ui.dart';
 import 'package:flow/src/utils/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,10 +9,10 @@ import 'package:go_router/go_router.dart';
 class DeleteTaskButton extends ConsumerWidget {
   const DeleteTaskButton({
     super.key,
-    required this.task,
+    required this.taskId,
   });
 
-  final Task task;
+  final String taskId;
 
   // * Keys for testing using find.byKey()
   static const deleteTaskIconButtonKey = Key('deleteTaskIconButton');
@@ -22,17 +21,8 @@ class DeleteTaskButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    Future<void> onDeleteDialogButtonPressed() async {
-      ref.read(taskFormControllerProvider.notifier).deleteTasksInstances(
-            task: task,
-            onSuccess: () {},
-          );
-      ref.read(taskFormControllerProvider.notifier).deleteTask(
-            task: task,
-            onSuccess: context.pop,
-          );
-      context.pop();
-    }
+    final state = ref.watch(taskControllerProvider);
+    final task = ref.watch(taskFutureProvider(taskId)).value;
 
     Future<void> showDeleteDialog() async {
       showDialog(
@@ -51,7 +41,7 @@ class DeleteTaskButton extends ConsumerWidget {
                   ),
                   gapH16,
                   Text(
-                    'Delete ${(task).title}',
+                    task == null ? 'Delete' : 'Delete ${task.title}',
                     textAlign: TextAlign.center,
                     style: getBodyLargeOnPrimaryContainer(context),
                   ),
@@ -68,7 +58,17 @@ class DeleteTaskButton extends ConsumerWidget {
                       ),
                       ElevatedButton(
                         key: deleteTaskDialogButtonKey,
-                        onPressed: onDeleteDialogButtonPressed,
+                        onPressed: () {
+                          ref.read(taskControllerProvider.notifier).deleteTask(
+                                taskId: taskId,
+                                onSuccess: () {
+                                  // * pop the delete confirmation dialog
+                                  context.pop();
+                                  // * pop the task screen
+                                  context.pop();
+                                },
+                              );
+                        },
                         child: const Text('Delete'),
                       ),
                     ],
@@ -80,13 +80,6 @@ class DeleteTaskButton extends ConsumerWidget {
         },
       );
     }
-
-    ref.listen<AsyncValue>(
-      taskFormControllerProvider,
-      (_, state) => state.showAlertDialogOnError(context),
-    );
-
-    final state = ref.watch(taskFormControllerProvider);
 
     return IconButton(
       key: deleteTaskIconButtonKey,

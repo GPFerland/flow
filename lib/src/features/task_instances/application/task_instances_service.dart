@@ -1,9 +1,7 @@
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
-import 'package:flow/src/features/task_instances/domain/mutable_task_instances.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
-import 'package:flow/src/features/task_instances/domain/task_instances.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,52 +18,49 @@ class TaskInstancesService {
   final LocalTaskInstancesRepository localTaskInstancesRepository;
   final RemoteTaskInstancesRepository remoteTaskInstancesRepository;
 
-  /// fetch the task instances from the local or remote repository
-  /// depending on the user auth state
-  Future<TaskInstances> _fetchTaskInstances() {
-    final user = authRepository.currentUser;
-    if (user != null) {
-      return remoteTaskInstancesRepository.fetchTaskInstances(user.uid);
-    } else {
-      return localTaskInstancesRepository.fetchTaskInstances();
-    }
-  }
-
   /// save the task instances to the local or remote repository
   /// depending on the user auth state
-  Future<void> _setTaskInstances(TaskInstances taskInstances) async {
+  Future<void> _setTaskInstances(List<TaskInstance> taskInstances) async {
     final user = authRepository.currentUser;
-    if (user != null) {
-      await remoteTaskInstancesRepository.setTaskInstances(
-        user.uid,
-        taskInstances,
-      );
-    } else {
-      await localTaskInstancesRepository.setTaskInstances(
-        taskInstances,
-      );
+    if (user == null) {
+      return await localTaskInstancesRepository.setTaskInstances(taskInstances);
     }
+    await remoteTaskInstancesRepository.setTaskInstances(
+      user.uid,
+      taskInstances,
+    );
+  }
+
+  /// fetch the task instances from the local or remote repository
+  /// depending on the user auth state
+  Future<List<TaskInstance>> _fetchTaskInstances() {
+    final user = authRepository.currentUser;
+    if (user == null) {
+      return localTaskInstancesRepository.fetchTaskInstances();
+    }
+    return remoteTaskInstancesRepository.fetchTaskInstances(user.uid);
   }
 
   /// adds a task instance in the local or remote repository
   /// depending on the user auth state
   Future<void> addTaskInstance(TaskInstance taskInstance) async {
     final taskInstances = await _fetchTaskInstances();
-    final updated = taskInstances.addTaskInstance(taskInstance);
-    await _setTaskInstances(updated);
+    taskInstances.add(taskInstance);
+    await _setTaskInstances(taskInstances);
   }
 
   /// sets a task instance in the local or remote repository
   /// depending on the user auth state
   Future<void> setTaskInstance(TaskInstance taskInstance) async {
     final taskInstances = await _fetchTaskInstances();
-    final updated = taskInstances.setTaskInstance(taskInstance);
-    await _setTaskInstances(updated);
-  }
+    final index = taskInstances.indexWhere((t) => t.id == taskInstance.id);
 
-  /// sets task instances to the local or remote repository
-  /// depending on the user auth state
-  Future<void> setTaskInstances(TaskInstances taskInstances) async {
+    if (index == -1) {
+      taskInstances.add(taskInstance);
+    } else {
+      taskInstances[index] = taskInstance;
+    }
+
     await _setTaskInstances(taskInstances);
   }
 
@@ -73,51 +68,59 @@ class TaskInstancesService {
   /// depending on the user auth state
   Future<void> removeTaskInstance(TaskInstance taskInstance) async {
     final taskInstances = await _fetchTaskInstances();
-    final updated = taskInstances.removeTaskInstance(taskInstance);
-    await _setTaskInstances(updated);
+    taskInstances.remove(taskInstance);
+    await _setTaskInstances(taskInstances);
   }
 
   /// removes all task instances associated with the provided task id
   Future<void> removeTasksInstances(String taskId) async {
     final taskInstances = await _fetchTaskInstances();
-    final updated = taskInstances.removeTasksInstances(taskId);
-    await _setTaskInstances(updated);
+    taskInstances.removeWhere((taskInstance) => taskInstance.taskId == taskId);
+    await _setTaskInstances(taskInstances);
   }
 
   // creates a task instance for the task on the date
   // if the task is scheduled for the date
   // and there is not an existing task instance for the task on the date
   Future<void> createTaskInstance(Task task, DateTime date) async {
-    if (!_taskScheduledOnDate(task: task, date: date) ||
-        await _taskInstanceExistsForDate(task: task, date: date)) {
+    if (!_taskScheduledOnDate(
+          task: task,
+          date: date,
+        ) ||
+        await _taskInstanceExistsForDate(
+          task: task,
+          date: date,
+        )) {
       return;
     }
 
-    await addTaskInstance(TaskInstance(
-      id: const Uuid().v4(),
-      taskId: task.id,
-      initialDate: date,
-    ));
+    await addTaskInstance(
+      TaskInstance(
+        id: const Uuid().v4(),
+        taskId: task.id,
+        initialDate: date,
+      ),
+    );
   }
 
   bool _taskScheduledOnDate({
     required Task task,
     required DateTime date,
   }) {
-    switch (task.frequencyType) {
-      case FrequencyType.once:
+    switch (task.frequency) {
+      case Frequency.once:
         if (date == task.date) {
           return true;
         }
-      case FrequencyType.daily:
+      case Frequency.daily:
         return true;
-      case FrequencyType.weekly:
+      case Frequency.weekly:
         for (Weekday weekday in task.weekdays) {
           if (weekday.weekdayIndex == date.weekday) {
             return true;
           }
         }
-      case FrequencyType.monthly:
+      case Frequency.monthly:
         for (Monthday monthday in task.monthdays) {
           if (_monthdayMatch(monthday, date)) {
             return true;
@@ -133,7 +136,7 @@ class TaskInstancesService {
   }) async {
     final taskInstances = await _fetchTaskInstances();
 
-    final filteredTaskInstances = taskInstances.taskInstancesList
+    final filteredTaskInstances = taskInstances
         .where((taskInstance) => taskInstance.taskId == task.id)
         .toList();
 
@@ -251,18 +254,37 @@ final taskInstancesServiceProvider = Provider<TaskInstancesService>(
   },
 );
 
-final dateTaskInstancesProvider =
-    StreamProvider.autoDispose.family<TaskInstances, DateTime>(
-  (ref, date) {
+final taskInstancesStreamProvider = StreamProvider<List<TaskInstance>>(
+  (ref) {
     final user = ref.watch(authStateChangesProvider).value;
-    if (user != null) {
-      return ref
-          .watch(remoteTaskInstancesRepositoryProvider)
-          .watchDateTaskInstances(user.uid, date);
-    } else {
+    if (user == null) {
       return ref
           .watch(localTaskInstancesRepositoryProvider)
-          .watchDateTaskInstances(date);
+          .watchTaskInstances();
     }
+    return ref
+        .watch(remoteTaskInstancesRepositoryProvider)
+        .watchTaskInstances(user.uid);
+  },
+);
+
+final dateTaskInstancesProvider =
+    StreamProvider.autoDispose.family<List<TaskInstance>, DateTime>(
+  (ref, date) {
+    final taskInstances = ref.watch(taskInstancesStreamProvider).value ?? [];
+    final List<TaskInstance> dateTaskInstancesList = [];
+
+    for (TaskInstance taskInstance in taskInstances) {
+      if (date == taskInstance.completedDate ||
+          date == taskInstance.skippedDate ||
+          date == taskInstance.rescheduledDate) {
+        dateTaskInstancesList.add(taskInstance);
+      } else if (date == taskInstance.initialDate &&
+          taskInstance.rescheduledDate == null) {
+        dateTaskInstancesList.add(taskInstance);
+      }
+    }
+
+    return Stream.value(dateTaskInstancesList);
   },
 );

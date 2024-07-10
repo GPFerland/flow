@@ -1,8 +1,8 @@
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flutter/material.dart';
 
-class DailyTaskFields extends StatelessWidget {
-  const DailyTaskFields({
+class DailyFields extends StatelessWidget {
+  const DailyFields({
     super.key,
   });
 

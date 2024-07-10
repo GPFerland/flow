@@ -1,4 +1,4 @@
-import 'package:flow/src/features/tasks/presentation/task_screen/delete_task_button.dart';
+import 'package:flow/src/features/tasks/presentation/task_screen/task_app_bar/task_app_bar_actions/delete_task_button.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../../robot.dart';

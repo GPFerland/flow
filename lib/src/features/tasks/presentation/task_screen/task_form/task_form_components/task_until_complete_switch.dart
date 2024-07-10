@@ -1,22 +1,41 @@
+import 'package:flow/src/features/tasks/presentation/task_screen/task_controller.dart';
 import 'package:flow/src/utils/style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class UntilCompletedToggleSlider extends StatelessWidget {
-  const UntilCompletedToggleSlider({
+class TaskUntilCompletedSwitch extends ConsumerStatefulWidget {
+  const TaskUntilCompletedSwitch({
     super.key,
-    required this.untilCompletedKey,
     required this.untilCompleted,
     required this.updateUntilCompleted,
-    this.readOnly = false,
   });
 
-  final Key untilCompletedKey;
   final bool untilCompleted;
   final Function(bool) updateUntilCompleted;
-  final bool readOnly;
+
+  // * Keys for testing using find.byKey()
+  static const untilCompletedKey = Key('untilCompleted');
+
+  @override
+  ConsumerState<TaskUntilCompletedSwitch> createState() {
+    return _UntilCompletedToggleSliderState();
+  }
+}
+
+class _UntilCompletedToggleSliderState
+    extends ConsumerState<TaskUntilCompletedSwitch> {
+  late bool untilCompleted;
+
+  @override
+  void initState() {
+    super.initState();
+    untilCompleted = widget.untilCompleted;
+  }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(taskControllerProvider);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -42,12 +61,17 @@ class UntilCompletedToggleSlider extends StatelessWidget {
             ),
           ),
           Switch(
-            key: untilCompletedKey,
+            key: TaskUntilCompletedSwitch.untilCompletedKey,
             value: untilCompleted,
-            onChanged: readOnly
+            onChanged: state.isLoading
                 ? null
                 : (value) {
-                    updateUntilCompleted(value);
+                    setState(
+                      () {
+                        untilCompleted = value;
+                        widget.updateUntilCompleted(untilCompleted);
+                      },
+                    );
                   },
           ),
         ],

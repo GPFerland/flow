@@ -3,7 +3,7 @@ import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/tasks/application/tasks_sync_service.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
-import 'package:flow/src/features/tasks/domain/tasks.dart';
+import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -38,9 +38,9 @@ void main() {
     'TasksSyncService',
     () {
       Future<void> runTasksSyncTest({
-        required Tasks localTasks,
-        required Tasks remoteTasks,
-        required Tasks expectedRemoteTasks,
+        required List<Task> localTasks,
+        required List<Task> remoteTasks,
+        required List<Task> expectedRemoteTasks,
       }) async {
         const uid = '123';
         when(authRepository.authStateChanges).thenAnswer(
@@ -56,8 +56,7 @@ void main() {
             .thenAnswer(
           (_) => Future.value(),
         );
-        when(() => localTasksRepository.setTasks(Tasks(tasksList: [])))
-            .thenAnswer(
+        when(() => localTasksRepository.setTasks([])).thenAnswer(
           (_) => Future.value(),
         );
         // create tasks sync service to trigger sync (no return required)
@@ -65,19 +64,19 @@ void main() {
         // wait for all the stubbed methods to return a value
         await Future.delayed(const Duration());
         //verify
-        if (localTasks.tasksList.isNotEmpty) {
+        if (localTasks.isNotEmpty) {
           verify(
             () => remoteTasksRepository.setTasks(uid, expectedRemoteTasks),
           ).called(1);
           verify(
-            () => localTasksRepository.setTasks(Tasks(tasksList: [])),
+            () => localTasksRepository.setTasks([]),
           ).called(1);
         } else {
           verifyNever(
             () => remoteTasksRepository.setTasks(uid, expectedRemoteTasks),
           );
           verifyNever(
-            () => localTasksRepository.setTasks(Tasks(tasksList: [])),
+            () => localTasksRepository.setTasks([]),
           );
         }
       }
@@ -86,9 +85,9 @@ void main() {
         'no local or remote tasks, remote stays empty',
         () async {
           await runTasksSyncTest(
-            localTasks: Tasks(tasksList: []),
-            remoteTasks: Tasks(tasksList: []),
-            expectedRemoteTasks: Tasks(tasksList: []),
+            localTasks: [],
+            remoteTasks: [],
+            expectedRemoteTasks: [],
           );
         },
       );
@@ -97,9 +96,9 @@ void main() {
         'no local tasks but remote tasks, remote tasks unchanged',
         () async {
           await runTasksSyncTest(
-            localTasks: Tasks(tasksList: []),
-            remoteTasks: Tasks(tasksList: [createTestTask()]),
-            expectedRemoteTasks: Tasks(tasksList: [createTestTask()]),
+            localTasks: [],
+            remoteTasks: [createTestTask()],
+            expectedRemoteTasks: [createTestTask()],
           );
         },
       );
@@ -108,9 +107,9 @@ void main() {
         'local tasks but no remote tasks, local tasks moved to remote',
         () async {
           await runTasksSyncTest(
-            localTasks: Tasks(tasksList: [createTestTask()]),
-            remoteTasks: Tasks(tasksList: []),
-            expectedRemoteTasks: Tasks(tasksList: [createTestTask()]),
+            localTasks: [createTestTask()],
+            remoteTasks: [],
+            expectedRemoteTasks: [createTestTask()],
           );
         },
       );
@@ -119,12 +118,12 @@ void main() {
         'local tasks and remote tasks, local added to remote',
         () async {
           await runTasksSyncTest(
-            localTasks: Tasks(tasksList: [createTestTask(id: '1')]),
-            remoteTasks: Tasks(tasksList: [createTestTask(id: '2')]),
-            expectedRemoteTasks: Tasks(tasksList: [
+            localTasks: [createTestTask(id: '1')],
+            remoteTasks: [createTestTask(id: '2')],
+            expectedRemoteTasks: [
               createTestTask(id: '2'),
               createTestTask(id: '1'),
-            ]),
+            ],
           );
         },
       );

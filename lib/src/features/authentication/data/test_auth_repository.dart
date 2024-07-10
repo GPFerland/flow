@@ -1,24 +1,30 @@
 import 'package:flow/src/exceptions/app_exception.dart';
 import 'package:flow/src/features/authentication/domain/app_user.dart';
-import 'package:flow/src/features/authentication/domain/fake_app_user.dart';
+import 'package:flow/src/features/authentication/domain/test_app_user.dart';
+import 'package:flow/src/utils/delay.dart';
 import 'package:flow/src/utils/in_memory_store.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TestAuthRepository {
-  TestAuthRepository();
+  TestAuthRepository({this.addDelay = true});
+
+  final bool addDelay;
 
   final _authState = InMemoryStore<AppUser?>(null);
 
   Stream<AppUser?> authStateChanges() => _authState.stream;
+
   AppUser? get currentUser => _authState.value;
 
   // List to keep track of all user accounts
-  final List<FakeAppUser> _users = [];
+  final List<TestAppUser> _users = [];
 
   Future<void> signInWithEmailAndPassword(
     String email,
     String password,
   ) async {
+    // add a delay to simulate loading
+    await delay(addDelay);
     // check the given credentials agains each registered user
     for (final user in _users) {
       // matching email and password
@@ -38,6 +44,8 @@ class TestAuthRepository {
     String email,
     String password,
   ) async {
+    // add a delay to simulate loading
+    await delay(addDelay);
     // check if the email is already in use
     for (final u in _users) {
       if (u.email == email) {
@@ -60,7 +68,7 @@ class TestAuthRepository {
 
   void _createNewUser(String email, String password) {
     // create new user
-    final user = FakeAppUser(
+    final user = TestAppUser(
       uid: email.split('').reversed.join(),
       email: email,
       password: password,

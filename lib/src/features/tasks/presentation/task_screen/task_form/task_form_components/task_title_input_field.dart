@@ -1,24 +1,33 @@
+import 'package:flow/src/features/tasks/presentation/task_screen/task_controller.dart';
 import 'package:flow/src/utils/style.dart';
 import 'package:flow/src/common_widgets/input_fields/input_fields_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TitleInputField extends StatelessWidget {
-  const TitleInputField({
+class TaskTitleInputField extends ConsumerStatefulWidget {
+  const TaskTitleInputField({
     super.key,
-    required this.titleKey,
     required this.titleController,
-    this.readOnly = false,
   });
 
-  final Key titleKey;
   final TextEditingController titleController;
-  final bool readOnly;
+
+  // * Keys for testing using find.byKey()
+  static const taskTitleKey = Key('taskTitle');
 
   @override
+  ConsumerState<TaskTitleInputField> createState() =>
+      _TaskTitleInputFieldState();
+}
+
+class _TaskTitleInputFieldState extends ConsumerState<TaskTitleInputField> {
+  @override
   Widget build(BuildContext context) {
+    final state = ref.watch(taskControllerProvider);
+
     return TextFormField(
-      key: titleKey,
-      controller: titleController,
+      key: TaskTitleInputField.taskTitleKey,
+      controller: widget.titleController,
       decoration: getTextInputFieldDecoration(
         labelText: 'Title',
         context: context,
@@ -31,7 +40,7 @@ class TitleInputField extends StatelessWidget {
         return null;
       },
       cursorHeight: cursorHeight,
-      readOnly: readOnly,
+      readOnly: state.isLoading,
     );
   }
 }

@@ -29,18 +29,30 @@ class Robot {
       : authRobot = AuthRobot(widgetTester),
         tasksRobot = TasksRobot(widgetTester),
         dateCheckListRobot = DateCheckListRobot(widgetTester);
+
   final WidgetTester widgetTester;
   final AuthRobot authRobot;
   final TasksRobot tasksRobot;
   final DateCheckListRobot dateCheckListRobot;
 
+  // pump the app
   Future<void> pumpFlowApp() async {
     // Override repositories
-    final authRepository = TestAuthRepository();
-    final localTasksRepository = TestLocalTasksRepository();
-    final remoteTasksRepository = TestRemoteTasksRepository();
-    final localTaskInstancesRepository = TestLocalTaskInstancesRepository();
-    final remoteTaskInstancesRepository = TestRemoteTaskInstancesRepository();
+    final authRepository = TestAuthRepository(
+      addDelay: false,
+    );
+    final localTasksRepository = TestLocalTasksRepository(
+      addDelay: false,
+    );
+    final remoteTasksRepository = TestRemoteTasksRepository(
+      addDelay: false,
+    );
+    final localTaskInstancesRepository = TestLocalTaskInstancesRepository(
+      addDelay: false,
+    );
+    final remoteTaskInstancesRepository = TestRemoteTaskInstancesRepository(
+      addDelay: false,
+    );
     // Override the required providers
     final providerContainer = ProviderContainer(
       overrides: [

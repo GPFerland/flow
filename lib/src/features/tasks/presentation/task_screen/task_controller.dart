@@ -52,32 +52,22 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
   }
 
   Future<void> deleteTask({
-    required Task task,
+    required String taskId,
     required void Function() onSuccess,
   }) async {
     state = const AsyncLoading<void>();
-    final value = await AsyncValue.guard(
-      () => tasksService.removeTask(task),
-    );
-    if (mounted) {
-      // * only set the state if the controller hasn't been disposed
-      state = value;
-      if (state.hasError == false) {
-        onSuccess();
-      }
-    }
-  }
 
-  Future<void> deleteTasksInstances({
-    required Task task,
-    required void Function() onSuccess,
-  }) async {
-    state = const AsyncLoading<void>();
-    final value = await AsyncValue.guard(
-      () => taskInstancesService.removeTasksInstances(task.id),
+    AsyncValue<void> value = await AsyncValue.guard(
+      () async {
+        // * attempt to delete the task instances associated with the task
+        await taskInstancesService.removeTasksInstances(taskId);
+        // * attempt to delete the task
+        await tasksService.removeTask(taskId);
+      },
     );
+
+    // * only set the state if the controller hasn't been disposed
     if (mounted) {
-      // * only set the state if the controller hasn't been disposed
       state = value;
       if (state.hasError == false) {
         onSuccess();
@@ -86,7 +76,7 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
   }
 }
 
-final taskFormControllerProvider =
+final taskControllerProvider =
     StateNotifierProvider.autoDispose<TaskController, AsyncValue<void>>(
   (ref) {
     return TaskController(

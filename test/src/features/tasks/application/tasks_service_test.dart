@@ -3,7 +3,7 @@ import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
-import 'package:flow/src/features/tasks/domain/tasks.dart';
+import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -17,7 +17,7 @@ void main() {
   late MockRemoteTasksRepository remoteTasksRepository;
 
   setUpAll(() {
-    registerFallbackValue(Tasks(tasksList: []));
+    registerFallbackValue([]);
   });
 
   setUp(
@@ -45,9 +45,7 @@ void main() {
       test('null user, fetch tasks from local repo', () async {
         // setup
         final expectedTask = createTestTask();
-        final expectedTasks = Tasks(
-          tasksList: [expectedTask],
-        );
+        final expectedTasks = [expectedTask];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTasksRepository.fetchTasks).thenAnswer(
           (_) => Future.value(expectedTasks),
@@ -70,9 +68,7 @@ void main() {
         // setup
         const testUser = AppUser(uid: 'abc', email: 'test@email.com');
         final expectedTask = createTestTask();
-        final expectedTasks = Tasks(
-          tasksList: [expectedTask],
-        );
+        final expectedTasks = [expectedTask];
         when(() => authRepository.currentUser).thenReturn(testUser);
         when(
           () => remoteTasksRepository.fetchTasks(testUser.uid),
@@ -92,92 +88,15 @@ void main() {
         expect(fetchedTasks, expectedTasks);
       });
     });
-    group('addTask', () {
-      test('null user, task added to local repo', () async {
-        // setup
-        final expectedTask = createTestTask();
-        final expectedTasks = Tasks(
-          tasksList: [expectedTask],
-        );
-        when(() => authRepository.currentUser).thenReturn(null);
-        when(localTasksRepository.fetchTasks).thenAnswer(
-          (_) => Future.value(Tasks(tasksList: [])),
-        );
-        when(
-          () => localTasksRepository.setTasks(expectedTasks),
-        ).thenAnswer(
-          (_) => Future.value(),
-        );
-        final tasksService = makeTasksService();
-        // run
-        await tasksService.addTask(expectedTask);
-        // verify
-        verify(
-          () => localTasksRepository.fetchTasks(),
-        ).called(1);
-        verifyNever(
-          () => remoteTasksRepository.fetchTasks(
-            any(),
-          ),
-        );
-        verify(
-          () => localTasksRepository.setTasks(
-            expectedTasks,
-          ),
-        ).called(1);
-        verifyNever(
-          () => remoteTasksRepository.setTasks(
-            any(),
-            any(),
-          ),
-        );
-      });
-      test('non-null user, adds task to remote tasks repo', () async {
-        // setup
-        const testUser = AppUser(uid: 'abc', email: 'test@email.com');
-        final expectedTask = createTestTask();
-        final expectedTasks = Tasks(
-          tasksList: [expectedTask],
-        );
-        when(() => authRepository.currentUser).thenReturn(testUser);
-        when(() => remoteTasksRepository.fetchTasks(testUser.uid)).thenAnswer(
-          (_) => Future.value(
-            Tasks(tasksList: []),
-          ),
-        );
-        when(
-          () => remoteTasksRepository.setTasks(
-            testUser.uid,
-            expectedTasks,
-          ),
-        ).thenAnswer(
-          (_) => Future.value(),
-        );
-        final tasksService = makeTasksService();
-        // run
-        await tasksService.addTask(expectedTask);
-        // verify
-        verify(
-          () => remoteTasksRepository.setTasks(
-            testUser.uid,
-            expectedTasks,
-          ),
-        ).called(1);
-        verifyNever(
-          () => localTasksRepository.setTasks(any()),
-        );
-      });
-    });
+
     group('setTask', () {
       test('null user, sets task to local tasks repo', () async {
         // setup
         final expectedTask = createTestTask();
-        final expectedTasks = Tasks(
-          tasksList: [expectedTask],
-        );
+        final expectedTasks = [expectedTask];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTasksRepository.fetchTasks).thenAnswer(
-          (_) => Future.value(Tasks(tasksList: [])),
+          (_) => Future.value([]),
         );
         when(() => localTasksRepository.setTasks(expectedTasks)).thenAnswer(
           (_) => Future.value(),
@@ -197,13 +116,11 @@ void main() {
         // setup
         const testUser = AppUser(uid: 'abc', email: 'test@email.com');
         final expectedTask = createTestTask();
-        final expectedTasks = Tasks(
-          tasksList: [expectedTask],
-        );
+        final expectedTasks = [expectedTask];
         when(() => authRepository.currentUser).thenReturn(testUser);
         when(() => remoteTasksRepository.fetchTasks(testUser.uid)).thenAnswer(
           (_) => Future.value(
-            Tasks(tasksList: []),
+            [],
           ),
         );
         when(
@@ -233,12 +150,8 @@ void main() {
       test('null user, remove task from local tasks repo', () async {
         // setup
         final existingTask = createTestTask();
-        final existingTasks = Tasks(
-          tasksList: [existingTask],
-        );
-        final expectedTasks = Tasks(
-          tasksList: [],
-        );
+        final existingTasks = [existingTask];
+        final expectedTasks = <Task>[];
         when(() => authRepository.currentUser).thenReturn(null);
         when(localTasksRepository.fetchTasks).thenAnswer(
           (_) => Future.value(existingTasks),
@@ -248,7 +161,7 @@ void main() {
         );
         final tasksService = makeTasksService();
         // run
-        await tasksService.removeTask(existingTask);
+        await tasksService.removeTask(existingTask.id);
         // verify
         verify(
           () => localTasksRepository.setTasks(expectedTasks),
@@ -261,12 +174,8 @@ void main() {
         // setup
         const testUser = AppUser(uid: 'abc', email: 'test@email.com');
         final existingTask = createTestTask();
-        final existingTasks = Tasks(
-          tasksList: [existingTask],
-        );
-        final expectedTasks = Tasks(
-          tasksList: [],
-        );
+        final existingTasks = [existingTask];
+        final expectedTasks = <Task>[];
         when(() => authRepository.currentUser).thenReturn(testUser);
         when(
           () => remoteTasksRepository.fetchTasks(testUser.uid),
@@ -283,7 +192,7 @@ void main() {
         );
         final tasksService = makeTasksService();
         // run
-        await tasksService.removeTask(existingTask);
+        await tasksService.removeTask(existingTask.id);
         // verify
         verify(
           () => remoteTasksRepository.setTasks(

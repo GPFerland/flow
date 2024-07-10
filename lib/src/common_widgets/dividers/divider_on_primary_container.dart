@@ -7,7 +7,7 @@ class DividerOnPrimaryContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 1,
-      color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.25),
+      color: Theme.of(context).colorScheme.onPrimaryContainer.withOpacity(0.15),
     );
   }
 }

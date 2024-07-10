@@ -1,40 +1,69 @@
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
-import 'package:flow/src/features/task_instances/domain/task_instances.dart';
 import 'package:flow/src/utils/remote_item.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 abstract class RemoteTaskInstancesRepository {
-  Future<TaskInstances> fetchTaskInstances(String uid);
+  Future<void> setTaskInstances(String uid, List<TaskInstance> taskInstances);
 
-  Future<void> setTaskInstances(String uid, TaskInstances taskInstances);
+  Future<List<TaskInstance>> fetchTaskInstances(String uid);
 
-  Stream<TaskInstances> watchTaskInstances(String uid);
+  Future<TaskInstance?> fetchTaskInstance(String uid, String taskInstanceId);
+
+  Stream<List<TaskInstance>> watchTaskInstances(String uid);
 
   Stream<TaskInstance?> watchTaskInstance(String uid, String taskInstanceId);
-
-  Stream<TaskInstances> watchDateTaskInstances(String uid, DateTime date);
 }
 
 final remoteTaskInstancesRepositoryProvider =
-    Provider<RemoteTaskInstancesRepository>((ref) {
-  // * Override this in the main method
-  throw UnimplementedError();
-});
+    Provider<RemoteTaskInstancesRepository>(
+  (ref) {
+    // * Override in main()
+    throw UnimplementedError();
+  },
+);
 
-final remoteTaskInstancesListStreamProvider =
-    StreamProvider.autoDispose.family<List<TaskInstance>, String>((ref, uid) {
-  // * Override this in the main method
-  throw UnimplementedError();
-});
+final remoteTaskInstancesFutureProvider =
+    FutureProvider.autoDispose.family<List<TaskInstance>, String>(
+  (ref, uid) {
+    final taskInstancesRepository = ref.watch(
+      remoteTaskInstancesRepositoryProvider,
+    );
+    return taskInstancesRepository.fetchTaskInstances(uid);
+  },
+);
 
-final remoteTaskInstancesListFutureProvider =
-    FutureProvider.autoDispose.family<List<TaskInstance>, String>((ref, uid) {
-  // * Override this in the main method
-  throw UnimplementedError();
-});
+final remoteTaskInstanceFutureProvider =
+    FutureProvider.autoDispose.family<TaskInstance?, RemoteItem>(
+  (ref, remoteItem) {
+    final taskInstancesRepository = ref.watch(
+      remoteTaskInstancesRepositoryProvider,
+    );
+    return taskInstancesRepository.fetchTaskInstance(
+      remoteItem.uid,
+      remoteItem.itemId,
+    );
+  },
+);
 
-final remoteTaskInstanceStreamProvider = StreamProvider.autoDispose
-    .family<TaskInstance?, RemoteItem>((ref, remoteItem) {
-  // * Override this in the main method
-  throw UnimplementedError();
-});
+final remoteTaskInstancesStreamProvider =
+    StreamProvider.autoDispose.family<List<TaskInstance>, String>(
+  (ref, uid) {
+    final taskInstancesRepository = ref.watch(
+      remoteTaskInstancesRepositoryProvider,
+    );
+    return taskInstancesRepository.watchTaskInstances(uid);
+  },
+);
+
+final remoteTaskInstanceStreamProvider =
+    StreamProvider.autoDispose.family<TaskInstance?, RemoteItem>(
+  (ref, remoteItem) {
+    final taskInstancesRepository = ref.watch(
+      remoteTaskInstancesRepositoryProvider,
+    );
+    return taskInstancesRepository.watchTaskInstance(
+      remoteItem.uid,
+      remoteItem.itemId,
+    );
+  },
+);

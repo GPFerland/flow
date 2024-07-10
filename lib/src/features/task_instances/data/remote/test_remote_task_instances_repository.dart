@@ -1,79 +1,69 @@
 import 'package:collection/collection.dart';
-import 'package:flow/src/constants/test_task_instances.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
-import 'package:flow/src/features/task_instances/domain/task_instances.dart';
-import 'package:flow/src/utils/remote_item.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flow/src/utils/delay.dart';
+import 'package:flow/src/utils/in_memory_store.dart';
 
 class TestRemoteTaskInstancesRepository
     implements RemoteTaskInstancesRepository {
-  TestRemoteTaskInstancesRepository();
+  TestRemoteTaskInstancesRepository({this.addDelay = true});
 
-  TaskInstances _taskInstances = kTestTaskInstances;
+  final bool addDelay;
 
-  @override
-  Future<TaskInstances> fetchTaskInstances(String uid) async {
-    return Future.value(_taskInstances);
-  }
+  /// An InMemoryStore containing the task instances data for all users, where:
+  /// key: uid of the user
+  /// value: task instances list of that user
+  final _taskInstances = InMemoryStore<Map<String, List<TaskInstance>>>({});
 
   @override
   Future<void> setTaskInstances(
-      String userId, TaskInstances taskInstances) async {
-    _taskInstances = taskInstances;
+    String uid,
+    List<TaskInstance> userTaskInstances,
+  ) async {
+    await delay(addDelay);
+    // First, get the current task instances data for all users
+    final taskInstances = _taskInstances.value;
+    // Then, set the task instances for the given uid
+    taskInstances[uid] = userTaskInstances;
+    // Finally, update the task instances data (will emit a new value)
+    _taskInstances.value = taskInstances;
   }
 
   @override
-  Stream<TaskInstances> watchTaskInstances(String uid) async* {
-    yield _taskInstances;
+  Future<List<TaskInstance>> fetchTaskInstances(String uid) async {
+    await delay(addDelay);
+    return Future.value(_taskInstances.value[uid] ?? []);
   }
 
   @override
-  Stream<TaskInstances> watchDateTaskInstances(
-      String uid, DateTime date) async* {
-    yield _taskInstances;
+  Future<TaskInstance?> fetchTaskInstance(
+    String uid,
+    String taskInstanceId,
+  ) async {
+    final userTaskInstances = await fetchTaskInstances(uid);
+    return Future.value(
+      userTaskInstances.firstWhereOrNull(
+        (taskInstance) => taskInstance.id == taskInstanceId,
+      ),
+    );
   }
 
   @override
-  Stream<TaskInstance?> watchTaskInstance(String uid, String id) {
+  Stream<List<TaskInstance>> watchTaskInstances(String uid) {
+    return _taskInstances.stream.map(
+      (taskInstancesData) => taskInstancesData[uid] ?? [],
+    );
+  }
+
+  @override
+  Stream<TaskInstance?> watchTaskInstance(
+    String uid,
+    String taskInstanceId,
+  ) {
     return watchTaskInstances(uid).map(
-      (taskInstances) => taskInstances.taskInstancesList
-          .firstWhereOrNull((taskInstance) => taskInstance.id == id),
+      (taskInstances) => taskInstances.firstWhereOrNull(
+        (taskInstance) => taskInstance.id == taskInstanceId,
+      ),
     );
   }
 }
-
-final testRemoteTaskInstancesRepositoryProvider =
-    Provider<TestRemoteTaskInstancesRepository>(
-  (ref) {
-    return TestRemoteTaskInstancesRepository();
-  },
-);
-
-final testRemoteTaskInstancesListStreamProvider =
-    StreamProvider.autoDispose.family<TaskInstances, String>(
-  (ref, uid) {
-    final taskInstancesRepository =
-        ref.watch(testRemoteTaskInstancesRepositoryProvider);
-    return taskInstancesRepository.watchTaskInstances(uid);
-  },
-);
-
-final testRemoteTaskInstancesListFutureProvider =
-    FutureProvider.autoDispose.family<TaskInstances, String>(
-  (ref, uid) {
-    final taskInstancesRepository =
-        ref.watch(testRemoteTaskInstancesRepositoryProvider);
-    return taskInstancesRepository.fetchTaskInstances(uid);
-  },
-);
-
-final testRemoteTaskInstanceStreamProvider =
-    StreamProvider.autoDispose.family<TaskInstance?, RemoteItem>(
-  (ref, remoteItem) {
-    final taskInstancesRepository =
-        ref.watch(testRemoteTaskInstancesRepositoryProvider);
-    return taskInstancesRepository.watchTaskInstance(
-        remoteItem.userId, remoteItem.itemId);
-  },
-);

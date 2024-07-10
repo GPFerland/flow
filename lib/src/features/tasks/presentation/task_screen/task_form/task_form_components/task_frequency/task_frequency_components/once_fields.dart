@@ -3,28 +3,39 @@ import 'package:flow/src/utils/date.dart';
 import 'package:flow/src/utils/style.dart';
 import 'package:flutter/material.dart';
 
-class OnceTaskFields extends StatefulWidget {
-  const OnceTaskFields({
+class OnceFields extends StatefulWidget {
+  const OnceFields({
     super.key,
-    required this.selectedDate,
-    required this.selectDate,
+    required this.date,
+    required this.updateDate,
   });
 
-  final DateTime selectedDate;
-  final Function(DateTime selectedDate) selectDate;
+  final DateTime date;
+  final Function(DateTime date) updateDate;
 
   @override
-  State<OnceTaskFields> createState() => _OnceTaskFieldsState();
+  State<OnceFields> createState() => _OnceFieldsState();
 }
 
-class _OnceTaskFieldsState extends State<OnceTaskFields> {
+class _OnceFieldsState extends State<OnceFields> {
+  late DateTime date;
+
+  @override
+  void initState() {
+    super.initState();
+    date = widget.date;
+  }
+
   Future<void> _selectDate() async {
     DateTime? newDate = await selectDate(
       context: context,
-      initialDate: widget.selectedDate,
+      initialDate: date,
     );
-    if (newDate != null && newDate != widget.selectedDate) {
-      widget.selectDate(getDateNoTime(newDate));
+    if (newDate != null && newDate != date) {
+      setState(() {
+        date = newDate;
+        widget.updateDate(getDateNoTime(date));
+      });
     }
   }
 
@@ -71,7 +82,7 @@ class _OnceTaskFieldsState extends State<OnceTaskFields> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   child: Text(
-                    getTitleDateString(widget.selectedDate),
+                    getTitleDateString(date),
                     style: getBodyMediumOnPrimary(context),
                     textAlign: TextAlign.center,
                     maxLines: 1,

@@ -3,6 +3,8 @@ import 'package:flow/src/features/task_instances/application/task_instances_serv
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/features/tasks/presentation/task_screen/task_form/task_form.dart';
+import 'package:flow/src/features/tasks/presentation/task_screen/task_form/task_form_components/task_description_input_field.dart';
+import 'package:flow/src/features/tasks/presentation/task_screen/task_form/task_form_components/task_title_input_field.dart';
 import 'package:flow/src/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,13 +43,17 @@ class TasksRobot {
   }
 
   Future<void> enterTitle(String title) async {
-    final titleField = find.byKey(TaskForm.taskTitleKey);
+    final titleField = find.byKey(
+      TaskTitleInputField.taskTitleKey,
+    );
     expect(titleField, findsOneWidget);
     await widgetTester.enterText(titleField, title);
   }
 
   Future<void> enterDescription(String description) async {
-    final descriptionField = find.byKey(TaskForm.taskDescriptionKey);
+    final descriptionField = find.byKey(
+      TaskDescriptionInputField.taskDescriptionKey,
+    );
     expect(descriptionField, findsOneWidget);
     await widgetTester.enterText(descriptionField, description);
   }

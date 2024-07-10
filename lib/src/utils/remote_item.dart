@@ -1,6 +1,6 @@
 class RemoteItem {
-  RemoteItem(this.userId, this.itemId);
+  RemoteItem(this.uid, this.itemId);
 
-  final String userId;
+  final String uid;
   final String itemId;
 }

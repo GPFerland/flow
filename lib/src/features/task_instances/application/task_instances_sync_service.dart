@@ -3,8 +3,6 @@ import 'package:flow/src/features/authentication/data/test_auth_repository.dart'
 import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
-import 'package:flow/src/features/task_instances/domain/mutable_task_instances.dart';
-import 'package:flow/src/features/task_instances/domain/task_instances.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TaskInstancesSyncService {
@@ -35,7 +33,7 @@ class TaskInstancesSyncService {
       );
       final localTaskInstances =
           await localTaskInstancesRepository.fetchTaskInstances();
-      if (localTaskInstances.taskInstancesList.isNotEmpty) {
+      if (localTaskInstances.isNotEmpty) {
         // Get the remote task instances data
         final remoteTaskInstancesRepository = ref.read(
           remoteTaskInstancesRepositoryProvider,
@@ -43,18 +41,14 @@ class TaskInstancesSyncService {
         final remoteTaskInstances =
             await remoteTaskInstancesRepository.fetchTaskInstances(uid);
         // Add all of the local task instances to the remote task instances
-        final updatedRemoteTaskInstances = remoteTaskInstances.addTaskInstances(
-          localTaskInstances.taskInstancesList,
-        );
+        remoteTaskInstances.addAll(localTaskInstances);
         // Write the updated remote task instances data to the repository
         await remoteTaskInstancesRepository.setTaskInstances(
           uid,
-          updatedRemoteTaskInstances,
+          remoteTaskInstances,
         );
         // Remove all task instances from the local task instances repository
-        await localTaskInstancesRepository.setTaskInstances(
-          TaskInstances(taskInstancesList: []),
-        );
+        await localTaskInstancesRepository.setTaskInstances([]);
       }
     } catch (exception, stackTrace) {
       ref.read(errorLoggerProvider).logError(exception, stackTrace);
