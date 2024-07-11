@@ -77,14 +77,29 @@ class SembastLocalTaskInstancesRepository
   }
 
   @override
-  Stream<List<TaskInstance>> watchTaskInstances() {
+  Stream<List<TaskInstance>> watchTaskInstances({DateTime? date}) {
     final record = store.record(taskInstancesKey);
     return record.onSnapshot(db).map(
       (snapshot) {
         if (snapshot == null) {
           return [];
         }
-        return _decodeTaskInstancesJson(snapshot.value as String);
+        if (date == null) {
+          return _decodeTaskInstancesJson(snapshot.value as String);
+        }
+        return _decodeTaskInstancesJson(snapshot.value as String).where(
+          (taskInstance) {
+            if (date == taskInstance.completedDate ||
+                date == taskInstance.skippedDate ||
+                date == taskInstance.rescheduledDate) {
+              return true;
+            } else if (date == taskInstance.initialDate &&
+                taskInstance.rescheduledDate == null) {
+              return true;
+            }
+            return false;
+          },
+        ).toList();
       },
     );
   }

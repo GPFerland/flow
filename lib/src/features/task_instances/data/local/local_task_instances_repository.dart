@@ -9,7 +9,7 @@ abstract class LocalTaskInstancesRepository {
 
   Future<TaskInstance?> fetchTaskInstance(String taskInstanceId);
 
-  Stream<List<TaskInstance>> watchTaskInstances();
+  Stream<List<TaskInstance>> watchTaskInstances({DateTime? date});
 
   Stream<TaskInstance?> watchTaskInstance(String taskInstanceId);
 }

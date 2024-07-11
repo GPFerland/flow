@@ -41,14 +41,6 @@ class TaskInstancesService {
     return remoteTaskInstancesRepository.fetchTaskInstances(user.uid);
   }
 
-  /// adds a task instance in the local or remote repository
-  /// depending on the user auth state
-  Future<void> addTaskInstance(TaskInstance taskInstance) async {
-    final taskInstances = await _fetchTaskInstances();
-    taskInstances.add(taskInstance);
-    await _setTaskInstances(taskInstances);
-  }
-
   /// sets a task instance in the local or remote repository
   /// depending on the user auth state
   Future<void> setTaskInstance(TaskInstance taskInstance) async {
@@ -94,7 +86,7 @@ class TaskInstancesService {
       return;
     }
 
-    await addTaskInstance(
+    await setTaskInstance(
       TaskInstance(
         id: const Uuid().v4(),
         taskId: task.id,
@@ -268,23 +260,17 @@ final taskInstancesStreamProvider = StreamProvider<List<TaskInstance>>(
   },
 );
 
-final dateTaskInstancesProvider =
+final dateTaskInstancesStreamProvider =
     StreamProvider.autoDispose.family<List<TaskInstance>, DateTime>(
   (ref, date) {
-    final taskInstances = ref.watch(taskInstancesStreamProvider).value ?? [];
-    final List<TaskInstance> dateTaskInstancesList = [];
-
-    for (TaskInstance taskInstance in taskInstances) {
-      if (date == taskInstance.completedDate ||
-          date == taskInstance.skippedDate ||
-          date == taskInstance.rescheduledDate) {
-        dateTaskInstancesList.add(taskInstance);
-      } else if (date == taskInstance.initialDate &&
-          taskInstance.rescheduledDate == null) {
-        dateTaskInstancesList.add(taskInstance);
-      }
+    final user = ref.watch(authStateChangesProvider).value;
+    if (user == null) {
+      return ref
+          .watch(localTaskInstancesRepositoryProvider)
+          .watchTaskInstances(date: date);
     }
-
-    return Stream.value(dateTaskInstancesList);
+    return ref
+        .watch(remoteTaskInstancesRepositoryProvider)
+        .watchTaskInstances(user.uid, date: date);
   },
 );

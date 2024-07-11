@@ -9,7 +9,7 @@ abstract class RemoteTaskInstancesRepository {
 
   Future<TaskInstance?> fetchTaskInstance(String uid, String taskInstanceId);
 
-  Stream<List<TaskInstance>> watchTaskInstances(String uid);
+  Stream<List<TaskInstance>> watchTaskInstances(String uid, {DateTime? date});
 
   Stream<TaskInstance?> watchTaskInstance(String uid, String taskInstanceId);
 }

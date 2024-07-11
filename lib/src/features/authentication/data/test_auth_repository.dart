@@ -25,7 +25,7 @@ class TestAuthRepository {
   ) async {
     // add a delay to simulate loading
     await delay(addDelay);
-    // check the given credentials agains each registered user
+    // check the given credentials against each registered user
     for (final user in _users) {
       // matching email and password
       if (user.email == email && user.password == password) {

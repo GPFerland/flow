@@ -36,8 +36,27 @@ class TestLocalTaskInstancesRepository implements LocalTaskInstancesRepository {
   }
 
   @override
-  Stream<List<TaskInstance>> watchTaskInstances() {
-    return _taskInstancesStreamController.stream;
+  Stream<List<TaskInstance>> watchTaskInstances({DateTime? date}) {
+    if (date == null) {
+      return _taskInstancesStreamController.stream;
+    }
+    return _taskInstancesStreamController.stream.map(
+      (taskInstances) {
+        return taskInstances.where(
+          (taskInstance) {
+            if (date == taskInstance.completedDate ||
+                date == taskInstance.skippedDate ||
+                date == taskInstance.rescheduledDate) {
+              return true;
+            } else if (date == taskInstance.initialDate &&
+                taskInstance.rescheduledDate == null) {
+              return true;
+            }
+            return false;
+          },
+        ).toList();
+      },
+    );
   }
 
   @override

@@ -46,8 +46,8 @@ void main() {
   }
 
   group('TaskInstancesService', () {
-    group('addTaskInstance', () {
-      test('null user, task instance added to local repo', () async {
+    group('setTaskInstance', () {
+      test('null user, new task instance set in local repo', () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
         final testTaskInstances = [testTaskInstance];
@@ -64,7 +64,7 @@ void main() {
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.addTaskInstance(testTaskInstance);
+        await tasksService.setTaskInstance(testTaskInstance);
         // verify
         verify(
           () => localTaskInstancesRepository.fetchTaskInstances(),
@@ -86,7 +86,7 @@ void main() {
           ),
         );
       });
-      test('non-null user, task instance added to remote repo', () async {
+      test('non-null user, new task instance set in remote repo', () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
         final testTaskInstances = [testTaskInstance];
@@ -108,7 +108,7 @@ void main() {
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.addTaskInstance(testTaskInstance);
+        await tasksService.setTaskInstance(testTaskInstance);
         // verify
         verify(
           () => remoteTaskInstancesRepository.fetchTaskInstances(
@@ -130,9 +130,7 @@ void main() {
           ),
         );
       });
-    });
-    group('setTaskInstance', () {
-      test('null user, task instance set in local repo', () async {
+      test('null user, existing task instance set in local repo', () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
         final testTaskInstances = [testTaskInstance];
@@ -175,7 +173,8 @@ void main() {
           ),
         );
       });
-      test('non-null user, task instance set in remote repo', () async {
+      test('non-null user, existing task instance set in remote repo',
+          () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
         final testTaskInstances = [testTaskInstance];

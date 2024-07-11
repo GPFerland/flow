@@ -1,5 +1,5 @@
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
-import 'package:flow/src/features/date_check_list/data/date_repository.dart';
+import 'package:flow/src/features/check_list/data/date_repository.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/task_instances/data/local/test_local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/test_remote_task_instances_repository.dart';

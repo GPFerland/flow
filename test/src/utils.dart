@@ -3,6 +3,11 @@ import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter/material.dart';
 
+enum SwipeDirection {
+  left,
+  right,
+}
+
 Task createTestTask({String id = '1'}) {
   return Task(
     id: id,

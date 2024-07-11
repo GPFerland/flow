@@ -49,7 +49,7 @@ class TestRemoteTaskInstancesRepository
   }
 
   @override
-  Stream<List<TaskInstance>> watchTaskInstances(String uid) {
+  Stream<List<TaskInstance>> watchTaskInstances(String uid, {DateTime? date}) {
     return _taskInstances.stream.map(
       (taskInstancesData) => taskInstancesData[uid] ?? [],
     );

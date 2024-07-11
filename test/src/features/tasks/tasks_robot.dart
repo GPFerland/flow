@@ -1,10 +1,10 @@
-import 'package:flow/src/features/date_check_list/data/date_repository.dart';
+import 'package:flow/src/features/check_list/data/date_repository.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
-import 'package:flow/src/features/tasks/presentation/task_screen/task_form/task_form.dart';
-import 'package:flow/src/features/tasks/presentation/task_screen/task_form/task_form_components/task_description_input_field.dart';
-import 'package:flow/src/features/tasks/presentation/task_screen/task_form/task_form_components/task_title_input_field.dart';
+import 'package:flow/src/features/tasks/presentation/task/form/task_form.dart';
+import 'package:flow/src/features/tasks/presentation/task/form/components/task_description_input_field.dart';
+import 'package:flow/src/features/tasks/presentation/task/form/components/task_title_input_field.dart';
 import 'package:flow/src/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,6 +56,14 @@ class TasksRobot {
     );
     expect(descriptionField, findsOneWidget);
     await widgetTester.enterText(descriptionField, description);
+  }
+
+  Future<void> selectIcon(String icon) async {
+    return Future.value();
+  }
+
+  Future<void> selectColor(String color) async {
+    return Future.value();
   }
 
   void expectFindTaskListCard(Task task) {

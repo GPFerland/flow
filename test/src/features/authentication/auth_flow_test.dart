@@ -7,8 +7,8 @@ void main() {
     final r = Robot(tester);
     await r.pumpFlowApp();
     await r.createAccountFromDateCheckList();
-    r.dateCheckListRobot.expectFindXTaskInstanceListCards(0);
+    r.dateCheckListRobot.expectFindXCheckListCards(0);
     await r.logoutFromDateCheckList();
-    r.dateCheckListRobot.expectFindXTaskInstanceListCards(0);
+    r.dateCheckListRobot.expectFindXCheckListCards(0);
   });
 }

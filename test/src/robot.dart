@@ -2,7 +2,7 @@ import 'package:flow/src/common_widgets/alert_dialogs.dart';
 import 'package:flow/src/common_widgets/buttons/add_item_icon_button.dart';
 import 'package:flow/src/common_widgets/buttons/custom_text_button.dart';
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
-import 'package:flow/src/features/date_check_list/presentation/date_app_bar/date_app_bar.dart';
+import 'package:flow/src/features/check_list/presentation/app_bar/check_list_app_bar.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_creation_service.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_sync_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
@@ -21,19 +21,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'features/authentication/auth_robot.dart';
-import 'features/date_check_list/date_check_list_robot.dart';
+import 'features/check_list/check_list_robot.dart';
 import 'features/tasks/tasks_robot.dart';
 
 class Robot {
   Robot(this.widgetTester)
       : authRobot = AuthRobot(widgetTester),
         tasksRobot = TasksRobot(widgetTester),
-        dateCheckListRobot = DateCheckListRobot(widgetTester);
+        dateCheckListRobot = CheckListRobot(widgetTester);
 
   final WidgetTester widgetTester;
   final AuthRobot authRobot;
   final TasksRobot tasksRobot;
-  final DateCheckListRobot dateCheckListRobot;
+  final CheckListRobot dateCheckListRobot;
 
   // pump the app
   Future<void> pumpFlowApp() async {
@@ -56,7 +56,9 @@ class Robot {
     // Override the required providers
     final providerContainer = ProviderContainer(
       overrides: [
-        authRepositoryProvider.overrideWithValue(authRepository),
+        authRepositoryProvider.overrideWithValue(
+          authRepository,
+        ),
         localTasksRepositoryProvider.overrideWithValue(
           localTasksRepository,
         ),
@@ -88,7 +90,7 @@ class Robot {
   // flows
   Future<void> signInFromDateCheckList() async {
     await dateCheckListRobot.openPopupMenu();
-    await tapKey(DateAppBar.signInMenuButtonKey);
+    await tapKey(CheckListAppBar.signInMenuButtonKey);
     await authRobot.enterEmail('test@email.com');
     await authRobot.enterPassword('password');
     await tapText('Submit');
@@ -96,7 +98,7 @@ class Robot {
 
   Future<void> createAccountFromDateCheckList() async {
     await dateCheckListRobot.openPopupMenu();
-    await tapKey(DateAppBar.signInMenuButtonKey);
+    await tapKey(CheckListAppBar.signInMenuButtonKey);
     await tapType(CustomTextButton);
     await authRobot.enterEmail('test@email.com');
     await authRobot.enterPassword('password');
@@ -105,22 +107,21 @@ class Robot {
 
   Future<void> logoutFromDateCheckList() async {
     await dateCheckListRobot.openPopupMenu();
-    await tapKey(DateAppBar.accountMenuButtonKey);
+    await tapKey(CheckListAppBar.accountMenuButtonKey);
     await tapText('Logout');
     await tapKey(kDialogDefaultKey);
   }
 
-  Future<void> createTaskFromDateCheckList(Task task) async {
-    await goToCreateTaskFromDateCheckList();
+  Future<void> createTaskFromCheckList(Task task) async {
+    await goToTaskScreenFromCheckList();
     await tasksRobot.enterTitle(task.title);
-    await tasksRobot.enterDescription(task.description);
-    await tapText('Submit');
+    await tapText('Create');
     await goBack();
   }
 
-  Future<void> goToCreateTaskFromDateCheckList() async {
+  Future<void> goToTaskScreenFromCheckList() async {
     await dateCheckListRobot.openPopupMenu();
-    await tapKey(DateAppBar.tasksMenuButtonKey);
+    await tapKey(CheckListAppBar.tasksMenuButtonKey);
     await tapType(AddItemIconButton);
   }
 
