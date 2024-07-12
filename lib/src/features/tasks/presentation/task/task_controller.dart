@@ -1,4 +1,3 @@
-import 'package:flow/src/features/check_list/data/date_repository.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
@@ -8,12 +7,10 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
   TaskController({
     required this.tasksService,
     required this.taskInstancesService,
-    required this.dateRepository,
   }) : super(const AsyncData(null));
 
   final TasksService tasksService;
   final TaskInstancesService taskInstancesService;
-  final DateRepository dateRepository;
 
   Future<void> submitTask({
     required Task task,
@@ -26,18 +23,7 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
         () => tasksService.setTask(task),
       );
       if (value.hasValue && !value.hasError) {
-        await taskInstancesService.createTaskInstance(
-          task,
-          dateRepository.dateBefore,
-        );
-        await taskInstancesService.createTaskInstance(
-          task,
-          dateRepository.date,
-        );
-        await taskInstancesService.createTaskInstance(
-          task,
-          dateRepository.dateAfter,
-        );
+        taskInstancesService.updateTasksInstances(task, oldTask);
       }
       if (mounted) {
         // * only set the state if the controller hasn't been disposed
@@ -82,7 +68,6 @@ final taskControllerProvider =
     return TaskController(
       tasksService: ref.watch(tasksServiceProvider),
       taskInstancesService: ref.watch(taskInstancesServiceProvider),
-      dateRepository: ref.watch(dateRepositoryProvider),
     );
   },
 );

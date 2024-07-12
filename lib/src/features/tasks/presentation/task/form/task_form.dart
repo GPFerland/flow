@@ -87,6 +87,7 @@ class _TaskFormState extends ConsumerState<TaskForm>
       final oldTask = widget.task;
       Task task = Task(
         id: oldTask != null ? oldTask.id : const Uuid().v4(),
+        priority: oldTask != null ? oldTask.priority : 0,
         title: _titleController.text,
         icon: _icon,
         color: _color,

@@ -1,6 +1,7 @@
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
+import 'package:flow/src/features/tasks/domain/mutable_task.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -35,6 +36,10 @@ class TasksService {
     return remoteTasksRepository.fetchTasks(user.uid);
   }
 
+  Future<void> setTasks(List<Task> tasks) async {
+    await _setTasks(tasks);
+  }
+
   /// sets a task in the local or remote repository
   /// depending on the user auth state
   Future<void> setTask(Task task) async {
@@ -42,6 +47,7 @@ class TasksService {
     final index = tasks.indexWhere((t) => t.id == task.id);
 
     if (index == -1) {
+      task = task.setPriority(tasks.length);
       tasks.add(task);
     } else {
       tasks[index] = task;

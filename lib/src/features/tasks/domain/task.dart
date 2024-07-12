@@ -1,8 +1,9 @@
 import 'dart:convert';
 
-import 'package:flow/src/utils/date.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+import 'package:flow/src/utils/date.dart';
 
 /// * The task identifier is an important concept and can have its own type.
 typedef TaskId = String;
@@ -10,6 +11,7 @@ typedef TaskId = String;
 class Task {
   Task({
     required this.id,
+    required this.priority,
     required this.createdOn,
     required this.title,
     required this.icon,
@@ -23,6 +25,7 @@ class Task {
   });
 
   final TaskId id;
+  final int priority;
   final DateTime createdOn;
   final String title;
   final IconData icon;
@@ -36,6 +39,7 @@ class Task {
 
   Task copyWith({
     TaskId? id,
+    int? priority,
     DateTime? createdOn,
     String? title,
     IconData? icon,
@@ -49,6 +53,7 @@ class Task {
   }) {
     return Task(
       id: id ?? this.id,
+      priority: priority ?? this.priority,
       createdOn: createdOn ?? this.createdOn,
       title: title ?? this.title,
       icon: icon ?? this.icon,
@@ -65,6 +70,7 @@ class Task {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
+      'priority': priority,
       'createdOn': createdOn.millisecondsSinceEpoch,
       'title': title,
       'icon': icon.codePoint,
@@ -81,6 +87,7 @@ class Task {
   factory Task.fromMap(Map<String, dynamic> map) {
     return Task(
       id: map['id'],
+      priority: map['priority']?.toInt() ?? 0,
       createdOn: DateTime.fromMillisecondsSinceEpoch(map['createdOn']),
       title: map['title'] ?? '',
       icon: IconData(map['icon'], fontFamily: 'MaterialIcons'),
@@ -102,7 +109,7 @@ class Task {
 
   @override
   String toString() {
-    return 'Task(id: $id, createdOn: $createdOn, title: $title, icon: $icon, color: $color, description: $description, untilCompleted: $untilCompleted, frequency: $frequency, date: $date, weekdays: $weekdays, monthdays: $monthdays)';
+    return 'Task(id: $id, priority: $priority, createdOn: $createdOn, title: $title, icon: $icon, color: $color, description: $description, untilCompleted: $untilCompleted, frequency: $frequency, date: $date, weekdays: $weekdays, monthdays: $monthdays)';
   }
 
   @override
@@ -111,6 +118,7 @@ class Task {
 
     return other is Task &&
         other.id == id &&
+        other.priority == priority &&
         other.createdOn == createdOn &&
         other.title == title &&
         other.icon == icon &&
@@ -126,6 +134,7 @@ class Task {
   @override
   int get hashCode {
     return id.hashCode ^
+        priority.hashCode ^
         createdOn.hashCode ^
         title.hashCode ^
         icon.hashCode ^

@@ -1,4 +1,5 @@
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
+import 'package:flow/src/features/check_list/data/date_repository.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
@@ -10,11 +11,13 @@ import 'package:uuid/uuid.dart';
 class TaskInstancesService {
   TaskInstancesService({
     required this.authRepository,
+    required this.dateRepository,
     required this.localTaskInstancesRepository,
     required this.remoteTaskInstancesRepository,
   });
 
   final TestAuthRepository authRepository;
+  final DateRepository dateRepository;
   final LocalTaskInstancesRepository localTaskInstancesRepository;
   final RemoteTaskInstancesRepository remoteTaskInstancesRepository;
 
@@ -56,6 +59,16 @@ class TaskInstancesService {
     await _setTaskInstances(taskInstances);
   }
 
+  /// removes a list of task instances from the local or remote repository
+  /// depending on the user auth state
+  Future<void> removeTaskInstances(List<TaskInstance> remove) async {
+    final taskInstances = await _fetchTaskInstances();
+    taskInstances.removeWhere(
+      (taskInstance) => remove.contains(taskInstance),
+    );
+    await _setTaskInstances(taskInstances);
+  }
+
   /// removes a task instance from the local or remote repository
   /// depending on the user auth state
   Future<void> removeTaskInstance(TaskInstance taskInstance) async {
@@ -71,18 +84,52 @@ class TaskInstancesService {
     await _setTaskInstances(taskInstances);
   }
 
+  // update the existing task instances for the task
+  Future<void> updateTasksInstances(Task task, Task? oldTask) async {
+    if (oldTask == null) {
+      await createTaskInstance(task, dateRepository.dateBefore);
+      await createTaskInstance(task, dateRepository.date);
+      await createTaskInstance(task, dateRepository.dateAfter);
+    } else {
+      await updateTaskInstances(task, oldTask);
+    }
+  }
+
+  Future<void> updateTaskInstances(Task task, Task oldTask) async {
+    if ((task.frequency == Frequency.once &&
+            oldTask.frequency == Frequency.once &&
+            task.date == oldTask.date) ||
+        (task.frequency == Frequency.daily &&
+            oldTask.frequency == Frequency.daily) ||
+        (task.frequency == Frequency.weekly &&
+            oldTask.frequency == Frequency.weekly &&
+            task.weekdays == oldTask.weekdays) ||
+        (task.frequency == Frequency.monthly &&
+            oldTask.frequency == Frequency.monthly &&
+            task.monthdays == oldTask.monthdays)) {
+      return;
+    }
+    final taskInstances = await _fetchTaskInstances();
+    final taskInstancesToRemove = taskInstances.where((taskInstance) {
+      if (taskInstance.initialDate.isAfter(getDateNoTimeToday()) &&
+          taskInstance.taskId == task.id) {
+        return true;
+      }
+      return false;
+    }).toList();
+    await removeTaskInstances(taskInstancesToRemove);
+    await createTaskInstance(task, dateRepository.dateBefore);
+    await createTaskInstance(task, dateRepository.date);
+    await createTaskInstance(task, dateRepository.dateAfter);
+  }
+
   // creates a task instance for the task on the date
   // if the task is scheduled for the date
   // and there is not an existing task instance for the task on the date
   Future<void> createTaskInstance(Task task, DateTime date) async {
-    if (!_taskScheduledOnDate(
-          task: task,
-          date: date,
-        ) ||
-        await _taskInstanceExistsForDate(
-          task: task,
-          date: date,
-        )) {
+    if (date.isBefore(task.createdOn) ||
+        !_taskScheduled(task: task, date: date) ||
+        await _taskInstanceExists(task: task, date: date)) {
       return;
     }
 
@@ -90,12 +137,13 @@ class TaskInstancesService {
       TaskInstance(
         id: const Uuid().v4(),
         taskId: task.id,
+        taskPriority: task.priority,
         initialDate: date,
       ),
     );
   }
 
-  bool _taskScheduledOnDate({
+  bool _taskScheduled({
     required Task task,
     required DateTime date,
   }) {
@@ -122,7 +170,7 @@ class TaskInstancesService {
     return false;
   }
 
-  Future<bool> _taskInstanceExistsForDate({
+  Future<bool> _taskInstanceExists({
     required Task task,
     required DateTime date,
   }) async {
@@ -235,6 +283,9 @@ final taskInstancesServiceProvider = Provider<TaskInstancesService>(
     return TaskInstancesService(
       authRepository: ref.watch(
         authRepositoryProvider,
+      ),
+      dateRepository: ref.watch(
+        dateRepositoryProvider,
       ),
       localTaskInstancesRepository: ref.watch(
         localTaskInstancesRepositoryProvider,

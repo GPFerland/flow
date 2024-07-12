@@ -445,7 +445,9 @@
 
 import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/constants/app_sizes.dart';
+import 'package:flow/src/features/check_list/data/task_visibility_repository.dart';
 import 'package:flow/src/features/check_list/presentation/check_list/card/check_list_card.dart';
+import 'package:flow/src/features/check_list/presentation/check_list_controller.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
@@ -477,30 +479,41 @@ class CheckList extends ConsumerWidget {
           );
         }
 
-        //todo - sort the list?
-        final sortedTaskInstances = dateTaskInstances;
-
         return Padding(
           padding: const EdgeInsets.only(top: Sizes.p8),
-          child: ListView.builder(
-            //todo - this is not good, figure out the good way to do this.
-            shrinkWrap: true,
-            // add one to display toggle button at the end of the list
-            itemCount: sortedTaskInstances.length + 1,
-            itemBuilder: (context, index) {
-              if (index < sortedTaskInstances.length) {
-                return CheckListCard(
-                  taskInstance: sortedTaskInstances[index],
-                );
-              } else if (index == sortedTaskInstances.length) {
-                //return toggleShowAllTaskInstances();
-                return TextButton(
-                  onPressed: () {},
-                  child: const Text('toggle tasks'),
-                );
-              } else {
-                return null;
-              }
+          child: Consumer(
+            builder: (context, listRef, child) {
+              final visibility =
+                  listRef.watch(taskVisibilityStateChangesProvider).value;
+              final sortedTaskInstances = listRef
+                  .read(checkListControllerProvider.notifier)
+                  .sortTaskInstances(List.from(dateTaskInstances));
+              return ListView.builder(
+                //todo - shrinkwrap is not good, figure it out bitch
+                shrinkWrap: true,
+                // add one to display toggle button at the end of the list
+                itemCount: sortedTaskInstances.length + 1,
+                itemBuilder: (context, index) {
+                  if (index < sortedTaskInstances.length) {
+                    return CheckListCard(
+                      taskInstance: sortedTaskInstances[index],
+                    );
+                  } else if (index == sortedTaskInstances.length) {
+                    return TextButton(
+                      onPressed: () {
+                        listRef
+                            .read(checkListControllerProvider.notifier)
+                            .toggleVisibility();
+                      },
+                      child: Text(visibility == TaskVisibility.all
+                          ? 'hide completed'
+                          : 'show all'),
+                    );
+                  } else {
+                    return null;
+                  }
+                },
+              );
             },
           ),
         );

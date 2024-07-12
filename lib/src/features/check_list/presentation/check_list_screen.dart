@@ -2,6 +2,8 @@ import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/features/check_list/data/date_repository.dart';
 import 'package:flow/src/features/check_list/presentation/app_bar/check_list_app_bar.dart';
 import 'package:flow/src/features/check_list/presentation/check_list/check_list.dart';
+import 'package:flow/src/features/check_list/presentation/check_list_controller.dart';
+import 'package:flow/src/utils/async_value_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:preload_page_view/preload_page_view.dart';
@@ -43,6 +45,11 @@ class _CheckListScreenState extends ConsumerState<CheckListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    ref.listen<AsyncValue<void>>(
+      checkListControllerProvider,
+      (_, state) => state.showAlertDialogOnError(context),
+    );
+
     return Scaffold(
       appBar: const CheckListAppBar(),
       body: PreloadPageView.builder(

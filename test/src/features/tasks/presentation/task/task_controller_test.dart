@@ -2,7 +2,6 @@
 library;
 
 import 'package:flow/src/features/tasks/presentation/task/task_controller.dart';
-import 'package:flow/src/utils/date.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -13,7 +12,6 @@ import '../../../../utils.dart';
 void main() {
   late MockTasksService tasksService;
   late MockTaskInstancesService taskInstancesService;
-  late MockDateRepository dateRepository;
   late TaskController taskFormController;
 
   setUpAll(() {
@@ -23,11 +21,9 @@ void main() {
   setUp(() {
     tasksService = MockTasksService();
     taskInstancesService = MockTaskInstancesService();
-    dateRepository = MockDateRepository();
     taskFormController = TaskController(
       tasksService: tasksService,
       taskInstancesService: taskInstancesService,
-      dateRepository: dateRepository,
     );
   });
 
@@ -46,15 +42,6 @@ void main() {
       when(() => taskInstancesService.createTaskInstance(any(), any()))
           .thenAnswer(
         (invocation) => Future.value(),
-      );
-      when(() => dateRepository.dateBefore).thenAnswer(
-        (_) => getDateNoTimeYesterday(),
-      );
-      when(() => dateRepository.date).thenAnswer(
-        (_) => getDateNoTimeToday(),
-      );
-      when(() => dateRepository.dateAfter).thenAnswer(
-        (_) => getDateNoTimeTomorrow(),
       );
       // expect later
       expectLater(

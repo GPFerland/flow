@@ -11,6 +11,7 @@ class TaskInstance {
   TaskInstance({
     required this.id,
     required this.taskId,
+    required this.taskPriority,
     this.completed = false,
     this.completedDate,
     this.skipped = false,
@@ -21,6 +22,7 @@ class TaskInstance {
 
   final TaskInstanceId id;
   final TaskId taskId;
+  final int taskPriority;
   final bool completed;
   final DateTime? completedDate;
   final bool skipped;
