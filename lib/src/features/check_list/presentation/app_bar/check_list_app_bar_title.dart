@@ -37,7 +37,7 @@ class CheckListAppBarTitle extends ConsumerWidget {
               );
             },
             child: Text(
-              getTitleDateString(date),
+              getFormattedDateString(date),
               key: dateTitleKey,
               style: getTitleLargeOnPrimary(context),
             ),

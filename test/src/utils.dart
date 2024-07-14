@@ -11,7 +11,7 @@ enum SwipeDirection {
 Task createTestTask({String id = '1'}) {
   return Task(
     id: id,
-    priority: 1,
+    priority: 0,
     createdOn: getDateNoTimeToday(),
     title: 'Fart',
     icon: Icons.check,
@@ -29,6 +29,8 @@ TaskInstance createTestTaskInstance({String id = '1'}) {
   return TaskInstance(
     id: id,
     taskId: '1',
+    taskPriority: 0,
+    untilCompleted: true,
     initialDate: getDateNoTimeToday(),
   );
 }

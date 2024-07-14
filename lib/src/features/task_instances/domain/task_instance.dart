@@ -12,6 +12,8 @@ class TaskInstance {
     required this.id,
     required this.taskId,
     required this.taskPriority,
+    required this.untilCompleted,
+    this.nextInstanceOn,
     this.completed = false,
     this.completedDate,
     this.skipped = false,
@@ -23,6 +25,8 @@ class TaskInstance {
   final TaskInstanceId id;
   final TaskId taskId;
   final int taskPriority;
+  final bool untilCompleted;
+  final DateTime? nextInstanceOn;
   final bool completed;
   final DateTime? completedDate;
   final bool skipped;
@@ -32,7 +36,7 @@ class TaskInstance {
 
   @override
   String toString() {
-    return 'TaskInstance(id: $id, taskId: $taskId, completed: $completed, completedDate: $completedDate, skipped: $skipped, skippedDate: $skippedDate, initialDate: $initialDate, rescheduledDate: $rescheduledDate)';
+    return 'TaskInstance(id: $id, taskId: $taskId, taskPriority: $taskPriority, untilCompleted: $untilCompleted, nextInstanceOn: $nextInstanceOn, completed: $completed, completedDate: $completedDate, skipped: $skipped, skippedDate: $skippedDate, initialDate: $initialDate, rescheduledDate: $rescheduledDate)';
   }
 
   @override
@@ -42,6 +46,9 @@ class TaskInstance {
     return other is TaskInstance &&
         other.id == id &&
         other.taskId == taskId &&
+        other.taskPriority == taskPriority &&
+        other.untilCompleted == untilCompleted &&
+        other.nextInstanceOn == nextInstanceOn &&
         other.completed == completed &&
         other.completedDate == completedDate &&
         other.skipped == skipped &&
@@ -54,6 +61,9 @@ class TaskInstance {
   int get hashCode {
     return id.hashCode ^
         taskId.hashCode ^
+        taskPriority.hashCode ^
+        untilCompleted.hashCode ^
+        nextInstanceOn.hashCode ^
         completed.hashCode ^
         completedDate.hashCode ^
         skipped.hashCode ^
@@ -66,6 +76,9 @@ class TaskInstance {
     return {
       'id': id,
       'taskId': taskId,
+      'taskPriority': taskPriority,
+      'untilCompleted': untilCompleted,
+      'nextInstanceOn': nextInstanceOn?.millisecondsSinceEpoch,
       'completed': completed,
       'completedDate': completedDate?.millisecondsSinceEpoch,
       'skipped': skipped,
@@ -79,6 +92,11 @@ class TaskInstance {
     return TaskInstance(
       id: map['id'],
       taskId: map['taskId'],
+      taskPriority: map['taskPriority']?.toInt() ?? 0,
+      untilCompleted: map['untilCompleted'] ?? false,
+      nextInstanceOn: map['nextInstanceOn'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['nextInstanceOn'])
+          : null,
       completed: map['completed'] ?? false,
       completedDate: map['completedDate'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['completedDate'])
@@ -102,6 +120,9 @@ class TaskInstance {
   TaskInstance copyWith({
     TaskInstanceId? id,
     TaskId? taskId,
+    int? taskPriority,
+    bool? untilCompleted,
+    ValueGetter<DateTime?>? nextInstanceOn,
     bool? completed,
     ValueGetter<DateTime?>? completedDate,
     bool? skipped,
@@ -112,6 +133,10 @@ class TaskInstance {
     return TaskInstance(
       id: id ?? this.id,
       taskId: taskId ?? this.taskId,
+      taskPriority: taskPriority ?? this.taskPriority,
+      untilCompleted: untilCompleted ?? this.untilCompleted,
+      nextInstanceOn:
+          nextInstanceOn != null ? nextInstanceOn() : this.nextInstanceOn,
       completed: completed ?? this.completed,
       completedDate:
           completedDate != null ? completedDate() : this.completedDate,

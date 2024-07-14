@@ -111,12 +111,12 @@ void main() {
         await r.tapKey(Frequency.once.tabKey);
 
         String dateToSelect = '11';
-        String expectedTitle = getTitleDateString(
+        String expectedTitle = getFormattedDateString(
           getDateNoTimeToday().copyWith(day: 11),
         );
         if (getDateNoTimeToday().day == 11) {
           dateToSelect = '22';
-          expectedTitle = getTitleDateString(
+          expectedTitle = getFormattedDateString(
             getDateNoTimeToday().copyWith(day: 22),
           );
         }

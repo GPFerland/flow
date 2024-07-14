@@ -42,7 +42,7 @@ class TasksService {
 
   /// sets a task in the local or remote repository
   /// depending on the user auth state
-  Future<void> setTask(Task task) async {
+  Future<Task> setTask(Task task) async {
     final tasks = await _fetchTasks();
     final index = tasks.indexWhere((t) => t.id == task.id);
 
@@ -54,6 +54,8 @@ class TasksService {
     }
 
     await _setTasks(tasks);
+
+    return task;
   }
 
   /// fetch tasks from the local or remote repository

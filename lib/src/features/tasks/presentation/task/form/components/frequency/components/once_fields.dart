@@ -82,7 +82,7 @@ class _OnceFieldsState extends State<OnceFields> {
                     color: Theme.of(context).colorScheme.primary,
                   ),
                   child: Text(
-                    getTitleDateString(date),
+                    getFormattedDateString(date),
                     style: getBodyMediumOnPrimary(context),
                     textAlign: TextAlign.center,
                     maxLines: 1,

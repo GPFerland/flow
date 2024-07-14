@@ -37,7 +37,7 @@ void main() {
       // setup
       final expectedTask = createTestTask();
       when(() => tasksService.setTask(expectedTask)).thenAnswer(
-        (_) => Future.value(),
+        (_) => Future.value(expectedTask),
       );
       when(() => taskInstancesService.createTaskInstance(any(), any()))
           .thenAnswer(

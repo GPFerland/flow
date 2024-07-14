@@ -213,7 +213,7 @@ enum Frequency {
       );
 }
 
-String getTitleDateString(DateTime date) {
+String getFormattedDateString(DateTime date) {
   DateTime formattedDate = getDateNoTime(date);
   if (formattedDate == getDateNoTimeToday()) {
     return 'Today';
@@ -270,4 +270,89 @@ Future<DateTime?> selectDate({
   }
 
   return null;
+}
+
+bool monthdayMatch(Monthday monthday, DateTime date) {
+  DateTime? tempDate;
+  int occurrenceNum = monthday.ordinal.index;
+  final firstDayOfMonth = DateTime(date.year, date.month, 1);
+  final lastDayOfMonth = DateTime(date.year, date.month + 1, 0);
+  final lastDayOfLastMonth = DateTime(date.year, date.month, 0);
+
+  if (monthday.weekday == Weekday.day) {
+    if (monthday.ordinal == Ordinal.last) {
+      tempDate = chooseLastDayOfMonth(
+        date,
+        lastDayOfMonth,
+        lastDayOfLastMonth,
+      );
+    } else {
+      tempDate = firstDayOfMonth.add(Duration(days: occurrenceNum));
+    }
+  } else {
+    if (monthday.ordinal == Ordinal.last) {
+      tempDate = chooseLastDayOfMonth(
+        date,
+        subtractTillWeekday(
+          lastDayOfMonth,
+          monthday.weekday.weekdayIndex,
+        ),
+        subtractTillWeekday(
+          lastDayOfLastMonth,
+          monthday.weekday.weekdayIndex,
+        ),
+      );
+    } else {
+      final firstWeekdayOfMonth = addTillWeekday(
+        firstDayOfMonth,
+        monthday.weekday.weekdayIndex,
+      );
+
+      int occurrenceCount = 0;
+      for (DateTime loopDate = firstWeekdayOfMonth;
+          loopDate.month == date.month;
+          loopDate = loopDate.add(const Duration(days: 7))) {
+        if (occurrenceCount == occurrenceNum) {
+          tempDate = loopDate;
+        }
+        occurrenceCount++;
+      }
+    }
+  }
+
+  if (tempDate == date) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+DateTime addTillWeekday(DateTime date, int dayOfWeekIndex) {
+  while (date.weekday != dayOfWeekIndex) {
+    date = date.add(
+      const Duration(days: 1),
+    );
+  }
+  return date;
+}
+
+DateTime subtractTillWeekday(DateTime date, int dayOfWeekIndex) {
+  while (date.weekday != dayOfWeekIndex) {
+    date = date.subtract(
+      const Duration(days: 1),
+    );
+  }
+  return date;
+}
+
+DateTime chooseLastDayOfMonth(
+  DateTime date,
+  DateTime lastDayOfMonth,
+  DateTime lastDayOfLastMonth,
+) {
+  if (date.isBefore(lastDayOfMonth)) {
+    return lastDayOfLastMonth;
+  } else {
+    return lastDayOfMonth;
+  }
 }

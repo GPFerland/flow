@@ -23,10 +23,10 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
         () => tasksService.setTask(task),
       );
       if (value.hasValue && !value.hasError) {
-        taskInstancesService.updateTasksInstances(task, oldTask);
+        taskInstancesService.updateTasksInstances(value.value!, oldTask);
       }
+      // * only set the state if the controller hasn't been disposed
       if (mounted) {
-        // * only set the state if the controller hasn't been disposed
         state = value;
         if (state.hasError == false) {
           onSuccess();
@@ -43,7 +43,7 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
   }) async {
     state = const AsyncLoading<void>();
 
-    AsyncValue<void> value = await AsyncValue.guard(
+    final value = await AsyncValue.guard(
       () async {
         // * attempt to delete the task instances associated with the task
         await taskInstancesService.removeTasksInstances(taskId);

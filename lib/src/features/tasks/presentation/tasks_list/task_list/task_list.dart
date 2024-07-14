@@ -55,15 +55,6 @@ class TaskList extends ConsumerWidget {
                 );
               },
             ),
-      // ListView.builder(
-      //   //todo - shrinkwrap is bullshit
-      //   shrinkWrap: true,
-      //   itemCount: tasks.length,
-      //   itemBuilder: (context, index) {
-      //     final task = tasks[index];
-      //     return TaskListCard(task: task);
-      //   },
-      // ),
     );
   }
 }

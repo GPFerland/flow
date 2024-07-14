@@ -23,10 +23,11 @@ class TaskListController extends StateNotifier<AsyncValue<void>> {
     tasks.insert(newIndex, movedTask);
 
     for (int i = 0; i < tasks.length; i++) {
-      tasks[i].setPriority(i);
+      tasks[i] = tasks[i].setPriority(i);
     }
 
-    tasksService.setTasks(tasks);
+    await tasksService.setTasks(tasks);
+    await taskInstancesService.updateTaskInstancesPriority(tasks);
   }
 }
 

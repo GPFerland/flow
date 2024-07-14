@@ -2,7 +2,9 @@ import 'package:flow/src/features/authentication/data/test_auth_repository.dart'
 import 'package:flow/src/features/check_list/data/date_repository.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/domain/mutable_task_instance.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
+import 'package:flow/src/features/tasks/domain/mutable_task.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -84,6 +86,20 @@ class TaskInstancesService {
     await _setTaskInstances(taskInstances);
   }
 
+  Future<void> updateTaskInstancesPriority(List<Task> tasks) async {
+    final taskInstances = await _fetchTaskInstances();
+    final List<TaskInstance> updatedTaskInstances = [];
+    for (TaskInstance taskInstance in taskInstances) {
+      if (taskInstance.initialDate.isBefore(getDateNoTimeToday())) {
+        updatedTaskInstances.add(taskInstance);
+        continue;
+      }
+      Task task = tasks.firstWhere((task) => task.id == taskInstance.taskId);
+      updatedTaskInstances.add(taskInstance.setTaskPriority(task.priority));
+    }
+    await _setTaskInstances(updatedTaskInstances);
+  }
+
   // update the existing task instances for the task
   Future<void> updateTasksInstances(Task task, Task? oldTask) async {
     if (oldTask == null) {
@@ -98,25 +114,34 @@ class TaskInstancesService {
   Future<void> updateTaskInstances(Task task, Task oldTask) async {
     if ((task.frequency == Frequency.once &&
             oldTask.frequency == Frequency.once &&
-            task.date == oldTask.date) ||
+            task.date == oldTask.date) &&
         (task.frequency == Frequency.daily &&
-            oldTask.frequency == Frequency.daily) ||
+            oldTask.frequency == Frequency.daily) &&
         (task.frequency == Frequency.weekly &&
             oldTask.frequency == Frequency.weekly &&
-            task.weekdays == oldTask.weekdays) ||
+            task.weekdays == oldTask.weekdays) &&
         (task.frequency == Frequency.monthly &&
             oldTask.frequency == Frequency.monthly &&
-            task.monthdays == oldTask.monthdays)) {
+            task.monthdays == oldTask.monthdays) &&
+        (task.untilCompleted == oldTask.untilCompleted)) {
       return;
     }
     final taskInstances = await _fetchTaskInstances();
-    final taskInstancesToRemove = taskInstances.where((taskInstance) {
-      if (taskInstance.initialDate.isAfter(getDateNoTimeToday()) &&
-          taskInstance.taskId == task.id) {
+    final matchingTaskInstances = taskInstances.where((taskInstance) {
+      if (taskInstance.taskId == task.id) {
+        //taskInstance.initialDate.isAfter(getDateNoTimeToday()) &&
         return true;
       }
       return false;
     }).toList();
+
+    final taskInstancesToRemove = matchingTaskInstances.where((taskInstance) {
+      if (taskInstance.initialDate.isAfter(getDateNoTimeToday())) {
+        return true;
+      }
+      return false;
+    }).toList();
+
     await removeTaskInstances(taskInstancesToRemove);
     await createTaskInstance(task, dateRepository.dateBefore);
     await createTaskInstance(task, dateRepository.date);
@@ -128,7 +153,7 @@ class TaskInstancesService {
   // and there is not an existing task instance for the task on the date
   Future<void> createTaskInstance(Task task, DateTime date) async {
     if (date.isBefore(task.createdOn) ||
-        !_taskScheduled(task: task, date: date) ||
+        !task.isScheduled(currentDate: date) ||
         await _taskInstanceExists(task: task, date: date)) {
       return;
     }
@@ -138,36 +163,11 @@ class TaskInstancesService {
         id: const Uuid().v4(),
         taskId: task.id,
         taskPriority: task.priority,
+        untilCompleted: task.untilCompleted,
+        nextInstanceOn: task.nextScheduledDate(date),
         initialDate: date,
       ),
     );
-  }
-
-  bool _taskScheduled({
-    required Task task,
-    required DateTime date,
-  }) {
-    switch (task.frequency) {
-      case Frequency.once:
-        if (date == task.date) {
-          return true;
-        }
-      case Frequency.daily:
-        return true;
-      case Frequency.weekly:
-        for (Weekday weekday in task.weekdays) {
-          if (weekday.weekdayIndex == date.weekday) {
-            return true;
-          }
-        }
-      case Frequency.monthly:
-        for (Monthday monthday in task.monthdays) {
-          if (_monthdayMatch(monthday, date)) {
-            return true;
-          }
-        }
-    }
-    return false;
   }
 
   Future<bool> _taskInstanceExists({
@@ -190,91 +190,6 @@ class TaskInstancesService {
     }
 
     return false;
-  }
-
-  bool _monthdayMatch(Monthday monthday, DateTime date) {
-    DateTime? tempDate;
-    int occurrenceNum = monthday.ordinal.index;
-    final firstDayOfMonth = DateTime(date.year, date.month, 1);
-    final lastDayOfMonth = DateTime(date.year, date.month + 1, 0);
-    final lastDayOfLastMonth = DateTime(date.year, date.month, 0);
-
-    if (monthday.weekday == Weekday.day) {
-      if (monthday.ordinal == Ordinal.last) {
-        tempDate = _chooseLastDayOfMonth(
-          date,
-          lastDayOfMonth,
-          lastDayOfLastMonth,
-        );
-      } else {
-        tempDate = firstDayOfMonth.add(Duration(days: occurrenceNum));
-      }
-    } else {
-      if (monthday.ordinal == Ordinal.last) {
-        tempDate = _chooseLastDayOfMonth(
-          date,
-          _subtractTillWeekday(
-            lastDayOfMonth,
-            monthday.weekday.weekdayIndex,
-          ),
-          _subtractTillWeekday(
-            lastDayOfLastMonth,
-            monthday.weekday.weekdayIndex,
-          ),
-        );
-      } else {
-        final firstWeekdayOfMonth = _addTillWeekday(
-          firstDayOfMonth,
-          monthday.weekday.weekdayIndex,
-        );
-
-        int occurrenceCount = 0;
-        for (DateTime loopDate = firstWeekdayOfMonth;
-            loopDate.month == date.month;
-            loopDate = loopDate.add(const Duration(days: 7))) {
-          if (occurrenceCount == occurrenceNum) {
-            tempDate = loopDate;
-          }
-          occurrenceCount++;
-        }
-      }
-    }
-
-    if (tempDate == date) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  DateTime _addTillWeekday(DateTime date, int dayOfWeekIndex) {
-    while (date.weekday != dayOfWeekIndex) {
-      date = date.add(
-        const Duration(days: 1),
-      );
-    }
-    return date;
-  }
-
-  DateTime _subtractTillWeekday(DateTime date, int dayOfWeekIndex) {
-    while (date.weekday != dayOfWeekIndex) {
-      date = date.subtract(
-        const Duration(days: 1),
-      );
-    }
-    return date;
-  }
-
-  DateTime _chooseLastDayOfMonth(
-    DateTime date,
-    DateTime lastDayOfMonth,
-    DateTime lastDayOfLastMonth,
-  ) {
-    if (date.isBefore(lastDayOfMonth)) {
-      return lastDayOfLastMonth;
-    } else {
-      return lastDayOfMonth;
-    }
   }
 }
 

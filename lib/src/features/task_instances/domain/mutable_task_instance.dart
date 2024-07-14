@@ -1,4 +1,5 @@
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
+import 'package:flow/src/utils/date.dart';
 
 /// Helper extension used to mutate the fields in a taskInstance object.
 extension MutableTaskInstance on TaskInstance {
@@ -27,5 +28,27 @@ extension MutableTaskInstance on TaskInstance {
     } else {
       return copyWith(skipped: true, skippedDate: () => date);
     }
+  }
+
+  TaskInstance setTaskPriority(int taskPriority) {
+    return copyWith(taskPriority: taskPriority);
+  }
+
+  bool isDisplayed(DateTime date) {
+    if (date == completedDate ||
+        date == skippedDate ||
+        date == rescheduledDate) {
+      return true;
+    } else if (date == initialDate && rescheduledDate == null) {
+      return true;
+    } else if (date == getDateNoTimeToday() &&
+        initialDate.isBefore(date) &&
+        untilCompleted &&
+        !completed &&
+        !skipped &&
+        !(rescheduledDate?.isAfter(date) == true)) {
+      return true;
+    }
+    return false;
   }
 }

@@ -18,7 +18,8 @@ void main() {
         (widgetTester) async {
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          String expectedTitleDate = getTitleDateString(getDateNoTimeToday());
+          String expectedTitleDate =
+              getFormattedDateString(getDateNoTimeToday());
           r.dateCheckListRobot.expectFindXCheckListCards(0);
           r.dateCheckListRobot.expectTitleDate(expectedTitleDate);
         },
@@ -40,7 +41,7 @@ void main() {
           );
           r.dateCheckListRobot.expectFindXCheckListCards(0);
           r.dateCheckListRobot.expectTitleDate(
-            getTitleDateString(getDateNoTimeTomorrow()),
+            getFormattedDateString(getDateNoTimeTomorrow()),
           );
         },
       );
@@ -56,7 +57,7 @@ void main() {
           );
           r.dateCheckListRobot.expectFindXCheckListCards(0);
           r.dateCheckListRobot.expectTitleDate(
-            getTitleDateString(getDateNoTimeYesterday()),
+            getFormattedDateString(getDateNoTimeYesterday()),
           );
         },
       );
@@ -72,7 +73,7 @@ void main() {
           );
           r.dateCheckListRobot.expectFindXCheckListCards(0);
           r.dateCheckListRobot.expectTitleDate(
-            getTitleDateString(
+            getFormattedDateString(
               getDateNoTimeToday().add(const Duration(days: 3)),
             ),
           );
@@ -90,7 +91,7 @@ void main() {
           );
           r.dateCheckListRobot.expectFindXCheckListCards(0);
           r.dateCheckListRobot.expectTitleDate(
-            getTitleDateString(
+            getFormattedDateString(
               getDateNoTimeToday().subtract(const Duration(days: 3)),
             ),
           );
@@ -107,12 +108,12 @@ void main() {
         (widgetTester) async {
           final r = Robot(widgetTester);
           String dateToSelect = '11';
-          String expectedTitle = getTitleDateString(
+          String expectedTitle = getFormattedDateString(
             getDateNoTimeToday().copyWith(day: 11),
           );
           if (getDateNoTimeToday().day == 11) {
             dateToSelect = '22';
-            expectedTitle = getTitleDateString(
+            expectedTitle = getFormattedDateString(
               getDateNoTimeToday().copyWith(day: 22),
             );
           }
@@ -148,7 +149,7 @@ void main() {
             SwipeDirection.left,
           );
           r.dateCheckListRobot.expectTitleDate(
-            getTitleDateString(
+            getFormattedDateString(
               getDateNoTimeToday().add(const Duration(days: 2)),
             ),
           );

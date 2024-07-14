@@ -1,5 +1,5 @@
 import 'package:email_validator/email_validator.dart';
-import 'package:flow/src/common_widgets/input_fields/input_fields_utils.dart';
+import 'package:flow/src/utils/input_fields_utils.dart';
 import 'package:flutter/material.dart';
 
 class EmailInputField extends StatelessWidget {

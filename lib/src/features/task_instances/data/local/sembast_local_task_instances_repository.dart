@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:collection/collection.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/domain/mutable_task_instance.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
@@ -87,19 +88,9 @@ class SembastLocalTaskInstancesRepository
         if (date == null) {
           return _decodeTaskInstancesJson(snapshot.value as String);
         }
-        return _decodeTaskInstancesJson(snapshot.value as String).where(
-          (taskInstance) {
-            if (date == taskInstance.completedDate ||
-                date == taskInstance.skippedDate ||
-                date == taskInstance.rescheduledDate) {
-              return true;
-            } else if (date == taskInstance.initialDate &&
-                taskInstance.rescheduledDate == null) {
-              return true;
-            }
-            return false;
-          },
-        ).toList();
+        return _decodeTaskInstancesJson(snapshot.value as String)
+            .where((taskInstance) => taskInstance.isDisplayed(date))
+            .toList();
       },
     );
   }

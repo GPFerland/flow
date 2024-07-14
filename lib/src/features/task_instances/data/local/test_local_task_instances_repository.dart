@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/domain/mutable_task_instance.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flow/src/utils/delay.dart';
 import 'package:rxdart/rxdart.dart';
@@ -44,15 +45,7 @@ class TestLocalTaskInstancesRepository implements LocalTaskInstancesRepository {
       (taskInstances) {
         return taskInstances.where(
           (taskInstance) {
-            if (date == taskInstance.completedDate ||
-                date == taskInstance.skippedDate ||
-                date == taskInstance.rescheduledDate) {
-              return true;
-            } else if (date == taskInstance.initialDate &&
-                taskInstance.rescheduledDate == null) {
-              return true;
-            }
-            return false;
+            return taskInstance.isDisplayed(date);
           },
         ).toList();
       },
