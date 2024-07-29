@@ -20,8 +20,6 @@ extension MutableTask on Task {
         return _getWeeklyFrequencyText();
       case Frequency.monthly:
         return _getMonthlyFrequencyText();
-      default:
-        return getFormattedDateString(date);
     }
   }
 
@@ -46,12 +44,12 @@ extension MutableTask on Task {
     if (monthdays.isEmpty) {
       return 'No days selected';
     } else if (monthdays.length == 1) {
-      return '${monthdays[0].ordinal.longhand} ${monthdays[0].weekday.longhand} of the Month';
+      return '${monthdays[0].ordinal.longhand} ${monthdays[0].weekday.longhand} of the month';
     }
     return 'Multiple days a month';
   }
 
-  bool isScheduled({required DateTime currentDate}) {
+  bool isScheduled(DateTime currentDate) {
     switch (frequency) {
       case Frequency.once:
         if (date == currentDate) {
@@ -95,7 +93,7 @@ extension MutableTask on Task {
           loopDate = loopDate.add(const Duration(days: 1));
         }
       case Frequency.monthly:
-        if (weekdays.isEmpty) {
+        if (monthdays.isEmpty) {
           return null;
         }
         DateTime loopDate =

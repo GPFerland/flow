@@ -1,7 +1,8 @@
 import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/constants/app_sizes.dart';
-import 'package:flow/src/features/check_list/presentation/check_list/card/components/check_list_card_checkbox.dart';
+import 'package:flow/src/features/check_list/presentation/check_list/components/card/components/check_list_card_checkbox.dart';
 import 'package:flow/src/features/check_list/presentation/reschedule_dialog/reschedule_dialog.dart';
+import 'package:flow/src/features/task_instances/domain/mutable_task_instance.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
@@ -16,9 +17,11 @@ class CheckListCard extends ConsumerWidget {
   const CheckListCard({
     super.key,
     required this.taskInstance,
+    required this.date,
   });
 
   final TaskInstance taskInstance;
+  final DateTime date;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,6 +30,12 @@ class CheckListCard extends ConsumerWidget {
     return AsyncValueWidget<Task?>(
       value: taskValue,
       data: (task) {
+        final trailingWidget = taskInstance.skipped
+            ? const Text('skipped')
+            : CheckListCardCheckbox(
+                taskInstance: taskInstance,
+              );
+
         return InkWell(
           borderRadius: BorderRadius.circular(Sizes.p12),
           customBorder: RoundedRectangleBorder(
@@ -58,6 +67,7 @@ class CheckListCard extends ConsumerWidget {
               ),
               child: Row(
                 children: [
+                  if (taskInstance.isOverdue(date)) const Icon(Icons.error),
                   TaskListCardIcon(
                     task: task!,
                   ),
@@ -67,9 +77,7 @@ class CheckListCard extends ConsumerWidget {
                       task.title,
                     ),
                   ),
-                  CheckListCardCheckbox(
-                    taskInstance: taskInstance,
-                  ),
+                  trailingWidget,
                 ],
               ),
             ),

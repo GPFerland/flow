@@ -17,6 +17,7 @@ class MonthlyFields extends StatefulWidget {
   static const ordinalDropdownKey = Key('ordinalDropdown');
   static const weekdayDropdownKey = Key('weekdayDropdown');
   static const plusIconButtonKey = Key('plusIconButton');
+  static const clearIconButtonKey = Key('clearIconButton');
 
   @override
   State<MonthlyFields> createState() => _MonthlyFieldsState();
@@ -118,6 +119,7 @@ class _MonthlyFieldsState extends State<MonthlyFields> {
                         ),
                       ),
                       IconButton(
+                        key: MonthlyFields.clearIconButtonKey,
                         icon: const Icon(Icons.clear),
                         color: Theme.of(context).colorScheme.onSurface,
                         onPressed: () {

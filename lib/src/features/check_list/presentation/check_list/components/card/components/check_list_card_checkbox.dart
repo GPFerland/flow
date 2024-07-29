@@ -26,9 +26,9 @@ class CheckListCardCheckbox extends ConsumerWidget {
       onChanged: isEnabled
           ? (bool? value) {
               final updatedTaskInstance = taskInstance.toggleCompleted(date);
-              ref.read(taskInstancesServiceProvider).setTaskInstance(
-                    updatedTaskInstance,
-                  );
+              ref.read(taskInstancesServiceProvider).setTaskInstances(
+                [updatedTaskInstance],
+              );
             }
           : null,
       activeColor: null,

@@ -21,9 +21,15 @@ class TasksService {
   Future<void> _setTasks(List<Task> tasks) async {
     final user = authRepository.currentUser;
     if (user == null) {
-      return await localTasksRepository.setTasks(tasks);
+      await localTasksRepository.setTasks(
+        tasks,
+      );
+    } else {
+      await remoteTasksRepository.setTasks(
+        user.uid,
+        tasks,
+      );
     }
-    await remoteTasksRepository.setTasks(user.uid, tasks);
   }
 
   /// fetch the tasks from the local or remote repository
@@ -32,40 +38,38 @@ class TasksService {
     final user = authRepository.currentUser;
     if (user == null) {
       return localTasksRepository.fetchTasks();
-    }
-    return remoteTasksRepository.fetchTasks(user.uid);
-  }
-
-  Future<void> setTasks(List<Task> tasks) async {
-    await _setTasks(tasks);
-  }
-
-  /// sets a task in the local or remote repository
-  /// depending on the user auth state
-  Future<Task> setTask(Task task) async {
-    final tasks = await _fetchTasks();
-    final index = tasks.indexWhere((t) => t.id == task.id);
-
-    if (index == -1) {
-      task = task.setPriority(tasks.length);
-      tasks.add(task);
     } else {
-      tasks[index] = task;
+      return remoteTasksRepository.fetchTasks(user.uid);
     }
-
-    await _setTasks(tasks);
-
-    return task;
   }
 
-  /// fetch tasks from the local or remote repository
-  /// depending on the user auth state
+  /// sets a list of tasks
+  Future<void> setTasks(List<Task> tasks) async {
+    final dbTasks = await _fetchTasks();
+
+    for (Task task in tasks) {
+      final index = dbTasks.indexWhere(
+        (dbTask) => dbTask.id == task.id,
+      );
+      if (index == -1) {
+        task = task.setPriority(dbTasks.length);
+        dbTasks.add(task);
+      } else {
+        dbTasks[index] = task;
+      }
+    }
+
+    dbTasks.sort((a, b) => a.priority.compareTo(b.priority));
+
+    await _setTasks(dbTasks);
+  }
+
+  /// fetch tasks
   Future<List<Task>> fetchTasks() async {
     return await _fetchTasks();
   }
 
-  /// removes a task from the local or remote repository
-  /// depending on the user auth state
+  /// remove task
   Future<void> removeTask(String taskId) async {
     final tasks = await _fetchTasks();
     tasks.removeWhere((task) => task.id == taskId);

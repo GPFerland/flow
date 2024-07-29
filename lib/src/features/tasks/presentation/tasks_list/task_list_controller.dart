@@ -18,6 +18,10 @@ class TaskListController extends StateNotifier<AsyncValue<void>> {
     int oldIndex,
     int newIndex,
   ) async {
+    if (oldIndex == newIndex) {
+      return;
+    }
+
     final Task movedTask = tasks.removeAt(oldIndex);
     newIndex = newIndex > oldIndex ? newIndex - 1 : newIndex;
     tasks.insert(newIndex, movedTask);
@@ -26,8 +30,17 @@ class TaskListController extends StateNotifier<AsyncValue<void>> {
       tasks[i] = tasks[i].setPriority(i);
     }
 
-    await tasksService.setTasks(tasks);
-    await taskInstancesService.updateTaskInstancesPriority(tasks);
+    state = const AsyncLoading<void>();
+    final value = await AsyncValue.guard(
+      () => tasksService.setTasks(tasks),
+    );
+    if (value.hasValue && !value.hasError) {
+      taskInstancesService.updateTaskInstancesPriority(tasks);
+    }
+    // * only set the state if the controller hasn't been disposed
+    if (mounted) {
+      state = value;
+    }
   }
 }
 

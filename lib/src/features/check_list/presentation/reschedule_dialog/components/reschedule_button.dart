@@ -34,8 +34,9 @@ class RescheduleButton extends ConsumerWidget {
           context: context,
           initialDate: currentDate,
           firstDate: taskInstance.initialDate,
-          lastDate:
-              taskInstance.nextInstanceOn?.subtract(const Duration(days: 1)),
+          lastDate: taskInstance.nextInstanceOn?.subtract(
+            const Duration(days: 1),
+          ),
         );
 
         if (newDate == null || newDate == currentDate) {

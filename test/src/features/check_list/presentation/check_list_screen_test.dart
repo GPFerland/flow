@@ -1,6 +1,7 @@
 import 'package:flow/src/constants/breakpoints.dart';
 import 'package:flow/src/features/check_list/presentation/app_bar/check_list_app_bar_title.dart';
 import 'package:flow/src/features/check_list/presentation/app_bar/check_list_app_bar.dart';
+import 'package:flow/src/features/check_list/presentation/check_list/components/toggle_visibility_button.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter/material.dart';
@@ -10,37 +11,29 @@ import '../../../robot.dart';
 import '../../../utils.dart';
 
 void main() {
-  group(
-    'CheckListScreen - startup',
-    () {
-      testWidgets(
-        'no tasks, date is today',
-        (widgetTester) async {
-          final r = Robot(widgetTester);
-          await r.pumpFlowApp();
-          String expectedTitleDate =
-              getFormattedDateString(getDateNoTimeToday());
-          r.dateCheckListRobot.expectFindXCheckListCards(0);
-          r.dateCheckListRobot.expectTitleDate(expectedTitleDate);
-        },
-      );
-    },
-  );
+  group('CheckListScreen', () {
+    group('startup', () {
+      testWidgets('no tasks, date is today', (widgetTester) async {
+        final r = Robot(widgetTester);
+        await r.pumpFlowApp();
+        String expectedTitleDate = getFormattedDateString(getDateNoTimeToday());
+        r.checkListRobot.expectFindXCheckListCards(0);
+        r.checkListRobot.expectTitleDate(expectedTitleDate);
+      });
+    });
 
-  group(
-    'CheckListScreen - swiping',
-    () {
+    group('swiping', () {
       testWidgets(
         'swipe left, no tasks, date is tomorrow',
         (widgetTester) async {
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          await r.dateCheckListRobot.swipeDateCheckListXTimes(
+          await r.checkListRobot.swipeDateCheckListXTimes(
             1,
             SwipeDirection.left,
           );
-          r.dateCheckListRobot.expectFindXCheckListCards(0);
-          r.dateCheckListRobot.expectTitleDate(
+          r.checkListRobot.expectFindXCheckListCards(0);
+          r.checkListRobot.expectTitleDate(
             getFormattedDateString(getDateNoTimeTomorrow()),
           );
         },
@@ -51,12 +44,12 @@ void main() {
         (widgetTester) async {
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          await r.dateCheckListRobot.swipeDateCheckListXTimes(
+          await r.checkListRobot.swipeDateCheckListXTimes(
             1,
             SwipeDirection.right,
           );
-          r.dateCheckListRobot.expectFindXCheckListCards(0);
-          r.dateCheckListRobot.expectTitleDate(
+          r.checkListRobot.expectFindXCheckListCards(0);
+          r.checkListRobot.expectTitleDate(
             getFormattedDateString(getDateNoTimeYesterday()),
           );
         },
@@ -67,12 +60,12 @@ void main() {
         (widgetTester) async {
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          await r.dateCheckListRobot.swipeDateCheckListXTimes(
+          await r.checkListRobot.swipeDateCheckListXTimes(
             3,
             SwipeDirection.left,
           );
-          r.dateCheckListRobot.expectFindXCheckListCards(0);
-          r.dateCheckListRobot.expectTitleDate(
+          r.checkListRobot.expectFindXCheckListCards(0);
+          r.checkListRobot.expectTitleDate(
             getFormattedDateString(
               getDateNoTimeToday().add(const Duration(days: 3)),
             ),
@@ -85,105 +78,120 @@ void main() {
         (widgetTester) async {
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          await r.dateCheckListRobot.swipeDateCheckListXTimes(
+          await r.checkListRobot.swipeDateCheckListXTimes(
             3,
             SwipeDirection.right,
           );
-          r.dateCheckListRobot.expectFindXCheckListCards(0);
-          r.dateCheckListRobot.expectTitleDate(
+          r.checkListRobot.expectFindXCheckListCards(0);
+          r.checkListRobot.expectTitleDate(
             getFormattedDateString(
               getDateNoTimeToday().subtract(const Duration(days: 3)),
             ),
           );
         },
       );
-    },
-  );
+    });
 
-  group(
-    'CheckListScreen - select date',
-    () {
+    group('select date', () {
       testWidgets(
         'tap date title, select the a different date, date is selected date',
         (widgetTester) async {
           final r = Robot(widgetTester);
-          String dateToSelect = '11';
+          int dateToSelect = 11;
+          DateTime today = getDateNoTimeToday();
           String expectedTitle = getFormattedDateString(
-            getDateNoTimeToday().copyWith(day: 11),
+            DateTime(today.year, today.month + 1, dateToSelect),
           );
-          if (getDateNoTimeToday().day == 11) {
-            dateToSelect = '22';
-            expectedTitle = getFormattedDateString(
-              getDateNoTimeToday().copyWith(day: 22),
-            );
-          }
           await r.pumpFlowApp();
           await r.tapType(CheckListAppBarTitle);
-          await r.tapText(dateToSelect);
+          await r.tapIcon(Icons.chevron_right);
+          await r.tapText(dateToSelect.toString());
           await r.tapText('OK');
-          r.dateCheckListRobot.expectTitleDate(expectedTitle);
+          r.checkListRobot.expectTitleDate(expectedTitle);
         },
       );
-    },
-  );
+    });
 
-  group(
-    'CheckListScreen - task instances',
-    () {
+    group('task instances', () {
       testWidgets(
-        'add a daily task, verify task instance displayed everyday',
+        'add a daily task, verify displayed everyday after creation date, NEVER before',
         (widgetTester) async {
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          final Task testTask =
-              createTestTask().copyWith(frequency: Frequency.daily);
+          final Task testTask = createTestTask().copyWith(
+            frequency: Frequency.daily,
+          );
           await r.goToTaskScreenFromCheckList();
           await r.tasksRobot.enterTitle(testTask.title);
           await r.tapKey(Frequency.daily.tabKey);
           await r.tapText('Create');
           r.tasksRobot.expectFindTaskListCard(testTask);
           await r.goBack();
-          r.dateCheckListRobot.expectFindXCheckListCards(1);
-          await r.dateCheckListRobot.swipeDateCheckListXTimes(
+          r.checkListRobot.expectFindXCheckListCards(1);
+          await r.checkListRobot.swipeDateCheckListXTimes(
             2,
             SwipeDirection.left,
           );
-          r.dateCheckListRobot.expectTitleDate(
+          r.checkListRobot.expectTitleDate(
             getFormattedDateString(
               getDateNoTimeToday().add(const Duration(days: 2)),
             ),
           );
-          r.dateCheckListRobot.expectFindXCheckListCards(1);
-          await r.dateCheckListRobot.swipeDateCheckListXTimes(
-            8,
+          r.checkListRobot.expectFindXCheckListCards(1);
+          await r.checkListRobot.swipeDateCheckListXTimes(
+            3,
             SwipeDirection.right,
           );
-          r.dateCheckListRobot.expectFindXCheckListCards(1);
+          r.checkListRobot.expectFindXCheckListCards(0);
         },
       );
-    },
-  );
+    });
 
-  group(
-    'CheckListScreen - complete',
-    () {
+    group('complete', () {
       testWidgets(
-        'add a once task, complete the task',
+        'add once task, complete task, tap hide completed, task hidden',
         (widgetTester) async {
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
           final Task task = createTestTask();
           await r.createTaskFromCheckList(task);
-          r.dateCheckListRobot.expectFindXCheckListCards(1);
+          r.checkListRobot.expectFindXCheckListCards(1);
           await r.tapType(Checkbox);
+          await r.tapKey(ToggleVisibilityButton.toggleVisibilityKey);
+          r.checkListRobot.expectFindXCheckListCards(0);
         },
       );
-    },
-  );
+      testWidgets(
+        'add once task, tap hide completed, complete task, task hidden',
+        (widgetTester) async {
+          final r = Robot(widgetTester);
+          await r.pumpFlowApp();
+          final Task task = createTestTask();
+          await r.createTaskFromCheckList(task);
+          r.checkListRobot.expectFindXCheckListCards(1);
+          await r.tapKey(ToggleVisibilityButton.toggleVisibilityKey);
+          await r.tapType(Checkbox);
+          r.checkListRobot.expectFindXCheckListCards(0);
+        },
+      );
+      testWidgets(
+        'add two once tasks, complete first task, tap hide completed, task hidden',
+        (widgetTester) async {
+          final r = Robot(widgetTester);
+          await r.pumpFlowApp();
+          final Task task1 = createTestTask();
+          await r.createTaskFromCheckList(task1);
+          final Task task2 = createTestTask(id: '2').copyWith(title: 'Poop');
+          await r.createTaskFromCheckList(task2);
+          r.checkListRobot.expectFindXCheckListCards(2);
+          await r.tapType(Checkbox);
+          await r.tapKey(ToggleVisibilityButton.toggleVisibilityKey);
+          r.checkListRobot.expectFindXCheckListCards(1);
+        },
+      );
+    });
 
-  group(
-    'CheckListScreen - reschedule',
-    () {
+    group('reschedule', () {
       testWidgets(
         'add a once task, verify reschedule',
         (widgetTester) async {
@@ -191,58 +199,59 @@ void main() {
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
           final Task task = createTestTask();
-          r.dateCheckListRobot.expectFindXCheckListCards(0);
+          r.checkListRobot.expectFindXCheckListCards(0);
           await r.createTaskFromCheckList(task);
-          r.dateCheckListRobot.expectFindXCheckListCards(1);
-          int dateToSelect = 11;
-          int todaysDate = getDateNoTimeToday().day;
-          if (todaysDate == dateToSelect) {
-            dateToSelect = 22;
-          }
+          r.checkListRobot.expectFindXCheckListCards(1);
+
+          String dateToSelect = '11';
+
           // run
-          await r.rescheduleTask(
-            task.title,
-            dateToSelect.toString(),
-          );
+          await r.tapText(task.title);
+          await r.tapText('Reschedule');
+          await r.tapIcon(Icons.chevron_right);
+          await r.tapText(dateToSelect);
+          await r.tapText('OK');
+
           // verify
-          r.dateCheckListRobot.expectFindXCheckListCards(0);
-          if (dateToSelect < todaysDate) {
-            await r.dateCheckListRobot.swipeDateCheckListXTimes(
-              todaysDate - dateToSelect,
-              SwipeDirection.right,
-            );
-          } else {
-            await r.dateCheckListRobot.swipeDateCheckListXTimes(
-              dateToSelect - todaysDate,
-              SwipeDirection.left,
-            );
-          }
-          r.dateCheckListRobot.expectFindXCheckListCards(1);
+          await r.tapType(CheckListAppBarTitle);
+          await r.tapIcon(Icons.chevron_right);
+          await r.tapText(dateToSelect);
+          await r.tapText('OK');
+          r.checkListRobot.expectFindXCheckListCards(1);
         },
       );
-    },
-  );
+    });
 
-  group(
-    'CheckListScreen - skip',
-    () {
+    group('skip', () {
       testWidgets(
-        'add a once task, skip the task',
+        'add daily task, skip task, tap hide completed, task hidden',
         (widgetTester) async {
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          final Task task = createTestTask();
+          final Task task = createTestTask(frequency: Frequency.daily);
           await r.createTaskFromCheckList(task);
-          r.dateCheckListRobot.expectFindXCheckListCards(1);
+          r.checkListRobot.expectFindXCheckListCards(1);
           await r.skipTask(task.title);
+          await r.tapKey(ToggleVisibilityButton.toggleVisibilityKey);
+          r.checkListRobot.expectFindXCheckListCards(0);
         },
       );
-    },
-  );
+      testWidgets(
+        'add daily task, tap hide completed, skip task, task hidden',
+        (widgetTester) async {
+          final r = Robot(widgetTester);
+          await r.pumpFlowApp();
+          final Task task = createTestTask(frequency: Frequency.daily);
+          await r.createTaskFromCheckList(task);
+          r.checkListRobot.expectFindXCheckListCards(1);
+          await r.tapKey(ToggleVisibilityButton.toggleVisibilityKey);
+          await r.skipTask(task.title);
+          r.checkListRobot.expectFindXCheckListCards(0);
+        },
+      );
+    });
 
-  group(
-    'CheckListScreen - edit',
-    () {
+    group('edit', () {
       testWidgets(
         'add a once task, on long press open edit task screen',
         (widgetTester) async {
@@ -250,17 +259,14 @@ void main() {
           await r.pumpFlowApp();
           final Task task = createTestTask();
           await r.createTaskFromCheckList(task);
-          r.dateCheckListRobot.expectFindXCheckListCards(1);
+          r.checkListRobot.expectFindXCheckListCards(1);
           await r.longPressText(task.title);
           await r.closePage();
         },
       );
-    },
-  );
+    });
 
-  group(
-    'CheckListScreen - app bar menu',
-    () {
+    group('app bar menu', () {
       testWidgets(
         'screen size is less than the tablet breakpoint, null user',
         (widgetTester) async {
@@ -271,10 +277,10 @@ void main() {
           );
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          await r.dateCheckListRobot.openPopupMenu();
+          await r.checkListRobot.openPopupMenu();
           await r.tapKey(CheckListAppBar.tasksMenuButtonKey);
           await r.goBack();
-          await r.dateCheckListRobot.openPopupMenu();
+          await r.checkListRobot.openPopupMenu();
           await r.tapKey(CheckListAppBar.signInMenuButtonKey);
           await r.closePage();
         },
@@ -290,12 +296,12 @@ void main() {
           );
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          await r.signInFromDateCheckList();
-          r.dateCheckListRobot.expectTitleDate('Today');
-          await r.dateCheckListRobot.openPopupMenu();
+          await r.signInFromCheckList();
+          r.checkListRobot.expectTitleDate('Today');
+          await r.checkListRobot.openPopupMenu();
           await r.tapKey(CheckListAppBar.tasksMenuButtonKey);
           await r.goBack();
-          await r.dateCheckListRobot.openPopupMenu();
+          await r.checkListRobot.openPopupMenu();
           await r.tapKey(CheckListAppBar.accountMenuButtonKey);
           await r.closePage();
         },
@@ -311,10 +317,10 @@ void main() {
           );
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          await r.dateCheckListRobot.openPopupMenu();
+          await r.checkListRobot.openPopupMenu();
           await r.tapKey(CheckListAppBar.tasksMenuButtonKey);
           await r.goBack();
-          await r.dateCheckListRobot.openPopupMenu();
+          await r.checkListRobot.openPopupMenu();
           await r.tapKey(CheckListAppBar.signInMenuButtonKey);
           await r.closePage();
         },
@@ -330,15 +336,15 @@ void main() {
           );
           final r = Robot(widgetTester);
           await r.pumpFlowApp();
-          await r.signInFromDateCheckList();
-          await r.dateCheckListRobot.openPopupMenu();
+          await r.signInFromCheckList();
+          await r.checkListRobot.openPopupMenu();
           await r.tapKey(CheckListAppBar.tasksMenuButtonKey);
           await r.goBack();
-          await r.dateCheckListRobot.openPopupMenu();
+          await r.checkListRobot.openPopupMenu();
           await r.tapKey(CheckListAppBar.accountMenuButtonKey);
           await r.closePage();
         },
       );
-    },
-  );
+    });
+  });
 }

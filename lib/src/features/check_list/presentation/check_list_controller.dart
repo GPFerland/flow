@@ -10,14 +10,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CheckListController extends StateNotifier<AsyncValue<void>> {
   CheckListController({
-    required this.taskVisibilityRepository,
     required this.dateRepository,
+    required this.taskVisibilityRepository,
     required this.tasksService,
     required this.taskInstancesService,
   }) : super(const AsyncData(null));
 
-  final TaskVisibilityRepository taskVisibilityRepository;
   final DateRepository dateRepository;
+  final TaskVisibilityRepository taskVisibilityRepository;
   final TasksService tasksService;
   final TaskInstancesService taskInstancesService;
 
@@ -69,7 +69,7 @@ class CheckListController extends StateNotifier<AsyncValue<void>> {
     state = const AsyncLoading();
     final updatedTaskInstance = taskInstance.reschedule(newDate);
     final value = await AsyncValue.guard(
-      () => taskInstancesService.setTaskInstance(updatedTaskInstance),
+      () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
     );
     // * only set the state if the controller hasn't been disposed
     if (mounted) {
@@ -89,7 +89,7 @@ class CheckListController extends StateNotifier<AsyncValue<void>> {
     state = const AsyncLoading();
     final updatedTaskInstance = taskInstance.toggleSkipped(dateRepository.date);
     final value = await AsyncValue.guard(
-      () => taskInstancesService.setTaskInstance(updatedTaskInstance),
+      () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
     );
     // * only set the state if the controller hasn't been disposed
     if (mounted) {

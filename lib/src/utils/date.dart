@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-/// Date formatter to be used in the app.
+/// Date formatter for app wide use
 final kDateFormatter = DateFormat('E, MMM d');
 
 enum Weekday {
@@ -77,50 +77,6 @@ enum Weekday {
       );
 }
 
-class Monthday {
-  const Monthday({
-    required this.weekday,
-    required this.ordinal,
-  });
-
-  final Weekday weekday;
-  final Ordinal ordinal;
-
-  Map<String, dynamic> toMap() {
-    return {
-      'weekday': weekday.toMap(),
-      'monthOrdinal': ordinal.toMap(),
-    };
-  }
-
-  factory Monthday.fromMap(Map<String, dynamic> map) {
-    return Monthday(
-      weekday: Weekday.fromMap(map['weekday']),
-      ordinal: Ordinal.fromMap(map['monthOrdinal']),
-    );
-  }
-
-  String toJson() => json.encode(toMap());
-
-  factory Monthday.fromJson(String source) =>
-      Monthday.fromMap(json.decode(source));
-
-  @override
-  String toString() => 'Monthday(weekday: $weekday, monthOrdinal: $ordinal)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is Monthday &&
-        other.weekday == weekday &&
-        other.ordinal == ordinal;
-  }
-
-  @override
-  int get hashCode => weekday.hashCode ^ ordinal.hashCode;
-}
-
 enum Ordinal {
   first(
     shorthand: '1st',
@@ -170,6 +126,50 @@ enum Ordinal {
   static Ordinal fromMap(Map<String, dynamic> map) => values.byName(
         map['monthOrdinal'],
       );
+}
+
+class Monthday {
+  const Monthday({
+    required this.weekday,
+    required this.ordinal,
+  });
+
+  final Weekday weekday;
+  final Ordinal ordinal;
+
+  Map<String, dynamic> toMap() {
+    return {
+      'weekday': weekday.toMap(),
+      'monthOrdinal': ordinal.toMap(),
+    };
+  }
+
+  factory Monthday.fromMap(Map<String, dynamic> map) {
+    return Monthday(
+      weekday: Weekday.fromMap(map['weekday']),
+      ordinal: Ordinal.fromMap(map['monthOrdinal']),
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory Monthday.fromJson(String source) =>
+      Monthday.fromMap(json.decode(source));
+
+  @override
+  String toString() => 'Monthday(weekday: $weekday, monthOrdinal: $ordinal)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is Monthday &&
+        other.weekday == weekday &&
+        other.ordinal == ordinal;
+  }
+
+  @override
+  int get hashCode => weekday.hashCode ^ ordinal.hashCode;
 }
 
 enum Frequency {
@@ -234,10 +234,6 @@ DateTime getDateNoTime(DateTime date) {
   );
 }
 
-String getDateNoTimeAsString(DateTime date) {
-  return getDateNoTime(date).toIso8601String();
-}
-
 DateTime getDateNoTimeToday() {
   return getDateNoTime(DateTime.now());
 }
@@ -250,6 +246,7 @@ DateTime getDateNoTimeTomorrow() {
   return getDateNoTimeToday().add(const Duration(days: 1));
 }
 
+//todo - should this function live somewhere else?
 Future<DateTime?> selectDate({
   required BuildContext context,
   required DateTime initialDate,
@@ -261,7 +258,7 @@ Future<DateTime?> selectDate({
   final DateTime? picked = await showDatePicker(
     context: context,
     initialDate: initialDate,
-    firstDate: firstDate ?? today.subtract(const Duration(days: 31)),
+    firstDate: firstDate ?? today.subtract(const Duration(days: 365 * 100)),
     lastDate: lastDate ?? today.add(const Duration(days: 365 * 100)),
   );
 
@@ -294,18 +291,18 @@ bool monthdayMatch(Monthday monthday, DateTime date) {
       tempDate = chooseLastDayOfMonth(
         date,
         subtractTillWeekday(
-          lastDayOfMonth,
-          monthday.weekday.weekdayIndex,
+          date: lastDayOfMonth,
+          weekdayIndex: monthday.weekday.weekdayIndex,
         ),
         subtractTillWeekday(
-          lastDayOfLastMonth,
-          monthday.weekday.weekdayIndex,
+          date: lastDayOfLastMonth,
+          weekdayIndex: monthday.weekday.weekdayIndex,
         ),
       );
     } else {
       final firstWeekdayOfMonth = addTillWeekday(
-        firstDayOfMonth,
-        monthday.weekday.weekdayIndex,
+        date: firstDayOfMonth,
+        weekdayIndex: monthday.weekday.weekdayIndex,
       );
 
       int occurrenceCount = 0;
@@ -327,20 +324,36 @@ bool monthdayMatch(Monthday monthday, DateTime date) {
   }
 }
 
-DateTime addTillWeekday(DateTime date, int dayOfWeekIndex) {
-  while (date.weekday != dayOfWeekIndex) {
+DateTime addTillWeekday({
+  required DateTime date,
+  required int weekdayIndex,
+  int occurrenceNum = 1,
+}) {
+  int i = 0;
+  while (i < occurrenceNum) {
     date = date.add(
       const Duration(days: 1),
     );
+    if (date.weekday == weekdayIndex) {
+      i += 1;
+    }
   }
   return date;
 }
 
-DateTime subtractTillWeekday(DateTime date, int dayOfWeekIndex) {
-  while (date.weekday != dayOfWeekIndex) {
+DateTime subtractTillWeekday({
+  required DateTime date,
+  required int weekdayIndex,
+  int occurrenceNum = 1,
+}) {
+  int i = 0;
+  while (i < occurrenceNum) {
     date = date.subtract(
       const Duration(days: 1),
     );
+    if (date.weekday == weekdayIndex) {
+      i += 1;
+    }
   }
   return date;
 }

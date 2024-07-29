@@ -1,6 +1,6 @@
 import 'package:flow/src/features/check_list/presentation/app_bar/compact_menu_buttons.dart';
 import 'package:flow/src/features/check_list/presentation/check_list_screen.dart';
-import 'package:flow/src/features/check_list/presentation/check_list/card/check_list_card.dart';
+import 'package:flow/src/features/check_list/presentation/check_list/components/card/check_list_card.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../utils.dart';

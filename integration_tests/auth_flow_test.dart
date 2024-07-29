@@ -11,13 +11,13 @@ void main() {
     final r = Robot(tester);
     await r.pumpFlowApp();
     //r.expectFindAllProductCards();
-    await r.dateCheckListRobot.openPopupMenu();
+    await r.checkListRobot.openPopupMenu();
     await r.tapKey(CheckListAppBar.signInMenuButtonKey);
     await r.authRobot.enterEmail('test@email.com');
     await r.authRobot.enterPassword('password');
     await r.tapText('Create');
     //r.expectFindAllProductCards();
-    await r.dateCheckListRobot.openPopupMenu();
+    await r.checkListRobot.openPopupMenu();
     await r.tapKey(CheckListAppBar.accountMenuButtonKey);
     await r.tapText('Logout');
     await r.tapText('Logout');

@@ -13,6 +13,7 @@ class TaskList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasksValue = ref.watch(tasksStreamProvider);
+    final state = ref.watch(taskListControllerProvider);
 
     return AsyncValueWidget(
       value: tasksValue,
@@ -29,6 +30,7 @@ class TaskList extends ConsumerWidget {
                   task: tasks[index],
                 );
               },
+              buildDefaultDragHandles: !state.isLoading,
               onReorder: (oldIndex, newIndex) {
                 ref.read(taskListControllerProvider.notifier).reorderTasks(
                       tasks,

@@ -35,18 +35,42 @@ extension MutableTaskInstance on TaskInstance {
   }
 
   bool isDisplayed(DateTime date) {
-    if (date == completedDate ||
-        date == skippedDate ||
+    if (isOverdue(date)) {
+      return true;
+    }
+
+    if (isScheduled(date)) {
+      return true;
+    }
+
+    if (untilCompleted &&
+        date.isBefore(getDateNoTimeToday()) &&
+        ((completed && date == completedDate) ||
+            (skipped && date == skippedDate))) {
+      return true;
+    }
+
+    return false;
+  }
+
+  bool isScheduled(DateTime date) {
+    if ((date == initialDate && rescheduledDate == null) ||
         date == rescheduledDate) {
       return true;
-    } else if (date == initialDate && rescheduledDate == null) {
-      return true;
-    } else if (date == getDateNoTimeToday() &&
+    }
+    return false;
+  }
+
+  bool isOverdue(DateTime date) {
+    final today = getDateNoTimeToday();
+    final dayBeforeNext = nextInstanceOn?.subtract(const Duration(days: 1));
+    if (untilCompleted &&
+        (date == today || (date.isBefore(today) && date == dayBeforeNext)) &&
         initialDate.isBefore(date) &&
-        untilCompleted &&
+        (rescheduledDate == null || rescheduledDate!.isBefore(date)) &&
+        (nextInstanceOn == null || date.isBefore(nextInstanceOn!)) &&
         !completed &&
-        !skipped &&
-        !(rescheduledDate?.isAfter(date) == true)) {
+        !skipped) {
       return true;
     }
     return false;

@@ -16,6 +16,7 @@ import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart
 import 'package:flow/src/features/tasks/data/remote/test_remote_tasks_repository.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/flow_app.dart';
+import 'package:flow/src/utils/date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -28,12 +29,12 @@ class Robot {
   Robot(this.widgetTester)
       : authRobot = AuthRobot(widgetTester),
         tasksRobot = TasksRobot(widgetTester),
-        dateCheckListRobot = CheckListRobot(widgetTester);
+        checkListRobot = CheckListRobot(widgetTester);
 
   final WidgetTester widgetTester;
   final AuthRobot authRobot;
   final TasksRobot tasksRobot;
-  final CheckListRobot dateCheckListRobot;
+  final CheckListRobot checkListRobot;
 
   // pump the app
   Future<void> pumpFlowApp() async {
@@ -88,16 +89,16 @@ class Robot {
   }
 
   // flows
-  Future<void> signInFromDateCheckList() async {
-    await dateCheckListRobot.openPopupMenu();
+  Future<void> signInFromCheckList() async {
+    await checkListRobot.openPopupMenu();
     await tapKey(CheckListAppBar.signInMenuButtonKey);
     await authRobot.enterEmail('test@email.com');
     await authRobot.enterPassword('password');
     await tapText('Submit');
   }
 
-  Future<void> createAccountFromDateCheckList() async {
-    await dateCheckListRobot.openPopupMenu();
+  Future<void> createAccountFromCheckList() async {
+    await checkListRobot.openPopupMenu();
     await tapKey(CheckListAppBar.signInMenuButtonKey);
     await tapType(CustomTextButton);
     await authRobot.enterEmail('test@email.com');
@@ -105,8 +106,8 @@ class Robot {
     await tapText('Create an account');
   }
 
-  Future<void> logoutFromDateCheckList() async {
-    await dateCheckListRobot.openPopupMenu();
+  Future<void> logoutFromCheckList() async {
+    await checkListRobot.openPopupMenu();
     await tapKey(CheckListAppBar.accountMenuButtonKey);
     await tapText('Logout');
     await tapKey(kDialogDefaultKey);
@@ -115,22 +116,24 @@ class Robot {
   Future<void> createTaskFromCheckList(Task task) async {
     await goToTaskScreenFromCheckList();
     await tasksRobot.enterTitle(task.title);
+    switch (task.frequency) {
+      case Frequency.once:
+        await tapKey(Frequency.once.tabKey);
+      case Frequency.daily:
+        await tapKey(Frequency.daily.tabKey);
+      case Frequency.weekly:
+        await tapKey(Frequency.weekly.tabKey);
+      case Frequency.monthly:
+        await tapKey(Frequency.monthly.tabKey);
+    }
     await tapText('Create');
     await goBack();
   }
 
   Future<void> goToTaskScreenFromCheckList() async {
-    await dateCheckListRobot.openPopupMenu();
+    await checkListRobot.openPopupMenu();
     await tapKey(CheckListAppBar.tasksMenuButtonKey);
     await tapType(AddItemIconButton);
-  }
-
-  Future<void> rescheduleTask(String taskTitle, String date) async {
-    await tapText(taskTitle);
-    await tapText('Scheduled');
-    await tapText(date);
-    await tapText('OK');
-    await tapText('Save');
   }
 
   Future<void> skipTask(String taskTitle) async {
@@ -150,6 +153,13 @@ class Robot {
   // generic actions
   Future<void> tapText(String text) async {
     final finder = find.text(text);
+    expect(finder, findsOneWidget);
+    await widgetTester.tap(finder);
+    await widgetTester.pumpAndSettle();
+  }
+
+  Future<void> tapIcon(IconData icon) async {
+    final finder = find.widgetWithIcon(IconButton, icon);
     expect(finder, findsOneWidget);
     await widgetTester.tap(finder);
     await widgetTester.pumpAndSettle();

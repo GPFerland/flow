@@ -2,7 +2,8 @@ import 'package:collection/collection.dart';
 import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/features/check_list/data/task_visibility_repository.dart';
-import 'package:flow/src/features/check_list/presentation/check_list/card/check_list_card.dart';
+import 'package:flow/src/features/check_list/presentation/check_list/components/card/check_list_card.dart';
+import 'package:flow/src/features/check_list/presentation/check_list/components/toggle_visibility_button.dart';
 import 'package:flow/src/features/check_list/presentation/check_list_controller.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
@@ -172,6 +173,7 @@ class _CheckListState extends ConsumerState<CheckList>
         child: CheckListCard(
           key: ValueKey((item as TaskInstance).id),
           taskInstance: item,
+          date: widget.date,
         ),
       ),
     );
@@ -200,8 +202,7 @@ class _CheckListState extends ConsumerState<CheckList>
           padding: const EdgeInsets.only(top: Sizes.p8),
           child: Consumer(
             builder: (context, listRef, child) {
-              final visibility =
-                  listRef.watch(taskVisibilityStateChangesProvider).value;
+              listRef.watch(taskVisibilityStateChangesProvider).value;
               final sortedTaskInstances = listRef
                   .read(checkListControllerProvider.notifier)
                   .sortTaskInstances(List.from(dateTaskInstances));
@@ -213,22 +214,14 @@ class _CheckListState extends ConsumerState<CheckList>
                   AnimatedList(
                     key: _itemListKey,
                     initialItemCount: _items.length,
+                    // todo - shrinkWrap is ass
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index, animation) {
                       return _buildItem(_items[index], index, animation);
                     },
                   ),
-                  TextButton(
-                    onPressed: () {
-                      listRef
-                          .read(checkListControllerProvider.notifier)
-                          .toggleVisibility();
-                    },
-                    child: Text(visibility == TaskVisibility.all
-                        ? 'hide completed'
-                        : 'show all'),
-                  ),
+                  const ToggleVisibilityButton(),
                 ],
               );
             },

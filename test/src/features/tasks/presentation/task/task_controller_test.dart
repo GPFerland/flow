@@ -12,16 +12,13 @@ import '../../../../utils.dart';
 void main() {
   late MockTasksService tasksService;
   late MockTaskInstancesService taskInstancesService;
-  late TaskController taskFormController;
-
-  setUpAll(() {
-    registerFallbackValue(createTestTask());
-  });
+  late TaskController taskController;
 
   setUp(() {
+    registerFallbackValue(createTestTask());
     tasksService = MockTasksService();
     taskInstancesService = MockTaskInstancesService();
-    taskFormController = TaskController(
+    taskController = TaskController(
       tasksService: tasksService,
       taskInstancesService: taskInstancesService,
     );
@@ -29,45 +26,46 @@ void main() {
 
   group('TaskController', () {
     test('initial state is AsyncValue.data', () {
-      verifyNever(() => tasksService.setTask(any()));
-      expect(taskFormController.state, const AsyncData<void>(null));
+      verifyNever(() => tasksService.setTasks(any()));
+      expect(taskController.state, const AsyncData<void>(null));
     });
 
     test('submitTask success', () async {
       // setup
       final expectedTask = createTestTask();
-      when(() => tasksService.setTask(expectedTask)).thenAnswer(
-        (_) => Future.value(expectedTask),
+      when(() => tasksService.setTasks([expectedTask])).thenAnswer(
+        (_) => Future.value(),
       );
-      when(() => taskInstancesService.createTaskInstance(any(), any()))
+      when(() => taskInstancesService.updateTasksInstances(any(), any()))
           .thenAnswer(
         (invocation) => Future.value(),
       );
       // expect later
       expectLater(
-        taskFormController.stream,
+        taskController.stream,
         emitsInOrder(const [
           AsyncLoading<void>(),
+          AsyncData<void>(null),
         ]),
       );
       // run
-      await taskFormController.submitTask(
+      await taskController.submitTask(
         task: expectedTask,
         oldTask: null,
         onSuccess: () {},
       );
       // verify
-      verify(() => tasksService.setTask(expectedTask)).called(1);
+      verify(() => tasksService.setTasks([expectedTask])).called(1);
     });
 
     test('submitTask failure', () async {
       // setup
       final expectedTask = createTestTask();
       final exception = Exception('Connection failed');
-      when(() => tasksService.setTask(expectedTask)).thenThrow(exception);
+      when(() => tasksService.setTasks([expectedTask])).thenThrow(exception);
       // expect later
       expectLater(
-        taskFormController.stream,
+        taskController.stream,
         emitsInOrder([
           const AsyncLoading<void>(),
           predicate<AsyncValue<void>>((value) {
@@ -77,13 +75,27 @@ void main() {
         ]),
       );
       // run
-      await taskFormController.submitTask(
+      await taskController.submitTask(
         task: expectedTask,
         oldTask: null,
         onSuccess: () {},
       );
       // verify
-      verify(() => tasksService.setTask(expectedTask)).called(1);
+      verify(() => tasksService.setTasks([expectedTask])).called(1);
+    });
+
+    test('submitTask no change', () async {
+      // setup
+      final expectedTask = createTestTask();
+      // run
+      await taskController.submitTask(
+        task: expectedTask,
+        oldTask: expectedTask.copyWith(),
+        onSuccess: () {},
+      );
+      // verify
+      verifyNever(() => tasksService.setTasks(any()));
+      verifyNever(() => taskInstancesService.setTaskInstances(any()));
     });
 
     test('deleteTask success', () async {
@@ -98,13 +110,14 @@ void main() {
       );
       // expect later
       expectLater(
-        taskFormController.stream,
+        taskController.stream,
         emitsInOrder(const [
           AsyncLoading<void>(),
+          AsyncData<void>(null),
         ]),
       );
       // run
-      await taskFormController.deleteTask(
+      await taskController.deleteTask(
         taskId: expectedTask.id,
         onSuccess: () {},
       );
@@ -128,7 +141,7 @@ void main() {
       when(() => tasksService.removeTask(expectedTask.id)).thenThrow(exception);
       // expect later
       expectLater(
-        taskFormController.stream,
+        taskController.stream,
         emitsInOrder([
           const AsyncLoading<void>(),
           predicate<AsyncValue<void>>((value) {
@@ -138,7 +151,7 @@ void main() {
         ]),
       );
       // run
-      await taskFormController.deleteTask(
+      await taskController.deleteTask(
         taskId: expectedTask.id,
         onSuccess: () {},
       );

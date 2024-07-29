@@ -8,7 +8,10 @@ enum SwipeDirection {
   right,
 }
 
-Task createTestTask({String id = '1'}) {
+Task createTestTask({
+  String id = '1',
+  Frequency frequency = Frequency.once,
+}) {
   return Task(
     id: id,
     priority: 0,
@@ -18,7 +21,7 @@ Task createTestTask({String id = '1'}) {
     color: Colors.deepPurple,
     description: 'Fart in the Morning',
     untilCompleted: true,
-    frequency: Frequency.once,
+    frequency: frequency,
     date: getDateNoTimeToday(),
     weekdays: [],
     monthdays: [],

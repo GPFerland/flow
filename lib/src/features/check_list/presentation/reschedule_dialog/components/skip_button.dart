@@ -23,7 +23,7 @@ class SkipButton extends ConsumerWidget {
     }
 
     return PrimaryButton(
-      text: 'Skip'.hardcoded,
+      text: taskInstance.skipped ? 'Un-skip'.hardcoded : 'Skip'.hardcoded,
       isLoading: state.isLoading,
       onPressed: () {
         ref.read(checkListControllerProvider.notifier).skipTaskInstance(

@@ -59,7 +59,7 @@ void main() {
       for (final task in tasks) {
         for (final date in testDates) {
           when(
-            () => taskInstancesService.createTaskInstance(task, date),
+            () => taskInstancesService.createTaskInstances(task, [date]),
           ).thenAnswer(
             (_) => Future.value(),
           );
@@ -72,13 +72,13 @@ void main() {
       //verify
       if (tasks.isEmpty) {
         verifyNever(
-          () => taskInstancesService.createTaskInstance(any(), any()),
+          () => taskInstancesService.createTaskInstances(any(), any()),
         );
       } else {
         for (final task in tasks) {
           for (final date in testDates) {
             verify(
-              () => taskInstancesService.createTaskInstance(task, date),
+              () => taskInstancesService.createTaskInstances(task, [date]),
             ).called(1);
           }
         }

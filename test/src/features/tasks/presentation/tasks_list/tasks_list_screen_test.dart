@@ -18,7 +18,7 @@ void main() {
         final r = Robot(widgetTester);
         await r.pumpFlowApp();
         await r.createTaskFromCheckList(task);
-        await r.dateCheckListRobot.openPopupMenu();
+        await r.checkListRobot.openPopupMenu();
         await r.tapKey(CheckListAppBar.tasksMenuButtonKey);
         await r.tapText(task.title);
         await r.closePage();
