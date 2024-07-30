@@ -8,8 +8,10 @@ import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flow/src/features/tasks/domain/mutable_task.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/utils/date.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:uuid/uuid.dart';
+
+part 'task_instances_service.g.dart';
 
 class TaskInstancesService {
   TaskInstancesService({
@@ -217,36 +219,36 @@ class TaskInstancesService {
   }
 }
 
-final taskInstancesServiceProvider = Provider<TaskInstancesService>(
-  (ref) {
-    return TaskInstancesService(
-      authRepository: ref.watch(
-        authRepositoryProvider,
-      ),
-      dateRepository: ref.watch(
-        dateRepositoryProvider,
-      ),
-      localTaskInstancesRepository: ref.watch(
-        localTaskInstancesRepositoryProvider,
-      ),
-      remoteTaskInstancesRepository: ref.watch(
-        remoteTaskInstancesRepositoryProvider,
-      ),
-    );
-  },
-);
+@Riverpod(keepAlive: true)
+TaskInstancesService taskInstancesService(TaskInstancesServiceRef ref) {
+  return TaskInstancesService(
+    authRepository: ref.watch(
+      authRepositoryProvider,
+    ),
+    dateRepository: ref.watch(
+      dateRepositoryProvider,
+    ),
+    localTaskInstancesRepository: ref.watch(
+      localTaskInstancesRepositoryProvider,
+    ),
+    remoteTaskInstancesRepository: ref.watch(
+      remoteTaskInstancesRepositoryProvider,
+    ),
+  );
+}
 
-final dateTaskInstancesStreamProvider =
-    StreamProvider.autoDispose.family<List<TaskInstance>, DateTime>(
-  (ref, date) {
-    final user = ref.watch(authStateChangesProvider).value;
-    if (user == null) {
-      return ref
-          .watch(localTaskInstancesRepositoryProvider)
-          .watchTaskInstances(date: date);
-    }
+@riverpod
+Stream<List<TaskInstance>> dateTaskInstancesStream(
+  DateTaskInstancesStreamRef ref,
+  DateTime date,
+) {
+  final user = ref.watch(authStateChangesProvider).value;
+  if (user == null) {
     return ref
-        .watch(remoteTaskInstancesRepositoryProvider)
-        .watchTaskInstances(user.uid, date: date);
-  },
-);
+        .watch(localTaskInstancesRepositoryProvider)
+        .watchTaskInstances(date: date);
+  }
+  return ref
+      .watch(remoteTaskInstancesRepositoryProvider)
+      .watchTaskInstances(user.uid, date: date);
+}

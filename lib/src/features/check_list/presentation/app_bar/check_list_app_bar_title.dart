@@ -13,7 +13,7 @@ class CheckListAppBarTitle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final dateValue = ref.watch(dateStateChangesProvider);
+    final dateValue = ref.watch(dateStreamProvider);
 
     return AsyncValueWidget<DateTime>(
       value: dateValue,

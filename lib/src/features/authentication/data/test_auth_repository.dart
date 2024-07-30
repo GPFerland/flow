@@ -3,37 +3,32 @@ import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/authentication/domain/test_app_user.dart';
 import 'package:flow/src/utils/delay.dart';
 import 'package:flow/src/utils/in_memory_store.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'test_auth_repository.g.dart';
 
 class TestAuthRepository {
   TestAuthRepository({this.addDelay = true});
-
   final bool addDelay;
-
   final _authState = InMemoryStore<AppUser?>(null);
 
   Stream<AppUser?> authStateChanges() => _authState.stream;
-
   AppUser? get currentUser => _authState.value;
 
   // List to keep track of all user accounts
   final List<TestAppUser> _users = [];
 
-  Future<void> signInWithEmailAndPassword(
-    String email,
-    String password,
-  ) async {
-    // add a delay to simulate loading
+  Future<void> signInWithEmailAndPassword(String email, String password) async {
     await delay(addDelay);
-    // check the given credentials against each registered user
-    for (final user in _users) {
+    // check the given credentials agains each registered user
+    for (final u in _users) {
       // matching email and password
-      if (user.email == email && user.password == password) {
-        _authState.value = user;
+      if (u.email == email && u.password == password) {
+        _authState.value = u;
         return;
       }
       // same email, wrong password
-      if (user.email == email && user.password != password) {
+      if (u.email == email && u.password != password) {
         throw WrongPasswordException();
       }
     }
@@ -41,10 +36,7 @@ class TestAuthRepository {
   }
 
   Future<void> createUserWithEmailAndPassword(
-    String email,
-    String password,
-  ) async {
-    // add a delay to simulate loading
+      String email, String password) async {
     await delay(addDelay);
     // check if the email is already in use
     for (final u in _users) {
@@ -80,13 +72,15 @@ class TestAuthRepository {
   }
 }
 
-final authRepositoryProvider = Provider<TestAuthRepository>((ref) {
-  final authRepository = TestAuthRepository();
-  ref.onDispose(() => authRepository.dispose());
-  return authRepository;
-});
+@Riverpod(keepAlive: true)
+TestAuthRepository authRepository(AuthRepositoryRef ref) {
+  final auth = TestAuthRepository();
+  ref.onDispose(() => auth.dispose());
+  return auth;
+}
 
-final authStateChangesProvider = StreamProvider<AppUser?>((ref) {
+@Riverpod(keepAlive: true)
+Stream<AppUser?> authStateChanges(AuthStateChangesRef ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   return authRepository.authStateChanges();
-});
+}

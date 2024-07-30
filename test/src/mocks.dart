@@ -1,6 +1,6 @@
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/check_list/data/date_repository.dart';
-import 'package:flow/src/features/check_list/data/task_visibility_repository.dart';
+import 'package:flow/src/features/check_list/data/task_display_repository.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/task_instances/data/local/test_local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/test_remote_task_instances_repository.dart';
@@ -14,8 +14,7 @@ class MockAuthRepository extends Mock implements TestAuthRepository {}
 
 class MockDateRepository extends Mock implements DateRepository {}
 
-class MockTaskVisibilityRepository extends Mock
-    implements TaskVisibilityRepository {}
+class MockTaskDisplayRepository extends Mock implements TaskDisplayRepository {}
 
 class MockLocalTasksRepository extends Mock
     implements TestLocalTasksRepository {}
@@ -34,3 +33,7 @@ class MockRemoteTaskInstancesRepository extends Mock
 class MockTaskInstancesService extends Mock implements TaskInstancesService {}
 
 class MockGoRouter extends Mock implements GoRouter {}
+
+class Listener<T> extends Mock {
+  void call(T? previous, T next);
+}

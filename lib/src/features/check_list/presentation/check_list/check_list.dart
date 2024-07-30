@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/constants/app_sizes.dart';
-import 'package:flow/src/features/check_list/data/task_visibility_repository.dart';
+import 'package:flow/src/features/check_list/data/task_display_repository.dart';
 import 'package:flow/src/features/check_list/presentation/check_list/components/card/check_list_card.dart';
-import 'package:flow/src/features/check_list/presentation/check_list/components/toggle_visibility_button.dart';
+import 'package:flow/src/features/check_list/presentation/check_list/components/toggle_display_button.dart';
 import 'package:flow/src/features/check_list/presentation/check_list_controller.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
@@ -202,7 +202,7 @@ class _CheckListState extends ConsumerState<CheckList>
           padding: const EdgeInsets.only(top: Sizes.p8),
           child: Consumer(
             builder: (context, listRef, child) {
-              listRef.watch(taskVisibilityStateChangesProvider).value;
+              listRef.watch(taskDisplayStreamProvider).value;
               final sortedTaskInstances = listRef
                   .read(checkListControllerProvider.notifier)
                   .sortTaskInstances(List.from(dateTaskInstances));
@@ -221,7 +221,7 @@ class _CheckListState extends ConsumerState<CheckList>
                       return _buildItem(_items[index], index, animation);
                     },
                   ),
-                  const ToggleVisibilityButton(),
+                  const ToggleDisplayButton(),
                 ],
               );
             },

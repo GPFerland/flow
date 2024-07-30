@@ -6,7 +6,7 @@ import 'package:flow/src/features/task_instances/domain/mutable_task_instance.da
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
-import 'package:flow/src/features/tasks/presentation/tasks_list/task_list/card/components/task_list_card_icon.dart';
+import 'package:flow/src/features/tasks/presentation/tasks_list/tasks_list/card/components/tasks_list_card_icon.dart';
 import 'package:flow/src/routing/app_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -68,7 +68,7 @@ class CheckListCard extends ConsumerWidget {
               child: Row(
                 children: [
                   if (taskInstance.isOverdue(date)) const Icon(Icons.error),
-                  TaskListCardIcon(
+                  TasksListCardIcon(
                     task: task!,
                   ),
                   gapW16,

@@ -1,19 +1,19 @@
 import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/common_widgets/empty_placeholder_widget.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
-import 'package:flow/src/features/tasks/presentation/tasks_list/task_list/card/task_list_card.dart';
-import 'package:flow/src/features/tasks/presentation/tasks_list/task_list_controller.dart';
+import 'package:flow/src/features/tasks/presentation/tasks_list/tasks_list/card/tasks_list_card.dart';
+import 'package:flow/src/features/tasks/presentation/tasks_list/tasks_list_controller.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TaskList extends ConsumerWidget {
-  const TaskList({super.key});
+class TasksList extends ConsumerWidget {
+  const TasksList({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasksValue = ref.watch(tasksStreamProvider);
-    final state = ref.watch(taskListControllerProvider);
+    final state = ref.watch(tasksListControllerProvider);
 
     return AsyncValueWidget(
       value: tasksValue,
@@ -25,14 +25,14 @@ class TaskList extends ConsumerWidget {
               shrinkWrap: true,
               itemCount: tasks.length,
               itemBuilder: (context, index) {
-                return TaskListCard(
+                return TasksListCard(
                   key: ValueKey(tasks[index].id),
                   task: tasks[index],
                 );
               },
               buildDefaultDragHandles: !state.isLoading,
               onReorder: (oldIndex, newIndex) {
-                ref.read(taskListControllerProvider.notifier).reorderTasks(
+                ref.read(tasksListControllerProvider.notifier).reorderTasks(
                       tasks,
                       oldIndex,
                       newIndex,

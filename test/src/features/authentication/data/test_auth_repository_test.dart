@@ -1,3 +1,4 @@
+import 'package:flow/src/exceptions/app_exception.dart';
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -9,9 +10,9 @@ void main() {
     uid: testEmail.split('').reversed.join(),
     email: testEmail,
   );
-
-  TestAuthRepository makeAuthRepository() => TestAuthRepository();
-
+  TestAuthRepository makeAuthRepository() => TestAuthRepository(
+        addDelay: false,
+      );
   group('TestAuthRepository', () {
     test('currentUser is null', () {
       final authRepository = makeAuthRepository();
@@ -28,7 +29,7 @@ void main() {
           testEmail,
           testPassword,
         ),
-        throwsA(isA<Exception>()),
+        throwsA(isA<UserNotFoundException>()),
       );
       expect(authRepository.currentUser, null);
       expect(authRepository.authStateChanges(), emits(null));

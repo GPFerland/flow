@@ -66,7 +66,7 @@ class _CheckListScreenState extends ConsumerState<CheckListScreen> {
         },
         itemBuilder: (context, index) {
           return Consumer(builder: (context, ref, child) {
-            final dateValue = ref.watch(dateStateChangesProvider);
+            final dateValue = ref.watch(dateStreamProvider);
             return AsyncValueWidget<DateTime>(
               value: dateValue,
               data: (date) {

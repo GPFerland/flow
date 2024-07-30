@@ -473,8 +473,8 @@ void main() {
       test('monthly type task scheduled, last sunday', () async {
         // setup
         final today = getDateNoTimeToday();
-        final lastDayOfMonth = DateTime(today.year, today.month + 1, 0);
-        DateTime testDate = lastDayOfMonth.copyWith();
+        final lastDayOfNextMonth = DateTime(today.year, today.month + 2, 0);
+        DateTime testDate = lastDayOfNextMonth.copyWith();
         while (testDate.weekday != Weekday.sun.weekdayIndex) {
           testDate = testDate.subtract(const Duration(days: 1));
         }
@@ -739,7 +739,7 @@ void main() {
         // verify
         verify(
           () => localTaskInstancesRepository.setTaskInstances(any()),
-        ).called(2);
+        ).called(1);
       });
       test('null user, task is NOT new, monthly day NO change', () async {
         // setup

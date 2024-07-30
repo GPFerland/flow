@@ -1,16 +1,20 @@
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-class TaskController extends StateNotifier<AsyncValue<void>> {
-  TaskController({
-    required this.tasksService,
-    required this.taskInstancesService,
-  }) : super(const AsyncData(null));
+part 'task_controller.g.dart';
 
-  final TasksService tasksService;
-  final TaskInstancesService taskInstancesService;
+@riverpod
+class TaskController extends _$TaskController {
+  Object? mounted;
+
+  @override
+  FutureOr<void> build() {
+    mounted = Object();
+    ref.onDispose(() => mounted = null);
+    // no initialization work to do
+  }
 
   Future<void> submitTask({
     required Task task,
@@ -18,7 +22,10 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
     required void Function() onSuccess,
   }) async {
     if (task != oldTask) {
+      final tasksService = ref.read(tasksServiceProvider);
+      final taskInstancesService = ref.read(taskInstancesServiceProvider);
       state = const AsyncLoading<void>();
+      final mounted = this.mounted;
       final value = await AsyncValue.guard(
         () => tasksService.setTasks([task]),
       );
@@ -26,7 +33,7 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
         taskInstancesService.updateTasksInstances(task, oldTask);
       }
       // * only set the state if the controller hasn't been disposed
-      if (mounted) {
+      if (mounted == this.mounted) {
         state = value;
         if (state.hasError == false) {
           onSuccess();
@@ -41,9 +48,12 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
     required String taskId,
     required void Function() onSuccess,
   }) async {
+    final tasksService = ref.read(tasksServiceProvider);
+    final taskInstancesService = ref.read(taskInstancesServiceProvider);
     state = const AsyncLoading<void>();
+    final mounted = this.mounted;
 
-    final value = await AsyncValue.guard(
+    AsyncValue<void> value = await AsyncValue.guard(
       () async {
         // * attempt to delete the task instances associated with the task
         await taskInstancesService.removeTasksInstances(taskId);
@@ -53,7 +63,7 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
     );
 
     // * only set the state if the controller hasn't been disposed
-    if (mounted) {
+    if (mounted == this.mounted) {
       state = value;
       if (state.hasError == false) {
         onSuccess();
@@ -61,13 +71,3 @@ class TaskController extends StateNotifier<AsyncValue<void>> {
     }
   }
 }
-
-final taskControllerProvider =
-    StateNotifierProvider.autoDispose<TaskController, AsyncValue<void>>(
-  (ref) {
-    return TaskController(
-      tasksService: ref.watch(tasksServiceProvider),
-      taskInstancesService: ref.watch(taskInstancesServiceProvider),
-    );
-  },
-);

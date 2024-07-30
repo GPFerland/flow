@@ -1,6 +1,8 @@
 import 'package:flow/src/utils/date.dart';
 import 'package:flow/src/utils/in_memory_store.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'date_repository.g.dart';
 
 class DateRepository {
   DateRepository();
@@ -31,17 +33,15 @@ class DateRepository {
   void dispose() => _dateState.close();
 }
 
-final dateRepositoryProvider = Provider<DateRepository>(
-  (ref) {
-    final dateRepository = DateRepository();
-    ref.onDispose(() => dateRepository.dispose());
-    return dateRepository;
-  },
-);
+@Riverpod(keepAlive: true)
+DateRepository dateRepository(DateRepositoryRef ref) {
+  final dateRepository = DateRepository();
+  ref.onDispose(() => dateRepository.dispose());
+  return dateRepository;
+}
 
-final dateStateChangesProvider = StreamProvider<DateTime>(
-  (ref) {
-    final dateRepository = ref.watch(dateRepositoryProvider);
-    return dateRepository.dateStateChanges();
-  },
-);
+@Riverpod(keepAlive: true)
+Stream<DateTime> dateStream(DateStreamRef ref) {
+  final dateRepository = ref.watch(dateRepositoryProvider);
+  return dateRepository.dateStateChanges();
+}

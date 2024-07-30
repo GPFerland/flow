@@ -8,9 +8,6 @@ class AppUser {
   final String email;
 
   @override
-  String toString() => 'AppUser(uid: $uid, email: $email)';
-
-  @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
@@ -19,4 +16,7 @@ class AppUser {
 
   @override
   int get hashCode => uid.hashCode ^ email.hashCode;
+
+  @override
+  String toString() => 'AppUser(uid: $uid, email: $email)';
 }

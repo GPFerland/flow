@@ -1,7 +1,8 @@
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-/// API for reading, watching and writing local taskInstance data (guest user)
+part 'local_task_instances_repository.g.dart';
+
 abstract class LocalTaskInstancesRepository {
   Future<void> setTaskInstances(List<TaskInstance> taskInstances);
 
@@ -14,46 +15,50 @@ abstract class LocalTaskInstancesRepository {
   Stream<TaskInstance?> watchTaskInstance(String taskInstanceId);
 }
 
-final localTaskInstancesRepositoryProvider =
-    Provider<LocalTaskInstancesRepository>(
-  (ref) {
-    // * Override in main()
-    throw UnimplementedError();
-  },
-);
+@Riverpod(keepAlive: true)
+LocalTaskInstancesRepository localTaskInstancesRepository(
+  LocalTaskInstancesRepositoryRef ref,
+) {
+  // * Override in main()
+  throw UnimplementedError();
+}
 
-final localTaskInstancesFutureProvider =
-    FutureProvider.autoDispose<List<TaskInstance>>(
-  (ref) {
-    final taskInstancesRepository =
-        ref.watch(localTaskInstancesRepositoryProvider);
-    return taskInstancesRepository.fetchTaskInstances();
-  },
-);
+@riverpod
+Future<List<TaskInstance>> localTaskInstancesFuture(
+  LocalTaskInstancesFutureRef ref,
+) {
+  final taskInstancesRepository = ref.watch(
+    localTaskInstancesRepositoryProvider,
+  );
+  return taskInstancesRepository.fetchTaskInstances();
+}
 
-final localTaskInstanceFutureProvider =
-    FutureProvider.autoDispose.family<TaskInstance?, String>(
-  (ref, taskInstanceId) {
-    final taskInstancesRepository =
-        ref.watch(localTaskInstancesRepositoryProvider);
-    return taskInstancesRepository.fetchTaskInstance(taskInstanceId);
-  },
-);
+@riverpod
+Future<TaskInstance?> localTaskInstanceFuture(
+  LocalTaskInstanceFutureRef ref,
+  String taskInstanceId,
+) {
+  final taskInstancesRepository = ref.watch(
+    localTaskInstancesRepositoryProvider,
+  );
+  return taskInstancesRepository.fetchTaskInstance(taskInstanceId);
+}
 
-final localTaskInstancesStreamProvider =
-    StreamProvider.autoDispose<List<TaskInstance>>(
-  (ref) {
-    final taskInstancesRepository =
-        ref.watch(localTaskInstancesRepositoryProvider);
-    return taskInstancesRepository.watchTaskInstances();
-  },
-);
+@riverpod
+Stream<List<TaskInstance>> localTaskInstancesStream(
+  LocalTaskInstancesStreamRef ref,
+) {
+  final taskInstancesRepository =
+      ref.watch(localTaskInstancesRepositoryProvider);
+  return taskInstancesRepository.watchTaskInstances();
+}
 
-final localTaskInstanceStreamProvider =
-    StreamProvider.autoDispose.family<TaskInstance?, String>(
-  (ref, taskInstanceId) {
-    final taskInstancesRepository =
-        ref.watch(localTaskInstancesRepositoryProvider);
-    return taskInstancesRepository.watchTaskInstance(taskInstanceId);
-  },
-);
+@riverpod
+Stream<TaskInstance?> localTaskInstanceStream(
+  LocalTaskInstanceStreamRef ref,
+  String taskInstanceId,
+) {
+  final taskInstancesRepository =
+      ref.watch(localTaskInstancesRepositoryProvider);
+  return taskInstancesRepository.watchTaskInstance(taskInstanceId);
+}

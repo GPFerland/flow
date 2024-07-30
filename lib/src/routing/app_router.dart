@@ -1,15 +1,17 @@
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/authentication/presentation/account/account_screen.dart';
+import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_form_type.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_screen.dart';
-import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
 import 'package:flow/src/features/check_list/presentation/check_list_screen.dart';
 import 'package:flow/src/features/tasks/presentation/task/task_screen.dart';
 import 'package:flow/src/features/tasks/presentation/tasks_list/tasks_list_screen.dart';
 import 'package:flow/src/routing/go_router_refresh_stream.dart';
 import 'package:flow/src/routing/not_found_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'app_router.g.dart';
 
 enum AppRoute {
   checkList,
@@ -20,7 +22,8 @@ enum AppRoute {
   signIn,
 }
 
-final goRouterProvider = Provider<GoRouter>((ref) {
+@riverpod
+GoRouter goRouter(GoRouterRef ref) {
   final authRepository = ref.watch(authRepositoryProvider);
   return GoRouter(
     initialLocation: '/',
@@ -97,4 +100,4 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     ],
     errorBuilder: (context, state) => const NotFoundScreen(),
   );
-});
+}

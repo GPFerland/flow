@@ -94,7 +94,7 @@ class Robot {
     await tapKey(CheckListAppBar.signInMenuButtonKey);
     await authRobot.enterEmail('test@email.com');
     await authRobot.enterPassword('password');
-    await tapText('Submit');
+    await tapText('Sign in');
   }
 
   Future<void> createAccountFromCheckList() async {

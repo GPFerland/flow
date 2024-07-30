@@ -1,7 +1,8 @@
 import 'package:flow/src/features/tasks/domain/task.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-/// API for reading, watching and writing local task data (guest user)
+part 'local_tasks_repository.g.dart';
+
 abstract class LocalTasksRepository {
   Future<void> setTasks(List<Task> tasks);
 
@@ -14,39 +15,32 @@ abstract class LocalTasksRepository {
   Stream<Task?> watchTask(String taskId);
 }
 
-final localTasksRepositoryProvider = Provider<LocalTasksRepository>(
-  (ref) {
-    // * Override in main()
-    throw UnimplementedError();
-  },
-);
+@Riverpod(keepAlive: true)
+LocalTasksRepository localTasksRepository(LocalTasksRepositoryRef ref) {
+  // * Override in main()
+  throw UnimplementedError();
+}
 
-final localTasksFutureProvider = FutureProvider.autoDispose<List<Task>>(
-  (ref) {
-    final tasksRepository = ref.watch(localTasksRepositoryProvider);
-    return tasksRepository.fetchTasks();
-  },
-);
+@riverpod
+Future<List<Task>> localTasksFuture(LocalTasksFutureRef ref) {
+  final tasksRepository = ref.watch(localTasksRepositoryProvider);
+  return tasksRepository.fetchTasks();
+}
 
-final localTaskFutureProvider =
-    FutureProvider.autoDispose.family<Task?, String>(
-  (ref, taskId) {
-    final tasksRepository = ref.watch(localTasksRepositoryProvider);
-    return tasksRepository.fetchTask(taskId);
-  },
-);
+@riverpod
+Future<Task?> localTaskFuture(LocalTaskFutureRef ref, String taskId) {
+  final tasksRepository = ref.watch(localTasksRepositoryProvider);
+  return tasksRepository.fetchTask(taskId);
+}
 
-final localTasksStreamProvider = StreamProvider.autoDispose<List<Task>>(
-  (ref) {
-    final tasksRepository = ref.watch(localTasksRepositoryProvider);
-    return tasksRepository.watchTasks();
-  },
-);
+@riverpod
+Stream<List<Task>> localTasksStream(LocalTasksStreamRef ref) {
+  final tasksRepository = ref.watch(localTasksRepositoryProvider);
+  return tasksRepository.watchTasks();
+}
 
-final localTaskStreamProvider =
-    StreamProvider.autoDispose.family<Task?, String>(
-  (ref, taskId) {
-    final tasksRepository = ref.watch(localTasksRepositoryProvider);
-    return tasksRepository.watchTask(taskId);
-  },
-);
+@riverpod
+Stream<Task?> localTaskStream(LocalTaskStreamRef ref, String taskId) {
+  final tasksRepository = ref.watch(localTasksRepositoryProvider);
+  return tasksRepository.watchTask(taskId);
+}

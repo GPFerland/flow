@@ -1,5 +1,5 @@
-import 'package:flow/src/features/tasks/presentation/tasks_list/task_list/card/components/task_list_card_frequency.dart';
-import 'package:flow/src/features/tasks/presentation/tasks_list/task_list/card/components/task_list_card_icon.dart';
+import 'package:flow/src/features/tasks/presentation/tasks_list/tasks_list/card/components/tasks_list_card_frequency.dart';
+import 'package:flow/src/features/tasks/presentation/tasks_list/tasks_list/card/components/tasks_list_card_icon.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/routing/app_router.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +7,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 //todo - handle the case where the title is too big or the frequency text????
-class TaskListCard extends ConsumerWidget {
-  const TaskListCard({
+class TasksListCard extends ConsumerWidget {
+  const TasksListCard({
     super.key,
     required this.task,
   });
@@ -33,10 +33,10 @@ class TaskListCard extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
           child: Row(
             children: [
-              TaskListCardIcon(task: task),
+              TasksListCardIcon(task: task),
               const SizedBox(width: 16),
               Expanded(child: Text(task.title)),
-              TaskListCardFrequency(task: task),
+              TasksListCardFrequency(task: task),
             ],
           ),
         ),

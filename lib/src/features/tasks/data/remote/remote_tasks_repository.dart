@@ -1,6 +1,7 @@
 import 'package:flow/src/features/tasks/domain/task.dart';
-import 'package:flow/src/utils/remote_item.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'remote_tasks_repository.g.dart';
 
 abstract class RemoteTasksRepository {
   Future<void> setTasks(String uid, List<Task> tasks);
@@ -14,41 +15,40 @@ abstract class RemoteTasksRepository {
   Stream<Task?> watchTask(String uid, String taskId);
 }
 
-final remoteTasksRepositoryProvider = Provider<RemoteTasksRepository>(
-  (ref) {
-    // * Override in main()
-    throw UnimplementedError();
-  },
-);
+@Riverpod(keepAlive: true)
+RemoteTasksRepository remoteTasksRepository(RemoteTasksRepositoryRef ref) {
+  // * Override in main()
+  throw UnimplementedError();
+}
 
-final remoteTasksFutureProvider =
-    FutureProvider.autoDispose.family<List<Task>, String>(
-  (ref, uid) {
-    final tasksRepository = ref.watch(remoteTasksRepositoryProvider);
-    return tasksRepository.fetchTasks(uid);
-  },
-);
+@riverpod
+Future<List<Task>> remoteTasksFuture(RemoteTasksFutureRef ref, String uid) {
+  final tasksRepository = ref.watch(remoteTasksRepositoryProvider);
+  return tasksRepository.fetchTasks(uid);
+}
 
-final remoteTaskFutureProvider =
-    FutureProvider.autoDispose.family<Task?, RemoteItem>(
-  (ref, remoteItem) {
-    final tasksRepository = ref.watch(remoteTasksRepositoryProvider);
-    return tasksRepository.fetchTask(remoteItem.uid, remoteItem.itemId);
-  },
-);
+@riverpod
+Future<Task?> remoteTaskFuture(
+  RemoteTaskFutureRef ref,
+  String uid,
+  String taskId,
+) {
+  final tasksRepository = ref.watch(remoteTasksRepositoryProvider);
+  return tasksRepository.fetchTask(uid, taskId);
+}
 
-final remoteTasksStreamProvider =
-    StreamProvider.autoDispose.family<List<Task>, String>(
-  (ref, uid) {
-    final tasksRepository = ref.watch(remoteTasksRepositoryProvider);
-    return tasksRepository.watchTasks(uid);
-  },
-);
+@riverpod
+Stream<List<Task>> remoteTasksStream(RemoteTasksStreamRef ref, String uid) {
+  final tasksRepository = ref.watch(remoteTasksRepositoryProvider);
+  return tasksRepository.watchTasks(uid);
+}
 
-final remoteTaskStreamProvider =
-    StreamProvider.autoDispose.family<Task?, RemoteItem>(
-  (ref, remoteItem) {
-    final tasksRepository = ref.watch(remoteTasksRepositoryProvider);
-    return tasksRepository.watchTask(remoteItem.uid, remoteItem.itemId);
-  },
-);
+@riverpod
+Stream<Task?> remoteTaskStream(
+  RemoteTaskStreamRef ref,
+  String uid,
+  String taskId,
+) {
+  final tasksRepository = ref.watch(remoteTasksRepositoryProvider);
+  return tasksRepository.watchTask(uid, taskId);
+}

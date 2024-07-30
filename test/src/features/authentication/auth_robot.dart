@@ -1,7 +1,10 @@
+import 'package:flow/src/common_widgets/alert_dialogs.dart';
+import 'package:flow/src/common_widgets/buttons/custom_text_button.dart';
+import 'package:flow/src/common_widgets/buttons/primary_button.dart';
 import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/features/authentication/presentation/account/account_screen.dart';
+import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_form_type.dart';
 import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_screen.dart';
-import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -48,6 +51,20 @@ class AuthRobot {
     );
   }
 
+  Future<void> tapEmailAndPasswordSubmitButton() async {
+    final primaryButton = find.byType(PrimaryButton);
+    expect(primaryButton, findsOneWidget);
+    await widgetTester.tap(primaryButton);
+    await widgetTester.pumpAndSettle();
+  }
+
+  Future<void> tapFormToggleButton() async {
+    final toggleButton = find.byType(CustomTextButton);
+    expect(toggleButton, findsOneWidget);
+    await widgetTester.tap(toggleButton);
+    await widgetTester.pumpAndSettle();
+  }
+
   Future<void> enterEmail(String email) async {
     final emailField = find.byKey(EmailPasswordSignInScreen.emailKey);
     expect(emailField, findsOneWidget);
@@ -72,14 +89,11 @@ class AuthRobot {
     await widgetTester.testTextInput.receiveAction(TextInputAction.done);
   }
 
-  void expectCreateAccountButtonFound() {
-    final dialogTitle = find.text('Create an account');
-    expect(dialogTitle, findsOneWidget);
-  }
-
-  void expectCreateAccountButtonNotFound() {
-    final dialogTitle = find.text('Create an account');
-    expect(dialogTitle, findsNothing);
+  Future<void> tapLogoutButton() async {
+    final logoutButton = find.text('Logout');
+    expect(logoutButton, findsOneWidget);
+    await widgetTester.tap(logoutButton);
+    await widgetTester.pump();
   }
 
   void expectLogoutDialogFound() {
@@ -87,8 +101,32 @@ class AuthRobot {
     expect(dialogTitle, findsOneWidget);
   }
 
+  Future<void> tapCancelButton() async {
+    final cancelButton = find.text('Cancel');
+    expect(cancelButton, findsOneWidget);
+    await widgetTester.tap(cancelButton);
+    await widgetTester.pump();
+  }
+
   void expectLogoutDialogNotFound() {
     final dialogTitle = find.text('Are you sure?');
+    expect(dialogTitle, findsNothing);
+  }
+
+  Future<void> tapDialogLogoutButton() async {
+    final logoutButton = find.byKey(kDialogDefaultKey);
+    expect(logoutButton, findsOneWidget);
+    await widgetTester.tap(logoutButton);
+    await widgetTester.pump();
+  }
+
+  void expectCreateAccountButtonFound() {
+    final dialogTitle = find.text('Create an account');
+    expect(dialogTitle, findsOneWidget);
+  }
+
+  void expectCreateAccountButtonNotFound() {
+    final dialogTitle = find.text('Create an account');
     expect(dialogTitle, findsNothing);
   }
 

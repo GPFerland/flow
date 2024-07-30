@@ -2,8 +2,8 @@ import 'package:flow/src/features/tasks/domain/mutable_task.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flutter/material.dart';
 
-class TaskListCardFrequency extends StatelessWidget {
-  const TaskListCardFrequency({
+class TasksListCardFrequency extends StatelessWidget {
+  const TasksListCardFrequency({
     super.key,
     required this.task,
   });

@@ -16,8 +16,7 @@ class CheckListCardCheckbox extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    DateTime date =
-        ref.watch(dateStateChangesProvider).value ?? getDateNoTimeToday();
+    DateTime date = ref.watch(dateStreamProvider).value ?? getDateNoTimeToday();
 
     bool isEnabled = !date.isAfter(getDateNoTimeToday());
 

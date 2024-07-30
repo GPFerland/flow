@@ -1,7 +1,7 @@
 import 'package:flow/src/constants/breakpoints.dart';
 import 'package:flow/src/features/check_list/presentation/app_bar/check_list_app_bar_title.dart';
 import 'package:flow/src/features/check_list/presentation/app_bar/check_list_app_bar.dart';
-import 'package:flow/src/features/check_list/presentation/check_list/components/toggle_visibility_button.dart';
+import 'package:flow/src/features/check_list/presentation/check_list/components/toggle_display_button.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/utils/date.dart';
 import 'package:flutter/material.dart';
@@ -157,7 +157,7 @@ void main() {
           await r.createTaskFromCheckList(task);
           r.checkListRobot.expectFindXCheckListCards(1);
           await r.tapType(Checkbox);
-          await r.tapKey(ToggleVisibilityButton.toggleVisibilityKey);
+          await r.tapKey(ToggleDisplayButton.toggleDisplayKey);
           r.checkListRobot.expectFindXCheckListCards(0);
         },
       );
@@ -169,7 +169,7 @@ void main() {
           final Task task = createTestTask();
           await r.createTaskFromCheckList(task);
           r.checkListRobot.expectFindXCheckListCards(1);
-          await r.tapKey(ToggleVisibilityButton.toggleVisibilityKey);
+          await r.tapKey(ToggleDisplayButton.toggleDisplayKey);
           await r.tapType(Checkbox);
           r.checkListRobot.expectFindXCheckListCards(0);
         },
@@ -185,7 +185,7 @@ void main() {
           await r.createTaskFromCheckList(task2);
           r.checkListRobot.expectFindXCheckListCards(2);
           await r.tapType(Checkbox);
-          await r.tapKey(ToggleVisibilityButton.toggleVisibilityKey);
+          await r.tapKey(ToggleDisplayButton.toggleDisplayKey);
           r.checkListRobot.expectFindXCheckListCards(1);
         },
       );
@@ -232,7 +232,7 @@ void main() {
           await r.createTaskFromCheckList(task);
           r.checkListRobot.expectFindXCheckListCards(1);
           await r.skipTask(task.title);
-          await r.tapKey(ToggleVisibilityButton.toggleVisibilityKey);
+          await r.tapKey(ToggleDisplayButton.toggleDisplayKey);
           r.checkListRobot.expectFindXCheckListCards(0);
         },
       );
@@ -244,7 +244,7 @@ void main() {
           final Task task = createTestTask(frequency: Frequency.daily);
           await r.createTaskFromCheckList(task);
           r.checkListRobot.expectFindXCheckListCards(1);
-          await r.tapKey(ToggleVisibilityButton.toggleVisibilityKey);
+          await r.tapKey(ToggleDisplayButton.toggleDisplayKey);
           await r.skipTask(task.title);
           r.checkListRobot.expectFindXCheckListCards(0);
         },

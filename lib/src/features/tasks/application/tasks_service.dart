@@ -3,7 +3,9 @@ import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
 import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
 import 'package:flow/src/features/tasks/domain/mutable_task.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'tasks_service.g.dart';
 
 class TasksService {
   TasksService({
@@ -77,48 +79,38 @@ class TasksService {
   }
 }
 
-final tasksServiceProvider = Provider<TasksService>(
-  (ref) {
-    return TasksService(
-      authRepository: ref.watch(
-        authRepositoryProvider,
-      ),
-      localTasksRepository: ref.watch(
-        localTasksRepositoryProvider,
-      ),
-      remoteTasksRepository: ref.watch(
-        remoteTasksRepositoryProvider,
-      ),
-    );
-  },
-);
+@Riverpod(keepAlive: true)
+TasksService tasksService(TasksServiceRef ref) {
+  return TasksService(
+    authRepository: ref.watch(authRepositoryProvider),
+    localTasksRepository: ref.watch(localTasksRepositoryProvider),
+    remoteTasksRepository: ref.watch(remoteTasksRepositoryProvider),
+  );
+}
 
-final tasksStreamProvider = StreamProvider.autoDispose<List<Task>>(
-  (ref) {
-    final user = ref.watch(authStateChangesProvider).value;
-    if (user == null) {
-      return ref.watch(localTasksRepositoryProvider).watchTasks();
-    }
-    return ref.watch(remoteTasksRepositoryProvider).watchTasks(user.uid);
-  },
-);
+@riverpod
+Future<Task?> taskFuture(TaskFutureRef ref, String taskId) {
+  final user = ref.watch(authStateChangesProvider).value;
+  if (user == null) {
+    return ref.watch(localTasksRepositoryProvider).fetchTask(taskId);
+  }
+  return ref.watch(remoteTasksRepositoryProvider).fetchTask(user.uid, taskId);
+}
 
-final taskFutureProvider = FutureProvider.autoDispose.family<Task?, String>(
-  (ref, taskId) {
-    final user = ref.watch(authStateChangesProvider).value;
-    if (user == null) {
-      return ref.watch(localTasksRepositoryProvider).fetchTask(taskId);
-    }
-    return ref.watch(remoteTasksRepositoryProvider).fetchTask(user.uid, taskId);
-  },
-);
+@riverpod
+Stream<List<Task>> tasksStream(TasksStreamRef ref) {
+  final user = ref.watch(authStateChangesProvider).value;
+  if (user == null) {
+    return ref.watch(localTasksRepositoryProvider).watchTasks();
+  }
+  return ref.watch(remoteTasksRepositoryProvider).watchTasks(user.uid);
+}
 
-final taskStreamProvider = StreamProvider.autoDispose.family<Task?, String>(
-  (ref, taskId) {
-    final user = ref.watch(authStateChangesProvider).value;
-    if (user == null) {
-      return ref.watch(localTasksRepositoryProvider).watchTask(taskId);
-    }
-    return ref.watch(remoteTasksRepositoryProvider).watchTask(user.uid, taskId);
-  },
-);
+@riverpod
+Stream<Task?> taskStream(TaskStreamRef ref, String taskId) {
+  final user = ref.watch(authStateChangesProvider).value;
+  if (user == null) {
+    return ref.watch(localTasksRepositoryProvider).watchTask(taskId);
+  }
+  return ref.watch(remoteTasksRepositoryProvider).watchTask(user.uid, taskId);
+}

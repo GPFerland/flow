@@ -4,6 +4,9 @@ import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'task_instances_sync_service.g.dart';
 
 class TaskInstancesSyncService {
   TaskInstancesSyncService(this.ref) {
@@ -56,8 +59,9 @@ class TaskInstancesSyncService {
   }
 }
 
-final taskInstancesSyncServiceProvider = Provider<TaskInstancesSyncService>(
-  (ref) {
-    return TaskInstancesSyncService(ref);
-  },
-);
+@Riverpod(keepAlive: true)
+TaskInstancesSyncService taskInstancesSyncService(
+  TaskInstancesSyncServiceRef ref,
+) {
+  return TaskInstancesSyncService(ref);
+}
