@@ -1,6 +1,4 @@
 import 'package:flow/src/features/tasks/presentation/task/task_controller.dart';
-import 'package:flow/src/utils/style.dart';
-import 'package:flow/src/utils/input_fields_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,12 +26,6 @@ class _DescriptionInputFieldState
     return TextFormField(
       key: TaskDescriptionInputField.taskDescriptionKey,
       controller: widget.descriptionController,
-      decoration: getTextInputFieldDecoration(
-        labelText: 'Description',
-        context: context,
-      ),
-      style: getTitleSmallOnPrimaryContainer(context),
-      cursorHeight: cursorHeight,
       readOnly: state.isLoading,
     );
   }

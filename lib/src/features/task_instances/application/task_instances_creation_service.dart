@@ -16,29 +16,35 @@ class TaskInstancesCreationService {
   final Ref ref;
 
   void _init() {
+    // listen for changes of the date
     ref.listen<AsyncValue<DateTime>>(
       dateStreamProvider,
       (previous, next) {
+        // if the date value is new
         if (next.value != null && previous?.value != next.value) {
-          _createTaskInstances(next.value!);
-          _createTaskInstances(next.value!.subtract(const Duration(days: 1)));
-          _createTaskInstances(next.value!.add(const Duration(days: 1)));
+          // create the task instances for the date, day before, and day after
+          _createTaskInstances([
+            next.value!,
+            next.value!.subtract(const Duration(days: 1)),
+            next.value!.add(const Duration(days: 1)),
+          ]);
         }
       },
     );
   }
 
-  Future<void> _createTaskInstances(DateTime date) async {
+  Future<void> _createTaskInstances(List<DateTime> dates) async {
     try {
-      final tasksService = ref.read(tasksServiceProvider);
       final taskInstancesService = ref.read(taskInstancesServiceProvider);
 
-      final tasks = await tasksService.fetchTasks();
+      final tasks = await ref.read(tasksFutureProvider.future);
 
+      // attempt to create a task instances for each task on the dates
       for (Task task in tasks) {
-        await taskInstancesService.createTaskInstances(task, [date]);
+        await taskInstancesService.createTasksInstances(task, dates);
       }
     } catch (exception, stackTrace) {
+      //todo - should this be a custom exception
       ref.read(errorLoggerProvider).logError(exception, stackTrace);
     }
   }

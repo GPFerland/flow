@@ -22,21 +22,6 @@ final localTasksRepositoryProvider = Provider<LocalTasksRepository>.internal(
 );
 
 typedef LocalTasksRepositoryRef = ProviderRef<LocalTasksRepository>;
-String _$localTasksFutureHash() => r'055fcbd04a7294f63ae8edc7ed14c68f1814fce8';
-
-/// See also [localTasksFuture].
-@ProviderFor(localTasksFuture)
-final localTasksFutureProvider = AutoDisposeFutureProvider<List<Task>>.internal(
-  localTasksFuture,
-  name: r'localTasksFutureProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$localTasksFutureHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef LocalTasksFutureRef = AutoDisposeFutureProviderRef<List<Task>>;
 String _$localTaskFutureHash() => r'3a798b0693ea460676b44bcc2dbf0859cf63f19f';
 
 /// Copied from Dart SDK
@@ -186,21 +171,21 @@ class _LocalTaskFutureProviderElement
   String get taskId => (origin as LocalTaskFutureProvider).taskId;
 }
 
-String _$localTasksStreamHash() => r'c27bd6a1bd9dd4a5f91a0be3e23bd895b6af387c';
+String _$localTasksFutureHash() => r'055fcbd04a7294f63ae8edc7ed14c68f1814fce8';
 
-/// See also [localTasksStream].
-@ProviderFor(localTasksStream)
-final localTasksStreamProvider = AutoDisposeStreamProvider<List<Task>>.internal(
-  localTasksStream,
-  name: r'localTasksStreamProvider',
+/// See also [localTasksFuture].
+@ProviderFor(localTasksFuture)
+final localTasksFutureProvider = AutoDisposeFutureProvider<List<Task>>.internal(
+  localTasksFuture,
+  name: r'localTasksFutureProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$localTasksStreamHash,
+      : _$localTasksFutureHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef LocalTasksStreamRef = AutoDisposeStreamProviderRef<List<Task>>;
+typedef LocalTasksFutureRef = AutoDisposeFutureProviderRef<List<Task>>;
 String _$localTaskStreamHash() => r'929a2b2575b6f2604cc5cc42c25b5a4f62930d70';
 
 /// See also [localTaskStream].
@@ -328,5 +313,21 @@ class _LocalTaskStreamProviderElement
   @override
   String get taskId => (origin as LocalTaskStreamProvider).taskId;
 }
+
+String _$localTasksStreamHash() => r'c27bd6a1bd9dd4a5f91a0be3e23bd895b6af387c';
+
+/// See also [localTasksStream].
+@ProviderFor(localTasksStream)
+final localTasksStreamProvider = AutoDisposeStreamProvider<List<Task>>.internal(
+  localTasksStream,
+  name: r'localTasksStreamProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$localTasksStreamHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef LocalTasksStreamRef = AutoDisposeStreamProviderRef<List<Task>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

@@ -24,8 +24,8 @@ final remoteTaskInstancesRepositoryProvider =
 
 typedef RemoteTaskInstancesRepositoryRef
     = ProviderRef<RemoteTaskInstancesRepository>;
-String _$remoteTaskInstancesFutureHash() =>
-    r'4f009bf7e222096860c73a6669243cf8f5a3101c';
+String _$remoteTaskInstanceFutureHash() =>
+    r'a64ed33448ca2655393dd331734a8d99f54c82e8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -47,140 +47,6 @@ class _SystemHash {
     return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
   }
 }
-
-/// See also [remoteTaskInstancesFuture].
-@ProviderFor(remoteTaskInstancesFuture)
-const remoteTaskInstancesFutureProvider = RemoteTaskInstancesFutureFamily();
-
-/// See also [remoteTaskInstancesFuture].
-class RemoteTaskInstancesFutureFamily
-    extends Family<AsyncValue<List<TaskInstance>>> {
-  /// See also [remoteTaskInstancesFuture].
-  const RemoteTaskInstancesFutureFamily();
-
-  /// See also [remoteTaskInstancesFuture].
-  RemoteTaskInstancesFutureProvider call(
-    String uid,
-  ) {
-    return RemoteTaskInstancesFutureProvider(
-      uid,
-    );
-  }
-
-  @override
-  RemoteTaskInstancesFutureProvider getProviderOverride(
-    covariant RemoteTaskInstancesFutureProvider provider,
-  ) {
-    return call(
-      provider.uid,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'remoteTaskInstancesFutureProvider';
-}
-
-/// See also [remoteTaskInstancesFuture].
-class RemoteTaskInstancesFutureProvider
-    extends AutoDisposeFutureProvider<List<TaskInstance>> {
-  /// See also [remoteTaskInstancesFuture].
-  RemoteTaskInstancesFutureProvider(
-    String uid,
-  ) : this._internal(
-          (ref) => remoteTaskInstancesFuture(
-            ref as RemoteTaskInstancesFutureRef,
-            uid,
-          ),
-          from: remoteTaskInstancesFutureProvider,
-          name: r'remoteTaskInstancesFutureProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$remoteTaskInstancesFutureHash,
-          dependencies: RemoteTaskInstancesFutureFamily._dependencies,
-          allTransitiveDependencies:
-              RemoteTaskInstancesFutureFamily._allTransitiveDependencies,
-          uid: uid,
-        );
-
-  RemoteTaskInstancesFutureProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.uid,
-  }) : super.internal();
-
-  final String uid;
-
-  @override
-  Override overrideWith(
-    FutureOr<List<TaskInstance>> Function(RemoteTaskInstancesFutureRef provider)
-        create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: RemoteTaskInstancesFutureProvider._internal(
-        (ref) => create(ref as RemoteTaskInstancesFutureRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        uid: uid,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<List<TaskInstance>> createElement() {
-    return _RemoteTaskInstancesFutureProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is RemoteTaskInstancesFutureProvider && other.uid == uid;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, uid.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-mixin RemoteTaskInstancesFutureRef
-    on AutoDisposeFutureProviderRef<List<TaskInstance>> {
-  /// The parameter `uid` of this provider.
-  String get uid;
-}
-
-class _RemoteTaskInstancesFutureProviderElement
-    extends AutoDisposeFutureProviderElement<List<TaskInstance>>
-    with RemoteTaskInstancesFutureRef {
-  _RemoteTaskInstancesFutureProviderElement(super.provider);
-
-  @override
-  String get uid => (origin as RemoteTaskInstancesFutureProvider).uid;
-}
-
-String _$remoteTaskInstanceFutureHash() =>
-    r'a64ed33448ca2655393dd331734a8d99f54c82e8';
 
 /// See also [remoteTaskInstanceFuture].
 @ProviderFor(remoteTaskInstanceFuture)
@@ -330,31 +196,31 @@ class _RemoteTaskInstanceFutureProviderElement
       (origin as RemoteTaskInstanceFutureProvider).taskInstanceId;
 }
 
-String _$remoteTaskInstancesStreamHash() =>
-    r'453cb9b443349b3222893ea854dd98588a8a6875';
+String _$remoteTaskInstancesFutureHash() =>
+    r'4f009bf7e222096860c73a6669243cf8f5a3101c';
 
-/// See also [remoteTaskInstancesStream].
-@ProviderFor(remoteTaskInstancesStream)
-const remoteTaskInstancesStreamProvider = RemoteTaskInstancesStreamFamily();
+/// See also [remoteTaskInstancesFuture].
+@ProviderFor(remoteTaskInstancesFuture)
+const remoteTaskInstancesFutureProvider = RemoteTaskInstancesFutureFamily();
 
-/// See also [remoteTaskInstancesStream].
-class RemoteTaskInstancesStreamFamily
+/// See also [remoteTaskInstancesFuture].
+class RemoteTaskInstancesFutureFamily
     extends Family<AsyncValue<List<TaskInstance>>> {
-  /// See also [remoteTaskInstancesStream].
-  const RemoteTaskInstancesStreamFamily();
+  /// See also [remoteTaskInstancesFuture].
+  const RemoteTaskInstancesFutureFamily();
 
-  /// See also [remoteTaskInstancesStream].
-  RemoteTaskInstancesStreamProvider call(
+  /// See also [remoteTaskInstancesFuture].
+  RemoteTaskInstancesFutureProvider call(
     String uid,
   ) {
-    return RemoteTaskInstancesStreamProvider(
+    return RemoteTaskInstancesFutureProvider(
       uid,
     );
   }
 
   @override
-  RemoteTaskInstancesStreamProvider getProviderOverride(
-    covariant RemoteTaskInstancesStreamProvider provider,
+  RemoteTaskInstancesFutureProvider getProviderOverride(
+    covariant RemoteTaskInstancesFutureProvider provider,
   ) {
     return call(
       provider.uid,
@@ -373,33 +239,33 @@ class RemoteTaskInstancesStreamFamily
       _allTransitiveDependencies;
 
   @override
-  String? get name => r'remoteTaskInstancesStreamProvider';
+  String? get name => r'remoteTaskInstancesFutureProvider';
 }
 
-/// See also [remoteTaskInstancesStream].
-class RemoteTaskInstancesStreamProvider
-    extends AutoDisposeStreamProvider<List<TaskInstance>> {
-  /// See also [remoteTaskInstancesStream].
-  RemoteTaskInstancesStreamProvider(
+/// See also [remoteTaskInstancesFuture].
+class RemoteTaskInstancesFutureProvider
+    extends AutoDisposeFutureProvider<List<TaskInstance>> {
+  /// See also [remoteTaskInstancesFuture].
+  RemoteTaskInstancesFutureProvider(
     String uid,
   ) : this._internal(
-          (ref) => remoteTaskInstancesStream(
-            ref as RemoteTaskInstancesStreamRef,
+          (ref) => remoteTaskInstancesFuture(
+            ref as RemoteTaskInstancesFutureRef,
             uid,
           ),
-          from: remoteTaskInstancesStreamProvider,
-          name: r'remoteTaskInstancesStreamProvider',
+          from: remoteTaskInstancesFutureProvider,
+          name: r'remoteTaskInstancesFutureProvider',
           debugGetCreateSourceHash:
               const bool.fromEnvironment('dart.vm.product')
                   ? null
-                  : _$remoteTaskInstancesStreamHash,
-          dependencies: RemoteTaskInstancesStreamFamily._dependencies,
+                  : _$remoteTaskInstancesFutureHash,
+          dependencies: RemoteTaskInstancesFutureFamily._dependencies,
           allTransitiveDependencies:
-              RemoteTaskInstancesStreamFamily._allTransitiveDependencies,
+              RemoteTaskInstancesFutureFamily._allTransitiveDependencies,
           uid: uid,
         );
 
-  RemoteTaskInstancesStreamProvider._internal(
+  RemoteTaskInstancesFutureProvider._internal(
     super._createNotifier, {
     required super.name,
     required super.dependencies,
@@ -413,13 +279,13 @@ class RemoteTaskInstancesStreamProvider
 
   @override
   Override overrideWith(
-    Stream<List<TaskInstance>> Function(RemoteTaskInstancesStreamRef provider)
+    FutureOr<List<TaskInstance>> Function(RemoteTaskInstancesFutureRef provider)
         create,
   ) {
     return ProviderOverride(
       origin: this,
-      override: RemoteTaskInstancesStreamProvider._internal(
-        (ref) => create(ref as RemoteTaskInstancesStreamRef),
+      override: RemoteTaskInstancesFutureProvider._internal(
+        (ref) => create(ref as RemoteTaskInstancesFutureRef),
         from: from,
         name: null,
         dependencies: null,
@@ -431,13 +297,13 @@ class RemoteTaskInstancesStreamProvider
   }
 
   @override
-  AutoDisposeStreamProviderElement<List<TaskInstance>> createElement() {
-    return _RemoteTaskInstancesStreamProviderElement(this);
+  AutoDisposeFutureProviderElement<List<TaskInstance>> createElement() {
+    return _RemoteTaskInstancesFutureProviderElement(this);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is RemoteTaskInstancesStreamProvider && other.uid == uid;
+    return other is RemoteTaskInstancesFutureProvider && other.uid == uid;
   }
 
   @override
@@ -449,19 +315,19 @@ class RemoteTaskInstancesStreamProvider
   }
 }
 
-mixin RemoteTaskInstancesStreamRef
-    on AutoDisposeStreamProviderRef<List<TaskInstance>> {
+mixin RemoteTaskInstancesFutureRef
+    on AutoDisposeFutureProviderRef<List<TaskInstance>> {
   /// The parameter `uid` of this provider.
   String get uid;
 }
 
-class _RemoteTaskInstancesStreamProviderElement
-    extends AutoDisposeStreamProviderElement<List<TaskInstance>>
-    with RemoteTaskInstancesStreamRef {
-  _RemoteTaskInstancesStreamProviderElement(super.provider);
+class _RemoteTaskInstancesFutureProviderElement
+    extends AutoDisposeFutureProviderElement<List<TaskInstance>>
+    with RemoteTaskInstancesFutureRef {
+  _RemoteTaskInstancesFutureProviderElement(super.provider);
 
   @override
-  String get uid => (origin as RemoteTaskInstancesStreamProvider).uid;
+  String get uid => (origin as RemoteTaskInstancesFutureProvider).uid;
 }
 
 String _$remoteTaskInstanceStreamHash() =>
@@ -612,6 +478,157 @@ class _RemoteTaskInstanceStreamProviderElement
   @override
   String get taskInstanceId =>
       (origin as RemoteTaskInstanceStreamProvider).taskInstanceId;
+}
+
+String _$remoteTaskInstancesStreamHash() =>
+    r'946ca518cba6b3567f234fad88d2b05efd1f831b';
+
+/// See also [remoteTaskInstancesStream].
+@ProviderFor(remoteTaskInstancesStream)
+const remoteTaskInstancesStreamProvider = RemoteTaskInstancesStreamFamily();
+
+/// See also [remoteTaskInstancesStream].
+class RemoteTaskInstancesStreamFamily
+    extends Family<AsyncValue<List<TaskInstance>>> {
+  /// See also [remoteTaskInstancesStream].
+  const RemoteTaskInstancesStreamFamily();
+
+  /// See also [remoteTaskInstancesStream].
+  RemoteTaskInstancesStreamProvider call(
+    String uid,
+    DateTime? date,
+  ) {
+    return RemoteTaskInstancesStreamProvider(
+      uid,
+      date,
+    );
+  }
+
+  @override
+  RemoteTaskInstancesStreamProvider getProviderOverride(
+    covariant RemoteTaskInstancesStreamProvider provider,
+  ) {
+    return call(
+      provider.uid,
+      provider.date,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'remoteTaskInstancesStreamProvider';
+}
+
+/// See also [remoteTaskInstancesStream].
+class RemoteTaskInstancesStreamProvider
+    extends AutoDisposeStreamProvider<List<TaskInstance>> {
+  /// See also [remoteTaskInstancesStream].
+  RemoteTaskInstancesStreamProvider(
+    String uid,
+    DateTime? date,
+  ) : this._internal(
+          (ref) => remoteTaskInstancesStream(
+            ref as RemoteTaskInstancesStreamRef,
+            uid,
+            date,
+          ),
+          from: remoteTaskInstancesStreamProvider,
+          name: r'remoteTaskInstancesStreamProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$remoteTaskInstancesStreamHash,
+          dependencies: RemoteTaskInstancesStreamFamily._dependencies,
+          allTransitiveDependencies:
+              RemoteTaskInstancesStreamFamily._allTransitiveDependencies,
+          uid: uid,
+          date: date,
+        );
+
+  RemoteTaskInstancesStreamProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.uid,
+    required this.date,
+  }) : super.internal();
+
+  final String uid;
+  final DateTime? date;
+
+  @override
+  Override overrideWith(
+    Stream<List<TaskInstance>> Function(RemoteTaskInstancesStreamRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: RemoteTaskInstancesStreamProvider._internal(
+        (ref) => create(ref as RemoteTaskInstancesStreamRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        uid: uid,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<List<TaskInstance>> createElement() {
+    return _RemoteTaskInstancesStreamProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is RemoteTaskInstancesStreamProvider &&
+        other.uid == uid &&
+        other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, uid.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin RemoteTaskInstancesStreamRef
+    on AutoDisposeStreamProviderRef<List<TaskInstance>> {
+  /// The parameter `uid` of this provider.
+  String get uid;
+
+  /// The parameter `date` of this provider.
+  DateTime? get date;
+}
+
+class _RemoteTaskInstancesStreamProviderElement
+    extends AutoDisposeStreamProviderElement<List<TaskInstance>>
+    with RemoteTaskInstancesStreamRef {
+  _RemoteTaskInstancesStreamProviderElement(super.provider);
+
+  @override
+  String get uid => (origin as RemoteTaskInstancesStreamProvider).uid;
+  @override
+  DateTime? get date => (origin as RemoteTaskInstancesStreamProvider).date;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

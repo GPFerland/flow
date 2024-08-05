@@ -9,22 +9,14 @@ import 'package:go_router/go_router.dart';
 //todo - When a task or routine is added and the user is on the Tasks or Routines page
 // scroll till they get to the new entry automatically
 
-//todo - think about seperating the local and remote so the user can make
-// updates without service and it will update the remote once a connetion is
-// reestablished
-
-//todo - Overdue tasks are not showing up on the day they were completed
-
-//todo - make sure that tasks marked as show until completed are showing up until completed
-
 //todo - do something so the date gets updated when the time changes to the next day
 // could this be aided by a datetime provider???????
+
+//todo - Figure out what my comment structure is and document it somewhere
 
 //todo - go through every file and add comments you dumb bitch
 
 //todo - make sure any stateful widgets are necessary, they actually call set state
-
-//todo - figure out how I can reschedule a task earlier than it would normally show up
 
 //todo - combine all of the confirmation dialog code that is similar
 
@@ -40,7 +32,11 @@ import 'package:go_router/go_router.dart';
 
 //todo - cap the width of the comfirmation dialog
 
-//todo - Refresh with a pulldown????
+//todo - think about how I handle ids for tasks and task instances
+//       should firestore handle this for me or can I generate ids myself
+
+//todo - show messages at the bottom of the page when stuff happens, creation
+//       deletion, updates, all that shit
 
 class FlowApp extends ConsumerWidget {
   const FlowApp({super.key});

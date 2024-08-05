@@ -1,4 +1,4 @@
-import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
+import 'package:flow/src/features/authentication/data/fake_auth_repository.dart';
 import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
@@ -65,7 +65,7 @@ void main() {
         (_) => Future.value(fetchTasksReturn),
       );
       when(
-        () => localTasksRepository.setTasks(
+        () => localTasksRepository.updateTasks(
           setTasksArg ?? any(),
         ),
       ).thenAnswer(
@@ -79,7 +79,7 @@ void main() {
         (_) => Future.value(fetchTasksReturn),
       );
       when(
-        () => remoteTasksRepository.setTasks(
+        () => remoteTasksRepository.updateTasks(
           testUser.uid,
           setTasksArg ?? any(),
         ),
@@ -104,12 +104,12 @@ void main() {
         ),
       );
       verify(
-        () => localTasksRepository.setTasks(
+        () => localTasksRepository.updateTasks(
           setTasksArg ?? any(),
         ),
       ).called(1);
       verifyNever(
-        () => remoteTasksRepository.setTasks(
+        () => remoteTasksRepository.updateTasks(
           any(),
           any(),
         ),
@@ -124,13 +124,13 @@ void main() {
         () => localTasksRepository.fetchTasks(),
       );
       verify(
-        () => remoteTasksRepository.setTasks(
+        () => remoteTasksRepository.updateTasks(
           testUser.uid,
           setTasksArg ?? any(),
         ),
       ).called(1);
       verifyNever(
-        () => localTasksRepository.setTasks(
+        () => localTasksRepository.updateTasks(
           any(),
         ),
       );
@@ -150,7 +150,7 @@ void main() {
         );
         final tasksService = makeTasksService();
         // run
-        await tasksService.setTasks(testTasks);
+        await tasksService.updateTasks(testTasks);
         // verify
         verifyRepositories(
           user: null,
@@ -168,7 +168,7 @@ void main() {
         );
         final tasksService = makeTasksService();
         // run
-        await tasksService.setTasks(testTasks);
+        await tasksService.updateTasks(testTasks);
         // verify
         verifyRepositories(
           user: testUser,
@@ -188,7 +188,7 @@ void main() {
         );
         final tasksService = makeTasksService();
         // run
-        await tasksService.setTasks([updatedTestTask]);
+        await tasksService.updateTasks([updatedTestTask]);
         // verify
         verifyRepositories(
           user: null,
@@ -208,47 +208,12 @@ void main() {
         );
         final tasksService = makeTasksService();
         // run
-        await tasksService.setTasks([updatedTestTask]);
+        await tasksService.updateTasks([updatedTestTask]);
         // verify
         verifyRepositories(
           user: testUser,
           setTasksArg: testTasks,
         );
-      });
-    });
-
-    group('fetchTasks', () {
-      test('null user, fetch tasks from local repo', () async {
-        // setup
-        final testTask = createTestTask();
-        final testTasks = [testTask];
-        setUpRepositories(
-          currentUserReturn: null,
-          fetchTasksReturn: testTasks,
-          setTasksArg: null,
-        );
-        final tasksService = makeTasksService();
-        // run
-        final fetchedTasks = await tasksService.fetchTasks();
-        // verify
-        verify(() => localTasksRepository.fetchTasks()).called(1);
-        expect(fetchedTasks, testTasks);
-      });
-      test('non-null user, fetch tasks from remote tasks repo', () async {
-        // setup
-        final testTask = createTestTask();
-        final testTasks = [testTask];
-        setUpRepositories(
-          currentUserReturn: testUser,
-          fetchTasksReturn: testTasks,
-          setTasksArg: null,
-        );
-        final tasksService = makeTasksService();
-        // run
-        final fetchedTasks = await tasksService.fetchTasks();
-        // verify
-        verify(() => remoteTasksRepository.fetchTasks(testUser.uid)).called(1);
-        expect(fetchedTasks, testTasks);
       });
     });
 
@@ -265,7 +230,7 @@ void main() {
         );
         final tasksService = makeTasksService();
         // run
-        await tasksService.removeTask(testTask.id);
+        await tasksService.deleteTask(testTask.id);
         // verify
         verifyRepositories(
           user: null,

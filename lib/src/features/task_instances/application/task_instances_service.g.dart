@@ -7,7 +7,7 @@ part of 'task_instances_service.dart';
 // **************************************************************************
 
 String _$taskInstancesServiceHash() =>
-    r'cb3a590ddfa845cb01c3d643fc647a21a96918b1';
+    r'e75df420534d9ccf20bb1f361a03de77ef3acc25';
 
 /// See also [taskInstancesService].
 @ProviderFor(taskInstancesService)
@@ -23,7 +23,7 @@ final taskInstancesServiceProvider = Provider<TaskInstancesService>.internal(
 
 typedef TaskInstancesServiceRef = ProviderRef<TaskInstancesService>;
 String _$dateTaskInstancesStreamHash() =>
-    r'9243db49ef7d3043b78f5fe79b64da11ddd090d5';
+    r'b621c54083d5b83da94b25feaa58f4425f6abb4a';
 
 /// Copied from Dart SDK
 class _SystemHash {

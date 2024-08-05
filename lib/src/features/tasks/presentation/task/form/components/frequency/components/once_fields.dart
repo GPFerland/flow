@@ -1,6 +1,5 @@
 import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/utils/date.dart';
-import 'package:flow/src/utils/style.dart';
 import 'package:flutter/material.dart';
 
 class OnceFields extends StatefulWidget {
@@ -64,9 +63,8 @@ class _OnceFieldsState extends State<OnceFields> {
                         color: Theme.of(context).colorScheme.onPrimaryContainer,
                       ),
                       gapW8,
-                      Text(
+                      const Text(
                         'Select Date',
-                        style: getBodyMediumOnPrimaryContainer(context),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -83,7 +81,6 @@ class _OnceFieldsState extends State<OnceFields> {
                   ),
                   child: Text(
                     getFormattedDateString(date),
-                    style: getBodyMediumOnPrimary(context),
                     textAlign: TextAlign.center,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,

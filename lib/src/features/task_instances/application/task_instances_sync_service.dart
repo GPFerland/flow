@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flow/src/exceptions/error_logger.dart';
-import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
-import 'package:flow/src/features/authentication/domain/app_user.dart';
+import 'package:flow/src/features/authentication/data/auth_repository.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,12 +16,15 @@ class TaskInstancesSyncService {
   final Ref ref;
 
   void _init() {
-    ref.listen<AsyncValue<AppUser?>>(
+    // listen for changes of the auth state, i.e. user signs in or out
+    ref.listen<AsyncValue<User?>>(
       authStateChangesProvider,
       (previous, next) {
         final previousUser = previous?.value;
         final user = next.value;
+        // if the user is signing in
         if (previousUser == null && user != null) {
+          // move the local task instances to the remote repository
           _moveTaskInstancesToRemoteRepository(user.uid);
         }
       },
@@ -30,30 +33,28 @@ class TaskInstancesSyncService {
 
   Future<void> _moveTaskInstancesToRemoteRepository(String uid) async {
     try {
-      // Get the local task instances data
+      // get the local task instances data
       final localTaskInstancesRepository = ref.read(
         localTaskInstancesRepositoryProvider,
       );
       final localTaskInstances =
           await localTaskInstancesRepository.fetchTaskInstances();
       if (localTaskInstances.isNotEmpty) {
-        // Get the remote task instances data
         final remoteTaskInstancesRepository = ref.read(
           remoteTaskInstancesRepositoryProvider,
         );
-        final remoteTaskInstances =
-            await remoteTaskInstancesRepository.fetchTaskInstances(uid);
-        // Add all of the local task instances to the remote task instances
-        remoteTaskInstances.addAll(localTaskInstances);
-        // Write the updated remote task instances data to the repository
-        await remoteTaskInstancesRepository.setTaskInstances(
+        // add the local tasks to the remote repository
+        await remoteTaskInstancesRepository.createTaskInstances(
           uid,
-          remoteTaskInstances,
+          localTaskInstances,
         );
-        // Remove all task instances from the local task instances repository
-        await localTaskInstancesRepository.setTaskInstances([]);
+        // delete all tasks from the local tasks repository
+        await localTaskInstancesRepository.deleteTaskInstances(
+          localTaskInstances.map((taskInstance) => taskInstance.id).toList(),
+        );
       }
     } catch (exception, stackTrace) {
+      //todo - update to custom exception
       ref.read(errorLoggerProvider).logError(exception, stackTrace);
     }
   }

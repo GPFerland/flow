@@ -1,5 +1,6 @@
 import 'package:flow/src/common_widgets/buttons/primary_button.dart';
 import 'package:flow/src/features/tasks/presentation/task/form/components/task_color_input_field.dart';
+import 'package:flow/src/features/tasks/presentation/task/form/components/task_create_or_update_button.dart';
 import 'package:flow/src/features/tasks/presentation/task/form/components/task_icon_input_field.dart';
 import 'package:flow/src/features/tasks/presentation/task/form/components/task_description_input_field.dart';
 import 'package:flow/src/features/tasks/presentation/task/form/components/task_title_input_field.dart';
@@ -49,19 +50,13 @@ class _TaskFormState extends ConsumerState<TaskForm>
       _descriptionController.text = task.description;
       _icon = task.icon;
       _color = task.color;
-      _untilCompleted = task.untilCompleted;
+      _untilCompleted = task.untilAddressed;
       _frequency = task.frequency;
       _date = task.date.copyWith();
       _weekdays = List.from(task.weekdays);
       _monthdays = List.from(task.monthdays);
     } else {
-      _icon = Icons.check;
-      _color = Colors.blue.shade200;
-      _untilCompleted = true;
-      _frequency = Frequency.once;
-      _date = getDateNoTimeToday();
-      _weekdays = [];
-      _monthdays = [];
+      _resetFields();
     }
   }
 
@@ -82,7 +77,6 @@ class _TaskFormState extends ConsumerState<TaskForm>
   void _updateMonthdays(List<Monthday> monthdays) => _monthdays = monthdays;
 
   void _submitTask() async {
-    //setState(() => _submitted = true);
     if (_formKey.currentState!.validate()) {
       final oldTask = widget.task;
       Task task = Task(
@@ -93,7 +87,7 @@ class _TaskFormState extends ConsumerState<TaskForm>
         color: _color,
         description: _descriptionController.text,
         createdOn: oldTask != null ? oldTask.createdOn : getDateNoTimeToday(),
-        untilCompleted: _untilCompleted,
+        untilAddressed: _untilCompleted,
         frequency: _frequency,
         date: _date,
         weekdays: _weekdays,
@@ -103,14 +97,28 @@ class _TaskFormState extends ConsumerState<TaskForm>
       ref.read(taskControllerProvider.notifier).submitTask(
             task: task,
             oldTask: oldTask,
-            onSuccess: context.pop,
           );
     }
   }
 
+  void _resetFields() async {
+    _titleController.text = '';
+    _titleController.text = '';
+    _icon = Icons.check;
+    _color = Colors.blue.shade200;
+    _untilCompleted = true;
+    _frequency = Frequency.once;
+    _date = getDateNoTimeToday();
+    _weekdays = [];
+    _monthdays = [];
+  }
+
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(taskControllerProvider);
+    final task = widget.task;
+    if (task == null) {
+      _resetFields();
+    }
 
     return ResponsiveScrollableCard(
       child: Form(
@@ -153,10 +161,9 @@ class _TaskFormState extends ConsumerState<TaskForm>
               updateMonthdays: _updateMonthdays,
             ),
             gapH8,
-            PrimaryButton(
-              text: widget.task == null ? 'Create' : 'Update',
-              isLoading: state.isLoading,
-              onPressed: state.isLoading ? null : _submitTask,
+            TaskCreateOrUpdateButton(
+              task: task,
+              submitTask: _submitTask,
             ),
           ],
         ),

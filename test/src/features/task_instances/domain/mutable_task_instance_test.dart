@@ -109,9 +109,9 @@ void main() {
   group('isDisplayed', () {
     test('overdue, return true', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        untilCompleted: true,
-        nextInstanceOn: () => null,
-        initialDate: getDateNoTimeYesterday(),
+        untilAddressed: true,
+        nextScheduledDate: () => null,
+        scheduledDate: getDateNoTimeYesterday(),
         rescheduledDate: () => null,
         completed: false,
         skipped: false,
@@ -126,9 +126,10 @@ void main() {
       final isDisplayed = taskInstance.isDisplayed(date);
       expect(isDisplayed, true);
     });
-    test('untilCompleted, before today, completed on date, return true', () {
+    test('untilAddressed, before today, completed on date, return true', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        initialDate: getDateNoTimeYesterday().subtract(const Duration(days: 2)),
+        scheduledDate:
+            getDateNoTimeYesterday().subtract(const Duration(days: 2)),
         skipped: false,
         completed: true,
         completedDate: () => getDateNoTimeYesterday(),
@@ -137,9 +138,10 @@ void main() {
       final isDisplayed = taskInstance.isDisplayed(date);
       expect(isDisplayed, true);
     });
-    test('untilCompleted, before today, skipped on date, return true', () {
+    test('untilAddressed, before today, skipped on date, return true', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        initialDate: getDateNoTimeYesterday().subtract(const Duration(days: 2)),
+        scheduledDate:
+            getDateNoTimeYesterday().subtract(const Duration(days: 2)),
         skipped: true,
         skippedDate: () => getDateNoTimeYesterday(),
         completed: false,
@@ -176,9 +178,9 @@ void main() {
   group('isOverdue', () {
     test('overdue, return true', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        untilCompleted: true,
-        nextInstanceOn: () => null,
-        initialDate: getDateNoTimeYesterday(),
+        untilAddressed: true,
+        nextScheduledDate: () => null,
+        scheduledDate: getDateNoTimeYesterday(),
         rescheduledDate: () => null,
         completed: false,
         skipped: false,
@@ -187,9 +189,9 @@ void main() {
       final isOverdue = taskInstance.isOverdue(date);
       expect(isOverdue, true);
     });
-    test('NOT overdue, untilCompleted is false', () {
+    test('NOT overdue, untilAddressed is false', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        untilCompleted: false,
+        untilAddressed: false,
       );
       final date = getDateNoTimeToday();
       final isOverdue = taskInstance.isOverdue(date);
@@ -197,8 +199,8 @@ void main() {
     });
     test('NOT overdue, date is not today OR day before next instance', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        untilCompleted: true,
-        nextInstanceOn: () => getDateNoTimeTomorrow().add(
+        untilAddressed: true,
+        nextScheduledDate: () => getDateNoTimeTomorrow().add(
           const Duration(days: 5),
         ),
       );
@@ -206,11 +208,11 @@ void main() {
       final isOverdue = taskInstance.isOverdue(date);
       expect(isOverdue, false);
     });
-    test('NOT overdue, initialDate is NOT before date', () {
+    test('NOT overdue, scheduledDate is NOT before date', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        untilCompleted: true,
-        nextInstanceOn: () => getDateNoTimeTomorrow(),
-        initialDate: getDateNoTimeTomorrow(),
+        untilAddressed: true,
+        nextScheduledDate: () => getDateNoTimeTomorrow(),
+        scheduledDate: getDateNoTimeTomorrow(),
       );
       final date = getDateNoTimeToday();
       final isOverdue = taskInstance.isOverdue(date);
@@ -218,20 +220,20 @@ void main() {
     });
     test('NOT overdue, rescheduledDate is NOT before date', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        untilCompleted: true,
-        nextInstanceOn: () => getDateNoTimeTomorrow(),
-        initialDate: getDateNoTimeYesterday(),
+        untilAddressed: true,
+        nextScheduledDate: () => getDateNoTimeTomorrow(),
+        scheduledDate: getDateNoTimeYesterday(),
         rescheduledDate: () => getDateNoTimeToday(),
       );
       final date = getDateNoTimeToday();
       final isOverdue = taskInstance.isOverdue(date);
       expect(isOverdue, false);
     });
-    test('NOT overdue, date is NOT before nextInstanceOn', () {
+    test('NOT overdue, date is NOT before nextScheduledDate', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        untilCompleted: true,
-        nextInstanceOn: () => getDateNoTimeToday(),
-        initialDate: getDateNoTimeYesterday(),
+        untilAddressed: true,
+        nextScheduledDate: () => getDateNoTimeToday(),
+        scheduledDate: getDateNoTimeYesterday(),
         rescheduledDate: () => null,
       );
       final date = getDateNoTimeToday();
@@ -240,9 +242,9 @@ void main() {
     });
     test('NOT overdue, task is completed', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        untilCompleted: true,
-        nextInstanceOn: () => null,
-        initialDate: getDateNoTimeYesterday(),
+        untilAddressed: true,
+        nextScheduledDate: () => null,
+        scheduledDate: getDateNoTimeYesterday(),
         rescheduledDate: () => null,
         completed: true,
       );
@@ -252,9 +254,9 @@ void main() {
     });
     test('NOT overdue, task is skipped', () {
       final taskInstance = createTestTaskInstance().copyWith(
-        untilCompleted: true,
-        nextInstanceOn: () => null,
-        initialDate: getDateNoTimeYesterday(),
+        untilAddressed: true,
+        nextScheduledDate: () => null,
+        scheduledDate: getDateNoTimeYesterday(),
         rescheduledDate: () => null,
         completed: false,
         skipped: true,

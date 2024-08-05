@@ -1,4 +1,4 @@
-import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
+import 'package:flow/src/features/authentication/data/fake_auth_repository.dart';
 import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/check_list/data/date_repository.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
@@ -58,7 +58,7 @@ void main() {
   void setUpRepositories({
     required AppUser? currentUserReturn,
     required List<TaskInstance> fetchTaskInstancesReturn,
-    required List<TaskInstance>? setTaskInstancesArg,
+    required List<TaskInstance>? updateTaskInstancesArg,
   }) {
     when(
       () => authRepository.currentUser,
@@ -88,8 +88,8 @@ void main() {
         (_) => Future.value(fetchTaskInstancesReturn),
       );
       when(
-        () => localTaskInstancesRepository.setTaskInstances(
-          setTaskInstancesArg ?? any(),
+        () => localTaskInstancesRepository.updateTaskInstances(
+          updateTaskInstancesArg ?? any(),
         ),
       ).thenAnswer(
         (_) => Future.value(),
@@ -102,9 +102,9 @@ void main() {
         (_) => Future.value(fetchTaskInstancesReturn),
       );
       when(
-        () => remoteTaskInstancesRepository.setTaskInstances(
+        () => remoteTaskInstancesRepository.updateTaskInstances(
           testUser.uid,
-          setTaskInstancesArg ?? any(),
+          updateTaskInstancesArg ?? any(),
         ),
       ).thenAnswer(
         (_) => Future.value(),
@@ -115,7 +115,7 @@ void main() {
   // verify expected repository function calls
   void verifyRepositories({
     required AppUser? user,
-    required List<TaskInstance>? setTaskInstancesArg,
+    required List<TaskInstance>? updateTaskInstancesArg,
   }) {
     if (user == null) {
       verify(
@@ -127,12 +127,12 @@ void main() {
         ),
       );
       verify(
-        () => localTaskInstancesRepository.setTaskInstances(
-          setTaskInstancesArg ?? any(),
+        () => localTaskInstancesRepository.updateTaskInstances(
+          updateTaskInstancesArg ?? any(),
         ),
       ).called(1);
       verifyNever(
-        () => remoteTaskInstancesRepository.setTaskInstances(
+        () => remoteTaskInstancesRepository.updateTaskInstances(
           any(),
           any(),
         ),
@@ -147,13 +147,13 @@ void main() {
         () => localTaskInstancesRepository.fetchTaskInstances(),
       );
       verify(
-        () => remoteTaskInstancesRepository.setTaskInstances(
+        () => remoteTaskInstancesRepository.updateTaskInstances(
           testUser.uid,
-          setTaskInstancesArg ?? any(),
+          updateTaskInstancesArg ?? any(),
         ),
       ).called(1);
       verifyNever(
-        () => localTaskInstancesRepository.setTaskInstances(
+        () => localTaskInstancesRepository.updateTaskInstances(
           any(),
         ),
       );
@@ -161,7 +161,7 @@ void main() {
   }
 
   group('TaskInstancesService', () {
-    group('setTaskInstances', () {
+    group('updateTaskInstances', () {
       test('null user, new task instance set in local repo', () async {
         // setup
         final testTaskInstance = createTestTaskInstance();
@@ -169,15 +169,15 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: testTaskInstances,
+          updateTaskInstancesArg: testTaskInstances,
         );
         final taskInstancesService = makeTaskInstancesService();
         // run
-        await taskInstancesService.setTaskInstances(testTaskInstances);
+        await taskInstancesService.updateTaskInstances(testTaskInstances);
         // verify
         verifyRepositories(
           user: null,
-          setTaskInstancesArg: testTaskInstances,
+          updateTaskInstancesArg: testTaskInstances,
         );
       });
       test('non-null user, new task instance set in remote repo', () async {
@@ -187,15 +187,15 @@ void main() {
         setUpRepositories(
           currentUserReturn: testUser,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: testTaskInstances,
+          updateTaskInstancesArg: testTaskInstances,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.setTaskInstances([testTaskInstance]);
+        await tasksService.updateTaskInstances([testTaskInstance]);
         // verify
         verifyRepositories(
           user: testUser,
-          setTaskInstancesArg: testTaskInstances,
+          updateTaskInstancesArg: testTaskInstances,
         );
       });
       test('null user, existing task instance set in local repo', () async {
@@ -209,15 +209,15 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: updatedTestTaskInstances,
+          updateTaskInstancesArg: updatedTestTaskInstances,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.setTaskInstances([updatedTestTaskInstance]);
+        await tasksService.updateTaskInstances([updatedTestTaskInstance]);
         // verify
         verifyRepositories(
           user: null,
-          setTaskInstancesArg: updatedTestTaskInstances,
+          updateTaskInstancesArg: updatedTestTaskInstances,
         );
       });
       test('non-null user, existing task instance set in remote repo',
@@ -232,20 +232,20 @@ void main() {
         setUpRepositories(
           currentUserReturn: testUser,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: updatedTestTaskInstances,
+          updateTaskInstancesArg: updatedTestTaskInstances,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.setTaskInstances([updatedTestTaskInstance]);
+        await tasksService.updateTaskInstances([updatedTestTaskInstance]);
         // verify
         verifyRepositories(
           user: testUser,
-          setTaskInstancesArg: testTaskInstances,
+          updateTaskInstancesArg: testTaskInstances,
         );
       });
     });
 
-    group('createTaskInstances', () {
+    group('createTasksInstances', () {
       test('null user, task NOT scheduled on date', () async {
         // setup
         final testDate = getDateNoTimeToday();
@@ -256,17 +256,17 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: [],
+          updateTaskInstancesArg: [],
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.createTaskInstances(testTask, [testDate]);
+        await tasksService.createTasksInstances(testTask, [testDate]);
         // verify
         verifyNever(
           () => localTaskInstancesRepository.fetchTaskInstances(),
         );
         verifyNever(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         );
       });
       test('null user, task instance already exists for date', () async {
@@ -278,20 +278,20 @@ void main() {
         );
         final testTaskInstance = createTestTaskInstance().copyWith(
           taskId: testTask.id,
-          initialDate: testDate,
+          scheduledDate: testDate,
         );
         final testTaskInstances = [testTaskInstance];
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: [],
+          updateTaskInstancesArg: [],
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.createTaskInstances(testTask, [testDate]);
+        await tasksService.createTasksInstances(testTask, [testDate]);
         // verify
         verifyNever(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         );
       });
       test('null user, date is before tasks createdOn date', () async {
@@ -304,14 +304,14 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: [],
+          updateTaskInstancesArg: [],
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.createTaskInstances(testTask, [testDate]);
+        await tasksService.createTasksInstances(testTask, [testDate]);
         // verify
         verifyNever(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         );
       });
       test('null user, once type task, scheduled', () async {
@@ -324,14 +324,14 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.createTaskInstances(testTask, [testDate]);
+        await tasksService.createTasksInstances(testTask, [testDate]);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
       test('daily type task scheduled', () async {
@@ -343,14 +343,14 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.createTaskInstances(testTask, [testDate]);
+        await tasksService.createTasksInstances(testTask, [testDate]);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
       test('weekly type task scheduled', () async {
@@ -367,14 +367,14 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.createTaskInstances(testTask, [testDate]);
+        await tasksService.createTasksInstances(testTask, [testDate]);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
       test('monthly type task scheduled, first day of the month', () async {
@@ -397,14 +397,14 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.createTaskInstances(testTask, [firstDayOfMonth]);
+        await tasksService.createTasksInstances(testTask, [firstDayOfMonth]);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
       test('monthly type task scheduled, last day of the month', () async {
@@ -423,14 +423,14 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.createTaskInstances(testTask, [lastDayOfMonth]);
+        await tasksService.createTasksInstances(testTask, [lastDayOfMonth]);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
       test('monthly type task scheduled, second tuesday', () async {
@@ -460,14 +460,14 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.createTaskInstances(testTask, [testDate]);
+        await tasksService.createTasksInstances(testTask, [testDate]);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
       test('monthly type task scheduled, last sunday', () async {
@@ -490,14 +490,14 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.createTaskInstances(testTask, [testDate]);
+        await tasksService.createTasksInstances(testTask, [testDate]);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
     });
@@ -517,18 +517,18 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: updatedTestTaskInstances,
+          updateTaskInstancesArg: updatedTestTaskInstances,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.removeTaskInstances([
-          taskInstance1,
-          taskInstance2,
+        await tasksService.deleteTaskInstances([
+          taskInstance1.id,
+          taskInstance2.id,
         ]);
         // verify
         verifyRepositories(
           user: null,
-          setTaskInstancesArg: updatedTestTaskInstances,
+          updateTaskInstancesArg: updatedTestTaskInstances,
         );
       });
     });
@@ -548,34 +548,34 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: updatedTestTaskInstances,
+          updateTaskInstancesArg: updatedTestTaskInstances,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.removeTasksInstances(testTaskId);
+        await tasksService.deleteTasksInstances(testTaskId);
         // verify
         verifyRepositories(
           user: null,
-          setTaskInstancesArg: updatedTestTaskInstances,
+          updateTaskInstancesArg: updatedTestTaskInstances,
         );
       });
     });
 
-    group('updateTasksInstances', () {
+    group('changeTasksInstances', () {
       test('null user, task is new', () async {
         // setup
         final testTask = createTestTask();
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: [],
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.updateTasksInstances(testTask, null);
+        await tasksService.changeTasksInstances(testTask, null);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
       test('null user, task is NOT new, once date NO change', () async {
@@ -587,20 +587,20 @@ void main() {
         final testTaskOld = testTask.copyWith();
         final testTaskInstance = createTestTaskInstance(id: '1').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeYesterday(),
+          scheduledDate: getDateNoTimeYesterday(),
         );
         final testTaskInstances = [testTaskInstance];
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.updateTasksInstances(testTask, testTaskOld);
+        await tasksService.changeTasksInstances(testTask, testTaskOld);
         // verify
         verifyNever(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         );
       });
       test('null user, task is NOT new, once date change', () async {
@@ -612,20 +612,20 @@ void main() {
         final testTaskOld = testTask.copyWith(date: getDateNoTimeYesterday());
         final testTaskInstance = createTestTaskInstance(id: '1').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeYesterday(),
+          scheduledDate: getDateNoTimeYesterday(),
         );
         final testTaskInstances = [testTaskInstance];
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.updateTasksInstances(testTask, testTaskOld);
+        await tasksService.changeTasksInstances(testTask, testTaskOld);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(2);
       });
       test('null user, task is NOT new, daily NO change', () async {
@@ -637,20 +637,20 @@ void main() {
         final testTaskOld = testTask.copyWith();
         final testTaskInstance = createTestTaskInstance(id: '1').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeYesterday(),
+          scheduledDate: getDateNoTimeYesterday(),
         );
         final testTaskInstances = [testTaskInstance];
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.updateTasksInstances(testTask, testTaskOld);
+        await tasksService.changeTasksInstances(testTask, testTaskOld);
         // verify
         verifyNever(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         );
       });
       test('null user, task is NOT new, daily change', () async {
@@ -661,15 +661,15 @@ void main() {
         final testTaskOld = testTask.copyWith(frequency: Frequency.daily);
         final testTaskInstance1 = createTestTaskInstance(id: '1').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeYesterday(),
+          scheduledDate: getDateNoTimeYesterday(),
         );
         final testTaskInstance2 = createTestTaskInstance(id: '2').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeToday(),
+          scheduledDate: getDateNoTimeToday(),
         );
         final testTaskInstance3 = createTestTaskInstance(id: '3').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeTomorrow(),
+          scheduledDate: getDateNoTimeTomorrow(),
         );
         final testTaskInstances = [
           testTaskInstance1,
@@ -679,14 +679,14 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.updateTasksInstances(testTask, testTaskOld);
+        await tasksService.changeTasksInstances(testTask, testTaskOld);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
       test('null user, task is NOT new, weekly day NO change', () async {
@@ -699,20 +699,20 @@ void main() {
         final testTaskOld = testTask.copyWith();
         final testTaskInstance = createTestTaskInstance(id: '1').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeYesterday(),
+          scheduledDate: getDateNoTimeYesterday(),
         );
         final testTaskInstances = [testTaskInstance];
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.updateTasksInstances(testTask, testTaskOld);
+        await tasksService.changeTasksInstances(testTask, testTaskOld);
         // verify
         verifyNever(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         );
       });
       test('null user, task is NOT new, weekly day change', () async {
@@ -725,20 +725,20 @@ void main() {
         final testTaskOld = testTask.copyWith(weekdays: [Weekday.mon]);
         final testTaskInstance = createTestTaskInstance(id: '1').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeYesterday(),
+          scheduledDate: getDateNoTimeYesterday(),
         );
         final testTaskInstances = [testTaskInstance];
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.updateTasksInstances(testTask, testTaskOld);
+        await tasksService.changeTasksInstances(testTask, testTaskOld);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
       test('null user, task is NOT new, monthly day NO change', () async {
@@ -753,20 +753,20 @@ void main() {
         final testTaskOld = testTask.copyWith();
         final testTaskInstance = createTestTaskInstance(id: '1').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeYesterday(),
+          scheduledDate: getDateNoTimeYesterday(),
         );
         final testTaskInstances = [testTaskInstance];
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.updateTasksInstances(testTask, testTaskOld);
+        await tasksService.changeTasksInstances(testTask, testTaskOld);
         // verify
         verifyNever(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         );
       });
       test('null user, task is NOT new, monthly day change', () async {
@@ -785,45 +785,45 @@ void main() {
         );
         final testTaskInstance = createTestTaskInstance(id: '1').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeYesterday(),
+          scheduledDate: getDateNoTimeYesterday(),
         );
         final testTaskInstances = [testTaskInstance];
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.updateTasksInstances(testTask, testTaskOld);
+        await tasksService.changeTasksInstances(testTask, testTaskOld);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(1);
       });
-      test('null user, task is NOT new, untilCompleted change', () async {
+      test('null user, task is NOT new, untilAddressed change', () async {
         // setup
         final testTask = createTestTask().copyWith(
           createdOn: getDateNoTimeYesterday(),
-          untilCompleted: true,
+          untilAddressed: true,
         );
-        final testTaskOld = testTask.copyWith(untilCompleted: false);
+        final testTaskOld = testTask.copyWith(untilAddressed: false);
         final testTaskInstance = createTestTaskInstance(id: '1').copyWith(
           taskId: testTask.id,
-          initialDate: getDateNoTimeYesterday(),
+          scheduledDate: getDateNoTimeYesterday(),
         );
         final testTaskInstances = [testTaskInstance];
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: null,
+          updateTaskInstancesArg: null,
         );
         final tasksService = makeTaskInstancesService();
         // run
-        await tasksService.updateTasksInstances(testTask, testTaskOld);
+        await tasksService.changeTasksInstances(testTask, testTaskOld);
         // verify
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(any()),
+          () => localTaskInstancesRepository.updateTaskInstances(any()),
         ).called(2);
       });
     });
@@ -842,7 +842,7 @@ void main() {
         final testTask1Instance1 = createTestTaskInstance(id: '1').copyWith(
           taskId: testTask1.id,
           taskPriority: 0,
-          initialDate: getDateNoTimeYesterday(),
+          scheduledDate: getDateNoTimeYesterday(),
         );
         final testTask1Instance2 = createTestTaskInstance(id: '2').copyWith(
           taskId: testTask1.id,
@@ -851,7 +851,7 @@ void main() {
         final testTask1Instance3 = createTestTaskInstance(id: '3').copyWith(
           taskId: testTask1.id,
           taskPriority: 0,
-          initialDate: getDateNoTimeTomorrow(),
+          scheduledDate: getDateNoTimeTomorrow(),
         );
         final testTask2Instance1 = createTestTaskInstance(id: '4').copyWith(
           taskId: testTask2.id,
@@ -878,7 +878,7 @@ void main() {
         setUpRepositories(
           currentUserReturn: null,
           fetchTaskInstancesReturn: testTaskInstances,
-          setTaskInstancesArg: updatedTestTaskInstances,
+          updateTaskInstancesArg: updatedTestTaskInstances,
         );
         final tasksService = makeTaskInstancesService();
         // run
@@ -886,7 +886,7 @@ void main() {
         // verify
         verifyRepositories(
           user: null,
-          setTaskInstancesArg: updatedTestTaskInstances,
+          updateTaskInstancesArg: updatedTestTaskInstances,
         );
       });
     });

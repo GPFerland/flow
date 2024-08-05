@@ -1,19 +1,19 @@
 import 'package:flow/src/common_widgets/alert_dialogs.dart';
 import 'package:flow/src/common_widgets/buttons/add_item_icon_button.dart';
 import 'package:flow/src/common_widgets/buttons/custom_text_button.dart';
-import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
+import 'package:flow/src/features/authentication/data/fake_auth_repository.dart';
 import 'package:flow/src/features/check_list/presentation/app_bar/check_list_app_bar.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_creation_service.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_sync_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
-import 'package:flow/src/features/task_instances/data/local/test_local_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository_fake.dart';
 import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository.dart';
-import 'package:flow/src/features/task_instances/data/remote/test_remote_task_instances_repository.dart';
+import 'package:flow/src/features/task_instances/data/remote/remote_task_instances_repository_fake.dart';
 import 'package:flow/src/features/tasks/application/tasks_sync_service.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
-import 'package:flow/src/features/tasks/data/local/test_local_tasks_repository.dart';
+import 'package:flow/src/features/tasks/data/local/local_tasks_repository_fake.dart';
 import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository.dart';
-import 'package:flow/src/features/tasks/data/remote/test_remote_tasks_repository.dart';
+import 'package:flow/src/features/tasks/data/remote/remote_tasks_repository_fake.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
 import 'package:flow/src/flow_app.dart';
 import 'package:flow/src/utils/date.dart';
@@ -39,19 +39,19 @@ class Robot {
   // pump the app
   Future<void> pumpFlowApp() async {
     // Override repositories
-    final authRepository = TestAuthRepository(
+    final authRepository = FakeAuthRepository(
       addDelay: false,
     );
-    final localTasksRepository = TestLocalTasksRepository(
+    final localTasksRepository = FakeLocalTasksRepository(
       addDelay: false,
     );
-    final remoteTasksRepository = TestRemoteTasksRepository(
+    final remoteTasksRepository = FakeRemoteTasksRepository(
       addDelay: false,
     );
-    final localTaskInstancesRepository = TestLocalTaskInstancesRepository(
+    final localTaskInstancesRepository = FakeLocalTaskInstancesRepository(
       addDelay: false,
     );
-    final remoteTaskInstancesRepository = TestRemoteTaskInstancesRepository(
+    final remoteTaskInstancesRepository = FakeRemoteTaskInstancesRepository(
       addDelay: false,
     );
     // Override the required providers

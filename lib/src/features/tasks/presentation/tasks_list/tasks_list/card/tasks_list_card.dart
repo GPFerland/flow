@@ -1,3 +1,4 @@
+import 'package:flow/src/constants/app_sizes.dart';
 import 'package:flow/src/features/tasks/presentation/tasks_list/tasks_list/card/components/tasks_list_card_frequency.dart';
 import 'package:flow/src/features/tasks/presentation/tasks_list/tasks_list/card/components/tasks_list_card_icon.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
@@ -28,16 +29,19 @@ class TasksListCard extends ConsumerWidget {
           pathParameters: {'id': task.id},
         );
       },
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          child: Row(
-            children: [
-              TasksListCardIcon(task: task),
-              const SizedBox(width: 16),
-              Expanded(child: Text(task.title)),
-              TasksListCardFrequency(task: task),
-            ],
+      child: SizedBox(
+        height: taskCardH,
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            child: Row(
+              children: [
+                TasksListCardIcon(task: task),
+                const SizedBox(width: 16),
+                Expanded(child: Text(task.title)),
+                TasksListCardFrequency(task: task),
+              ],
+            ),
           ),
         ),
       ),

@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:flow/src/features/tasks/domain/task.dart';
 
-/// * The task instance identifier is an important concept and can have its own type.
+// * The task instance identifier is an important concept and can have its own type.
 typedef TaskInstanceId = String;
 
 class TaskInstance {
@@ -12,31 +12,31 @@ class TaskInstance {
     required this.id,
     required this.taskId,
     required this.taskPriority,
-    required this.untilCompleted,
-    this.nextInstanceOn,
+    required this.untilAddressed,
     this.completed = false,
     this.completedDate,
     this.skipped = false,
     this.skippedDate,
-    required this.initialDate,
+    required this.scheduledDate,
     this.rescheduledDate,
+    this.nextScheduledDate,
   });
 
   final TaskInstanceId id;
   final TaskId taskId;
   final int taskPriority;
-  final bool untilCompleted;
-  final DateTime? nextInstanceOn;
+  final bool untilAddressed;
   final bool completed;
   final DateTime? completedDate;
   final bool skipped;
   final DateTime? skippedDate;
-  final DateTime initialDate;
+  final DateTime scheduledDate;
   final DateTime? rescheduledDate;
+  final DateTime? nextScheduledDate;
 
   @override
   String toString() {
-    return 'TaskInstance(id: $id, taskId: $taskId, taskPriority: $taskPriority, untilCompleted: $untilCompleted, nextInstanceOn: $nextInstanceOn, completed: $completed, completedDate: $completedDate, skipped: $skipped, skippedDate: $skippedDate, initialDate: $initialDate, rescheduledDate: $rescheduledDate)';
+    return 'TaskInstance(id: $id, taskId: $taskId, taskPriority: $taskPriority, untilAddressed: $untilAddressed, completed: $completed, completedDate: $completedDate, skipped: $skipped, skippedDate: $skippedDate, scheduledDate: $scheduledDate, rescheduledDate: $rescheduledDate, nextScheduledDate: $nextScheduledDate)';
   }
 
   @override
@@ -47,14 +47,14 @@ class TaskInstance {
         other.id == id &&
         other.taskId == taskId &&
         other.taskPriority == taskPriority &&
-        other.untilCompleted == untilCompleted &&
-        other.nextInstanceOn == nextInstanceOn &&
+        other.untilAddressed == untilAddressed &&
         other.completed == completed &&
         other.completedDate == completedDate &&
         other.skipped == skipped &&
         other.skippedDate == skippedDate &&
-        other.initialDate == initialDate &&
-        other.rescheduledDate == rescheduledDate;
+        other.scheduledDate == scheduledDate &&
+        other.rescheduledDate == rescheduledDate &&
+        other.nextScheduledDate == nextScheduledDate;
   }
 
   @override
@@ -62,14 +62,14 @@ class TaskInstance {
     return id.hashCode ^
         taskId.hashCode ^
         taskPriority.hashCode ^
-        untilCompleted.hashCode ^
-        nextInstanceOn.hashCode ^
+        untilAddressed.hashCode ^
         completed.hashCode ^
         completedDate.hashCode ^
         skipped.hashCode ^
         skippedDate.hashCode ^
-        initialDate.hashCode ^
-        rescheduledDate.hashCode;
+        scheduledDate.hashCode ^
+        rescheduledDate.hashCode ^
+        nextScheduledDate.hashCode;
   }
 
   Map<String, dynamic> toMap() {
@@ -77,14 +77,14 @@ class TaskInstance {
       'id': id,
       'taskId': taskId,
       'taskPriority': taskPriority,
-      'untilCompleted': untilCompleted,
-      'nextInstanceOn': nextInstanceOn?.millisecondsSinceEpoch,
+      'untilAddressed': untilAddressed,
       'completed': completed,
       'completedDate': completedDate?.millisecondsSinceEpoch,
       'skipped': skipped,
       'skippedDate': skippedDate?.millisecondsSinceEpoch,
-      'initialDate': initialDate.millisecondsSinceEpoch,
+      'scheduledDate': scheduledDate.millisecondsSinceEpoch,
       'rescheduledDate': rescheduledDate?.millisecondsSinceEpoch,
+      'nextScheduledDate': nextScheduledDate?.millisecondsSinceEpoch,
     };
   }
 
@@ -93,10 +93,7 @@ class TaskInstance {
       id: map['id'],
       taskId: map['taskId'],
       taskPriority: map['taskPriority']?.toInt() ?? 0,
-      untilCompleted: map['untilCompleted'] ?? false,
-      nextInstanceOn: map['nextInstanceOn'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['nextInstanceOn'])
-          : null,
+      untilAddressed: map['untilAddressed'] ?? false,
       completed: map['completed'] ?? false,
       completedDate: map['completedDate'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['completedDate'])
@@ -105,9 +102,12 @@ class TaskInstance {
       skippedDate: map['skippedDate'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['skippedDate'])
           : null,
-      initialDate: DateTime.fromMillisecondsSinceEpoch(map['initialDate']),
+      scheduledDate: DateTime.fromMillisecondsSinceEpoch(map['scheduledDate']),
       rescheduledDate: map['rescheduledDate'] != null
           ? DateTime.fromMillisecondsSinceEpoch(map['rescheduledDate'])
+          : null,
+      nextScheduledDate: map['nextScheduledDate'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['nextScheduledDate'])
           : null,
     );
   }
@@ -121,30 +121,31 @@ class TaskInstance {
     TaskInstanceId? id,
     TaskId? taskId,
     int? taskPriority,
-    bool? untilCompleted,
-    ValueGetter<DateTime?>? nextInstanceOn,
+    bool? untilAddressed,
     bool? completed,
     ValueGetter<DateTime?>? completedDate,
     bool? skipped,
     ValueGetter<DateTime?>? skippedDate,
-    DateTime? initialDate,
+    DateTime? scheduledDate,
     ValueGetter<DateTime?>? rescheduledDate,
+    ValueGetter<DateTime?>? nextScheduledDate,
   }) {
     return TaskInstance(
       id: id ?? this.id,
       taskId: taskId ?? this.taskId,
       taskPriority: taskPriority ?? this.taskPriority,
-      untilCompleted: untilCompleted ?? this.untilCompleted,
-      nextInstanceOn:
-          nextInstanceOn != null ? nextInstanceOn() : this.nextInstanceOn,
+      untilAddressed: untilAddressed ?? this.untilAddressed,
       completed: completed ?? this.completed,
       completedDate:
           completedDate != null ? completedDate() : this.completedDate,
       skipped: skipped ?? this.skipped,
       skippedDate: skippedDate != null ? skippedDate() : this.skippedDate,
-      initialDate: initialDate ?? this.initialDate,
+      scheduledDate: scheduledDate ?? this.scheduledDate,
       rescheduledDate:
           rescheduledDate != null ? rescheduledDate() : this.rescheduledDate,
+      nextScheduledDate: nextScheduledDate != null
+          ? nextScheduledDate()
+          : this.nextScheduledDate,
     );
   }
 }

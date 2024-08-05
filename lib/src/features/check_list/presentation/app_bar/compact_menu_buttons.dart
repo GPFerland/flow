@@ -1,4 +1,4 @@
-import 'package:flow/src/features/authentication/domain/app_user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flow/src/features/check_list/presentation/app_bar/check_list_app_bar.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
 import 'package:flow/src/routing/app_router.dart';
@@ -17,7 +17,7 @@ class CompactMenuButtons extends StatelessWidget {
     this.user,
   });
 
-  final AppUser? user;
+  final User? user;
 
   @override
   Widget build(BuildContext context) {

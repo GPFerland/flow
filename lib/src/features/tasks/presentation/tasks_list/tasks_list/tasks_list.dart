@@ -12,6 +12,21 @@ class TasksList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // final remoteTasksRepository = ref.watch(remoteTasksRepositoryProvider);
+    // return FirestoreListView<Task>(
+    //   query: remoteTasksRepository.tasksQuery(),
+    //   itemBuilder: (
+    //     BuildContext context,
+    //     QueryDocumentSnapshot<Task> doc,
+    //   ) {
+    //     final task = doc.data();
+    //     return TasksListCard(
+    //       key: ValueKey(task.id),
+    //       task: task,
+    //     );
+    //   },
+    // );
+
     final tasksValue = ref.watch(tasksStreamProvider);
     final state = ref.watch(tasksListControllerProvider);
 

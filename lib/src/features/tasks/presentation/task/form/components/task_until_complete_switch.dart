@@ -1,5 +1,4 @@
 import 'package:flow/src/features/tasks/presentation/task/task_controller.dart';
-import 'package:flow/src/utils/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,12 +39,11 @@ class _UntilCompletedToggleSliderState
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          Expanded(
+          const Expanded(
             child: Row(
               children: [
                 Text(
                   'Show Until Completed',
-                  style: getTitleSmallOnPrimaryContainer(context),
                 ),
                 //todo - this isnt working like I would expect???
                 // const SizedBox(width: 8),

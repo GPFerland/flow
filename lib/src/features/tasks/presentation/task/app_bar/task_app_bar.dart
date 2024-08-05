@@ -4,7 +4,7 @@ import 'package:flow/src/features/tasks/presentation/task/app_bar/task_app_bar_a
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
+class TaskAppBar extends ConsumerWidget implements PreferredSizeWidget {
   const TaskAppBar({
     super.key,
     this.taskId,
@@ -13,21 +13,18 @@ class TaskAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String? taskId;
 
   @override
-  Widget build(BuildContext context) {
-    return AppBar(
-      title: taskId == null
-          ? const Text('Create Task')
-          : Consumer(
-              builder: (context, ref, child) {
-                final taskValue = ref.watch(taskStreamProvider(taskId!));
-                return AsyncValueWidget(
-                  value: taskValue,
-                  data: (task) =>
-                      task != null ? Text(task.title) : const Text('Task'),
-                );
-              },
-            ),
-      actions: taskId == null ? null : [DeleteTaskButton(taskId: taskId!)],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final taskValue = taskId == null
+        ? const AsyncData(null)
+        : ref.watch(taskFutureProvider(taskId!));
+    return AsyncValueWidget(
+      value: taskValue,
+      data: (task) {
+        return AppBar(
+          title: task == null ? const Text('Create Task') : Text(task.title),
+          actions: task == null ? null : [DeleteTaskButton(taskId: taskId!)],
+        );
+      },
     );
   }
 

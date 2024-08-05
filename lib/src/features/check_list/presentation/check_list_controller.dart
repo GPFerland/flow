@@ -1,26 +1,17 @@
 import 'dart:async';
 
-import 'package:flow/src/features/check_list/data/date_repository.dart';
 import 'package:flow/src/features/check_list/data/task_display_repository.dart';
-import 'package:flow/src/features/task_instances/application/task_instances_service.dart';
-import 'package:flow/src/features/task_instances/domain/mutable_task_instance.dart';
 import 'package:flow/src/features/task_instances/domain/task_instance.dart';
-import 'package:flow/src/features/tasks/application/tasks_service.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:flow/src/utils/notifier_mounted.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'check_list_controller.g.dart';
 
 @riverpod
-class CheckListController extends _$CheckListController {
-  Object? mounted;
-
+class CheckListController extends _$CheckListController with NotifierMounted {
   @override
   FutureOr<void> build() {
-    mounted = Object();
-    ref.onDispose(() => mounted = null);
-    // no initialization work to do
+    ref.onDispose(setUnmounted);
   }
 
   List<TaskInstance> sortTaskInstances(List<TaskInstance> taskInstances) {
@@ -61,78 +52,5 @@ class CheckListController extends _$CheckListController {
     await taskDisplayRepository.setDisplay(
       visibility == TaskDisplay.all ? TaskDisplay.outstanding : TaskDisplay.all,
     );
-  }
-
-  Future<void> rescheduleTaskInstance({
-    required DateTime newDate,
-    required TaskInstance taskInstance,
-    required VoidCallback onRescheduled,
-  }) async {
-    final taskInstancesService = ref.read(taskInstancesServiceProvider);
-    state = const AsyncLoading();
-    final mounted = this.mounted;
-    final updatedTaskInstance = taskInstance.reschedule(newDate);
-    final value = await AsyncValue.guard(
-      () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
-    );
-    // * only set the state if the controller hasn't been disposed
-    if (mounted == this.mounted) {
-      if (value.hasError) {
-        state = AsyncError(value.error!, StackTrace.current);
-      } else {
-        state = value;
-        onRescheduled();
-      }
-    }
-  }
-
-  Future<void> skipTaskInstance({
-    required TaskInstance taskInstance,
-    required VoidCallback onSkipped,
-  }) async {
-    final dateRepository = ref.read(dateRepositoryProvider);
-    final taskInstancesService = ref.read(taskInstancesServiceProvider);
-
-    state = const AsyncLoading();
-    final mounted = this.mounted;
-    final updatedTaskInstance = taskInstance.toggleSkipped(dateRepository.date);
-    final value = await AsyncValue.guard(
-      () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
-    );
-    // * only set the state if the controller hasn't been disposed
-    if (mounted == this.mounted) {
-      if (value.hasError) {
-        state = AsyncError(value.error!, StackTrace.current);
-      } else {
-        state = value;
-        onSkipped();
-      }
-    }
-  }
-
-  Future<void> deleteTask({
-    required TaskInstance taskInstance,
-    required VoidCallback onDelete,
-  }) async {
-    final tasksService = ref.read(tasksServiceProvider);
-    final taskInstancesService = ref.read(taskInstancesServiceProvider);
-
-    state = const AsyncLoading();
-    final mounted = this.mounted;
-    final value = await AsyncValue.guard(() async {
-      // * attempt to delete the task instances associated with the task
-      await taskInstancesService.removeTasksInstances(taskInstance.taskId);
-      // * attempt to delete the task
-      await tasksService.removeTask(taskInstance.taskId);
-    });
-    // * only set the state if the controller hasn't been disposed
-    if (mounted == this.mounted) {
-      if (value.hasError) {
-        state = AsyncError(value.error!, StackTrace.current);
-      } else {
-        state = value;
-        onDelete();
-      }
-    }
   }
 }

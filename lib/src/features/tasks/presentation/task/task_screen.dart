@@ -32,9 +32,11 @@ class TaskScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(Sizes.p4),
             child: Consumer(
               builder: (context, ref, child) {
+                // use future provider to prevent unintended rebuilds while
+                // the user is entering form data
                 final taskValue = taskId == null
                     ? const AsyncData(null)
-                    : ref.watch(taskStreamProvider(taskId!));
+                    : ref.watch(taskFutureProvider(taskId!));
 
                 return AsyncValueWidget(
                   value: taskValue,

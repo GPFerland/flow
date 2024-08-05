@@ -24,24 +24,6 @@ final localTaskInstancesRepositoryProvider =
 
 typedef LocalTaskInstancesRepositoryRef
     = ProviderRef<LocalTaskInstancesRepository>;
-String _$localTaskInstancesFutureHash() =>
-    r'442c9fb794432561585c8fc27e6f697ed920fcd2';
-
-/// See also [localTaskInstancesFuture].
-@ProviderFor(localTaskInstancesFuture)
-final localTaskInstancesFutureProvider =
-    AutoDisposeFutureProvider<List<TaskInstance>>.internal(
-  localTaskInstancesFuture,
-  name: r'localTaskInstancesFutureProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$localTaskInstancesFutureHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef LocalTaskInstancesFutureRef
-    = AutoDisposeFutureProviderRef<List<TaskInstance>>;
 String _$localTaskInstanceFutureHash() =>
     r'bc61a1f66e404490db5f2b4d35903c251146afd4';
 
@@ -198,24 +180,24 @@ class _LocalTaskInstanceFutureProviderElement
       (origin as LocalTaskInstanceFutureProvider).taskInstanceId;
 }
 
-String _$localTaskInstancesStreamHash() =>
-    r'dece7558334818133b71e64f39a94da1401d4247';
+String _$localTaskInstancesFutureHash() =>
+    r'442c9fb794432561585c8fc27e6f697ed920fcd2';
 
-/// See also [localTaskInstancesStream].
-@ProviderFor(localTaskInstancesStream)
-final localTaskInstancesStreamProvider =
-    AutoDisposeStreamProvider<List<TaskInstance>>.internal(
-  localTaskInstancesStream,
-  name: r'localTaskInstancesStreamProvider',
+/// See also [localTaskInstancesFuture].
+@ProviderFor(localTaskInstancesFuture)
+final localTaskInstancesFutureProvider =
+    AutoDisposeFutureProvider<List<TaskInstance>>.internal(
+  localTaskInstancesFuture,
+  name: r'localTaskInstancesFutureProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$localTaskInstancesStreamHash,
+      : _$localTaskInstancesFutureHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef LocalTaskInstancesStreamRef
-    = AutoDisposeStreamProviderRef<List<TaskInstance>>;
+typedef LocalTaskInstancesFutureRef
+    = AutoDisposeFutureProviderRef<List<TaskInstance>>;
 String _$localTaskInstanceStreamHash() =>
     r'0b0cbdf02a39d6e8e1994c821f64701c1c556474';
 
@@ -348,6 +330,140 @@ class _LocalTaskInstanceStreamProviderElement
   @override
   String get taskInstanceId =>
       (origin as LocalTaskInstanceStreamProvider).taskInstanceId;
+}
+
+String _$localTaskInstancesStreamHash() =>
+    r'97d0f21adc568733440772578000c738eed8c61e';
+
+/// See also [localTaskInstancesStream].
+@ProviderFor(localTaskInstancesStream)
+const localTaskInstancesStreamProvider = LocalTaskInstancesStreamFamily();
+
+/// See also [localTaskInstancesStream].
+class LocalTaskInstancesStreamFamily
+    extends Family<AsyncValue<List<TaskInstance>>> {
+  /// See also [localTaskInstancesStream].
+  const LocalTaskInstancesStreamFamily();
+
+  /// See also [localTaskInstancesStream].
+  LocalTaskInstancesStreamProvider call(
+    DateTime? date,
+  ) {
+    return LocalTaskInstancesStreamProvider(
+      date,
+    );
+  }
+
+  @override
+  LocalTaskInstancesStreamProvider getProviderOverride(
+    covariant LocalTaskInstancesStreamProvider provider,
+  ) {
+    return call(
+      provider.date,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'localTaskInstancesStreamProvider';
+}
+
+/// See also [localTaskInstancesStream].
+class LocalTaskInstancesStreamProvider
+    extends AutoDisposeStreamProvider<List<TaskInstance>> {
+  /// See also [localTaskInstancesStream].
+  LocalTaskInstancesStreamProvider(
+    DateTime? date,
+  ) : this._internal(
+          (ref) => localTaskInstancesStream(
+            ref as LocalTaskInstancesStreamRef,
+            date,
+          ),
+          from: localTaskInstancesStreamProvider,
+          name: r'localTaskInstancesStreamProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$localTaskInstancesStreamHash,
+          dependencies: LocalTaskInstancesStreamFamily._dependencies,
+          allTransitiveDependencies:
+              LocalTaskInstancesStreamFamily._allTransitiveDependencies,
+          date: date,
+        );
+
+  LocalTaskInstancesStreamProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.date,
+  }) : super.internal();
+
+  final DateTime? date;
+
+  @override
+  Override overrideWith(
+    Stream<List<TaskInstance>> Function(LocalTaskInstancesStreamRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: LocalTaskInstancesStreamProvider._internal(
+        (ref) => create(ref as LocalTaskInstancesStreamRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        date: date,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeStreamProviderElement<List<TaskInstance>> createElement() {
+    return _LocalTaskInstancesStreamProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is LocalTaskInstancesStreamProvider && other.date == date;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, date.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+mixin LocalTaskInstancesStreamRef
+    on AutoDisposeStreamProviderRef<List<TaskInstance>> {
+  /// The parameter `date` of this provider.
+  DateTime? get date;
+}
+
+class _LocalTaskInstancesStreamProviderElement
+    extends AutoDisposeStreamProviderElement<List<TaskInstance>>
+    with LocalTaskInstancesStreamRef {
+  _LocalTaskInstancesStreamProviderElement(super.provider);
+
+  @override
+  DateTime? get date => (origin as LocalTaskInstancesStreamProvider).date;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

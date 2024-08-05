@@ -53,13 +53,10 @@ void main() {
       when(dateRepository.dateStateChanges).thenAnswer(
         (_) => Stream.value(getDateNoTimeToday()),
       );
-      when(tasksService.fetchTasks).thenAnswer(
-        (_) => Future.value(tasks),
-      );
       for (final task in tasks) {
         for (final date in testDates) {
           when(
-            () => taskInstancesService.createTaskInstances(task, [date]),
+            () => taskInstancesService.createTasksInstances(task, [date]),
           ).thenAnswer(
             (_) => Future.value(),
           );
@@ -72,13 +69,13 @@ void main() {
       //verify
       if (tasks.isEmpty) {
         verifyNever(
-          () => taskInstancesService.createTaskInstances(any(), any()),
+          () => taskInstancesService.createTasksInstances(any(), any()),
         );
       } else {
         for (final task in tasks) {
           for (final date in testDates) {
             verify(
-              () => taskInstancesService.createTaskInstances(task, [date]),
+              () => taskInstancesService.createTasksInstances(task, [date]),
             ).called(1);
           }
         }

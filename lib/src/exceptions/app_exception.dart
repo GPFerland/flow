@@ -10,39 +10,6 @@ sealed class AppException implements Exception {
   String toString() => message;
 }
 
-/// Auth
-class EmailAlreadyInUseException extends AppException {
-  EmailAlreadyInUseException()
-      : super(
-          'email-already-in-use',
-          'Email already in use'.hardcoded,
-        );
-}
-
-class WeakPasswordException extends AppException {
-  WeakPasswordException()
-      : super(
-          'weak-password',
-          'Password is too weak'.hardcoded,
-        );
-}
-
-class WrongPasswordException extends AppException {
-  WrongPasswordException()
-      : super(
-          'wrong-password',
-          'Wrong password'.hardcoded,
-        );
-}
-
-class UserNotFoundException extends AppException {
-  UserNotFoundException()
-      : super(
-          'user-not-found',
-          'User not found'.hardcoded,
-        );
-}
-
 /// Tasks
 class TasksCreateFailedException extends AppException {
   TasksCreateFailedException()

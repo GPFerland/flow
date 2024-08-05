@@ -1,4 +1,4 @@
-import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
+import 'package:flow/src/features/authentication/data/fake_auth_repository.dart';
 import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/tasks/application/tasks_sync_service.dart';
 import 'package:flow/src/features/tasks/data/local/local_tasks_repository.dart';
@@ -52,11 +52,11 @@ void main() {
         when(() => remoteTasksRepository.fetchTasks(uid)).thenAnswer(
           (_) => Future.value(remoteTasks),
         );
-        when(() => remoteTasksRepository.setTasks(uid, expectedRemoteTasks))
+        when(() => remoteTasksRepository.updateTasks(uid, expectedRemoteTasks))
             .thenAnswer(
           (_) => Future.value(),
         );
-        when(() => localTasksRepository.setTasks([])).thenAnswer(
+        when(() => localTasksRepository.updateTasks([])).thenAnswer(
           (_) => Future.value(),
         );
         // create tasks sync service to trigger sync (no return required)
@@ -66,17 +66,17 @@ void main() {
         //verify
         if (localTasks.isNotEmpty) {
           verify(
-            () => remoteTasksRepository.setTasks(uid, expectedRemoteTasks),
+            () => remoteTasksRepository.updateTasks(uid, expectedRemoteTasks),
           ).called(1);
           verify(
-            () => localTasksRepository.setTasks([]),
+            () => localTasksRepository.updateTasks([]),
           ).called(1);
         } else {
           verifyNever(
-            () => remoteTasksRepository.setTasks(uid, expectedRemoteTasks),
+            () => remoteTasksRepository.updateTasks(uid, expectedRemoteTasks),
           );
           verifyNever(
-            () => localTasksRepository.setTasks([]),
+            () => localTasksRepository.updateTasks([]),
           );
         }
       }

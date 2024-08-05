@@ -20,7 +20,7 @@ final tasksServiceProvider = Provider<TasksService>.internal(
 );
 
 typedef TasksServiceRef = ProviderRef<TasksService>;
-String _$taskFutureHash() => r'018bae57b06f0f5c248c69c052b423ab23ccd50a';
+String _$taskFutureHash() => r'b460746d8158ef0f1c4ad567bd2bfe47b2cffebf';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -169,21 +169,21 @@ class _TaskFutureProviderElement extends AutoDisposeFutureProviderElement<Task?>
   String get taskId => (origin as TaskFutureProvider).taskId;
 }
 
-String _$tasksStreamHash() => r'6a2cba94c92cc1d5eb8b69bbe0bad8a28ca7d470';
+String _$tasksFutureHash() => r'ac8d8ce55b01d3e9b7207436dc04d9e491e65a20';
 
-/// See also [tasksStream].
-@ProviderFor(tasksStream)
-final tasksStreamProvider = AutoDisposeStreamProvider<List<Task>>.internal(
-  tasksStream,
-  name: r'tasksStreamProvider',
+/// See also [tasksFuture].
+@ProviderFor(tasksFuture)
+final tasksFutureProvider = AutoDisposeFutureProvider<List<Task>>.internal(
+  tasksFuture,
+  name: r'tasksFutureProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$tasksStreamHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$tasksFutureHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef TasksStreamRef = AutoDisposeStreamProviderRef<List<Task>>;
-String _$taskStreamHash() => r'c502021ff1c8460c8f2980d423b8628c0b073315';
+typedef TasksFutureRef = AutoDisposeFutureProviderRef<List<Task>>;
+String _$taskStreamHash() => r'ffd06420519097fcb990c111feddc09010884517';
 
 /// See also [taskStream].
 @ProviderFor(taskStream)
@@ -310,5 +310,20 @@ class _TaskStreamProviderElement extends AutoDisposeStreamProviderElement<Task?>
   @override
   String get taskId => (origin as TaskStreamProvider).taskId;
 }
+
+String _$tasksStreamHash() => r'bd77eccd7d50c91be80ac92d185503475c202c49';
+
+/// See also [tasksStream].
+@ProviderFor(tasksStream)
+final tasksStreamProvider = AutoDisposeStreamProvider<List<Task>>.internal(
+  tasksStream,
+  name: r'tasksStreamProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$tasksStreamHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef TasksStreamRef = AutoDisposeStreamProviderRef<List<Task>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

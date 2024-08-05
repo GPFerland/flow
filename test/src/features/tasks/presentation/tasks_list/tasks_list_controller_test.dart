@@ -59,8 +59,8 @@ void main() {
         // verify that the listener is no longer called
         verifyNoMoreInteractions(listener);
         // verify that no repository calls during initialization
-        verifyNever(() => tasksService.setTasks(any()));
-        verifyNever(() => taskInstancesService.setTaskInstances(any()));
+        verifyNever(() => tasksService.updateTasks(any()));
+        verifyNever(() => taskInstancesService.updateTaskInstances(any()));
       });
     });
 
@@ -85,7 +85,7 @@ void main() {
           updatedTestTask3,
           updatedTestTask1,
         ];
-        when(() => tasksService.setTasks(reorderedTestTasks)).thenAnswer(
+        when(() => tasksService.updateTasks(reorderedTestTasks)).thenAnswer(
           (_) => Future.value(),
         );
         when(() => taskInstancesService
@@ -113,7 +113,7 @@ void main() {
           () => listener(any(that: isA<AsyncLoading>()), data),
         ]);
         verifyNoMoreInteractions(listener);
-        verify(() => tasksService.setTasks(reorderedTestTasks)).called(1);
+        verify(() => tasksService.updateTasks(reorderedTestTasks)).called(1);
         verify(() => taskInstancesService.updateTaskInstancesPriority(
               reorderedTestTasks,
             )).called(1);
@@ -140,7 +140,7 @@ void main() {
           updatedTestTask1,
         ];
         final exception = Exception('Connection failed');
-        when(() => tasksService.setTasks(reorderedTestTasks))
+        when(() => tasksService.updateTasks(reorderedTestTasks))
             .thenThrow(exception);
         // sto
         const data = AsyncData<void>(null);
@@ -166,7 +166,7 @@ void main() {
               ),
         ]);
         verifyNoMoreInteractions(listener);
-        verify(() => tasksService.setTasks(reorderedTestTasks)).called(1);
+        verify(() => tasksService.updateTasks(reorderedTestTasks)).called(1);
       });
     });
   });

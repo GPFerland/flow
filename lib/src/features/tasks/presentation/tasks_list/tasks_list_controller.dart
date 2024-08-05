@@ -2,19 +2,16 @@ import 'package:flow/src/features/task_instances/application/task_instances_serv
 import 'package:flow/src/features/tasks/application/tasks_service.dart';
 import 'package:flow/src/features/tasks/domain/mutable_task.dart';
 import 'package:flow/src/features/tasks/domain/task.dart';
+import 'package:flow/src/utils/notifier_mounted.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'tasks_list_controller.g.dart';
 
 @riverpod
-class TasksListController extends _$TasksListController {
-  Object? mounted;
-
+class TasksListController extends _$TasksListController with NotifierMounted {
   @override
   FutureOr<void> build() {
-    mounted = Object();
-    ref.onDispose(() => mounted = null);
-    // no initialization work to do
+    ref.onDispose(setUnmounted);
   }
 
   Future<void> reorderTasks(
@@ -37,15 +34,13 @@ class TasksListController extends _$TasksListController {
     final tasksService = ref.read(tasksServiceProvider);
     final taskInstancesService = ref.read(taskInstancesServiceProvider);
     state = const AsyncLoading<void>();
-    final mounted = this.mounted;
     final value = await AsyncValue.guard(
-      () => tasksService.setTasks(tasks),
+      () => tasksService.updateTasks(tasks),
     );
     if (value.hasValue && !value.hasError) {
       taskInstancesService.updateTaskInstancesPriority(tasks);
     }
-    // * only set the state if the controller hasn't been disposed
-    if (mounted == this.mounted) {
+    if (mounted) {
       state = value;
     }
   }

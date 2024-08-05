@@ -59,8 +59,8 @@ void main() {
       // verify that the listener is no longer called
       verifyNoMoreInteractions(listener);
       // verify that no repository calls during initialization
-      verifyNever(() => tasksService.setTasks(any()));
-      verifyNever(() => taskInstancesService.setTaskInstances(any()));
+      verifyNever(() => tasksService.updateTasks(any()));
+      verifyNever(() => taskInstancesService.updateTaskInstances(any()));
     });
   });
 
@@ -68,10 +68,10 @@ void main() {
     test('success', () async {
       // setup
       final expectedTask = createTestTask();
-      when(() => tasksService.setTasks([expectedTask])).thenAnswer(
+      when(() => tasksService.updateTasks([expectedTask])).thenAnswer(
         (_) => Future.value(),
       );
-      when(() => taskInstancesService.updateTasksInstances(any(), any()))
+      when(() => taskInstancesService.changeTasksInstances(any(), any()))
           .thenAnswer(
         (invocation) => Future.value(),
       );
@@ -96,16 +96,16 @@ void main() {
         () => listener(any(that: isA<AsyncLoading>()), data),
       ]);
       verifyNoMoreInteractions(listener);
-      verify(() => tasksService.setTasks([expectedTask])).called(1);
+      verify(() => tasksService.updateTasks([expectedTask])).called(1);
       verify(
-        () => taskInstancesService.updateTasksInstances(expectedTask, null),
+        () => taskInstancesService.changeTasksInstances(expectedTask, null),
       ).called(1);
     });
     test('failure', () async {
       // setup
       final expectedTask = createTestTask();
       final exception = Exception('Connection failed');
-      when(() => tasksService.setTasks([expectedTask])).thenThrow(exception);
+      when(() => tasksService.updateTasks([expectedTask])).thenThrow(exception);
       // sto
       const data = AsyncData<void>(null);
       // verify initial value from build method
@@ -130,9 +130,9 @@ void main() {
             ),
       ]);
       verifyNoMoreInteractions(listener);
-      verify(() => tasksService.setTasks([expectedTask])).called(1);
+      verify(() => tasksService.updateTasks([expectedTask])).called(1);
       verifyNever(
-        () => taskInstancesService.updateTasksInstances(expectedTask, null),
+        () => taskInstancesService.changeTasksInstances(expectedTask, null),
       );
     });
     test('no change', () async {
@@ -150,8 +150,13 @@ void main() {
         onSuccess: () {},
       );
       // verify
-      verifyNever(() => tasksService.setTasks(any()));
-      verifyNever(() => taskInstancesService.updateTaskInstances(any(), any()));
+      verifyNever(() => tasksService.updateTasks(any()));
+      verifyNever(
+        () => taskInstancesService.changeTasksInstances(
+          any(),
+          any(),
+        ),
+      );
     });
   });
 
@@ -159,11 +164,11 @@ void main() {
     test('success', () async {
       // setup
       final expectedTask = createTestTask();
-      when(() => taskInstancesService.removeTasksInstances(expectedTask.id))
+      when(() => taskInstancesService.deleteTasksInstances(expectedTask.id))
           .thenAnswer(
         (_) => Future.value(),
       );
-      when(() => tasksService.removeTask(expectedTask.id)).thenAnswer(
+      when(() => tasksService.deleteTask(expectedTask.id)).thenAnswer(
         (_) => Future.value(),
       );
       // sto
@@ -187,10 +192,10 @@ void main() {
       ]);
       verifyNoMoreInteractions(listener);
       verify(
-        () => taskInstancesService.removeTasksInstances(expectedTask.id),
+        () => taskInstancesService.deleteTasksInstances(expectedTask.id),
       ).called(1);
       verify(
-        () => tasksService.removeTask(expectedTask.id),
+        () => tasksService.deleteTask(expectedTask.id),
       ).called(1);
     });
 
@@ -198,11 +203,11 @@ void main() {
       // setup
       final expectedTask = createTestTask();
       final exception = Exception('Connection failed');
-      when(() => taskInstancesService.removeTasksInstances(expectedTask.id))
+      when(() => taskInstancesService.deleteTasksInstances(expectedTask.id))
           .thenAnswer(
         (_) => Future.value(),
       );
-      when(() => tasksService.removeTask(expectedTask.id)).thenThrow(exception);
+      when(() => tasksService.deleteTask(expectedTask.id)).thenThrow(exception);
       // sto
       const data = AsyncData<void>(null);
       // verify initial value from build method
@@ -226,10 +231,10 @@ void main() {
             ),
       ]);
       verify(
-        () => tasksService.removeTask(expectedTask.id),
+        () => tasksService.deleteTask(expectedTask.id),
       ).called(1);
       verify(
-        () => taskInstancesService.removeTasksInstances(expectedTask.id),
+        () => taskInstancesService.deleteTasksInstances(expectedTask.id),
       ).called(1);
     });
   });

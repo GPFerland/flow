@@ -17,7 +17,7 @@ class Task {
     required this.icon,
     required this.color,
     required this.description,
-    required this.untilCompleted,
+    required this.untilAddressed,
     required this.frequency,
     required this.date,
     required this.weekdays,
@@ -31,7 +31,7 @@ class Task {
   final IconData icon;
   final Color color;
   final String description;
-  final bool untilCompleted;
+  final bool untilAddressed;
   final Frequency frequency;
   final DateTime date;
   final List<Weekday> weekdays;
@@ -45,7 +45,7 @@ class Task {
     IconData? icon,
     Color? color,
     String? description,
-    bool? untilCompleted,
+    bool? untilAddressed,
     Frequency? frequency,
     DateTime? date,
     List<Weekday>? weekdays,
@@ -59,7 +59,7 @@ class Task {
       icon: icon ?? this.icon,
       color: color ?? this.color,
       description: description ?? this.description,
-      untilCompleted: untilCompleted ?? this.untilCompleted,
+      untilAddressed: untilAddressed ?? this.untilAddressed,
       frequency: frequency ?? this.frequency,
       date: date ?? this.date,
       weekdays: weekdays ?? this.weekdays,
@@ -76,7 +76,7 @@ class Task {
       'icon': icon.codePoint,
       'color': color.value,
       'description': description,
-      'untilCompleted': untilCompleted,
+      'untilAddressed': untilAddressed,
       'frequency': frequency.toMap(),
       'date': date.millisecondsSinceEpoch,
       'weekdays': weekdays.map((x) => x.toMap()).toList(),
@@ -93,7 +93,7 @@ class Task {
       icon: IconData(map['icon'], fontFamily: 'MaterialIcons'),
       color: Color(map['color']),
       description: map['description'] ?? '',
-      untilCompleted: map['untilCompleted'] ?? false,
+      untilAddressed: map['untilAddressed'] ?? false,
       frequency: Frequency.fromMap(map['frequency']),
       date: DateTime.fromMillisecondsSinceEpoch(map['date']),
       weekdays:
@@ -109,7 +109,7 @@ class Task {
 
   @override
   String toString() {
-    return 'Task(id: $id, priority: $priority, createdOn: $createdOn, title: $title, icon: $icon, color: $color, description: $description, untilCompleted: $untilCompleted, frequency: $frequency, date: $date, weekdays: $weekdays, monthdays: $monthdays)';
+    return 'Task(id: $id, priority: $priority, createdOn: $createdOn, title: $title, icon: $icon, color: $color, description: $description, untilAddressed: $untilAddressed, frequency: $frequency, date: $date, weekdays: $weekdays, monthdays: $monthdays)';
   }
 
   @override
@@ -124,7 +124,7 @@ class Task {
         other.icon == icon &&
         other.color == color &&
         other.description == description &&
-        other.untilCompleted == untilCompleted &&
+        other.untilAddressed == untilAddressed &&
         other.frequency == frequency &&
         other.date == date &&
         listEquals(other.weekdays, weekdays) &&
@@ -140,7 +140,7 @@ class Task {
         icon.hashCode ^
         color.hashCode ^
         description.hashCode ^
-        untilCompleted.hashCode ^
+        untilAddressed.hashCode ^
         frequency.hashCode ^
         date.hashCode ^
         weekdays.hashCode ^

@@ -20,7 +20,7 @@ Task createTestTask({
     icon: Icons.check,
     color: Colors.deepPurple,
     description: 'Fart in the Morning',
-    untilCompleted: true,
+    untilAddressed: true,
     frequency: frequency,
     date: getDateNoTimeToday(),
     weekdays: [],
@@ -33,7 +33,7 @@ TaskInstance createTestTaskInstance({String id = '1'}) {
     id: id,
     taskId: '1',
     taskPriority: 0,
-    untilCompleted: true,
-    initialDate: getDateNoTimeToday(),
+    untilAddressed: true,
+    scheduledDate: getDateNoTimeToday(),
   );
 }

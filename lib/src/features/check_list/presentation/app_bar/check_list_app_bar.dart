@@ -1,8 +1,8 @@
 import 'package:flow/src/common_widgets/buttons/action_text_button.dart';
+import 'package:flow/src/constants/breakpoints.dart';
+import 'package:flow/src/features/authentication/data/auth_repository.dart';
 import 'package:flow/src/features/check_list/presentation/app_bar/check_list_app_bar_title.dart';
 import 'package:flow/src/features/check_list/presentation/app_bar/compact_menu_buttons.dart';
-import 'package:flow/src/constants/breakpoints.dart';
-import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
 import 'package:flow/src/localization/string_hardcoded.dart';
 import 'package:flow/src/routing/app_router.dart';
 import 'package:flutter/material.dart';
@@ -19,45 +19,51 @@ class CheckListAppBar extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final user = ref.watch(authStateChangesProvider).value;
-    // * This widget is responsive.
-    // * On large screen sizes, it shows all the actions in the app bar.
-    // * On small screen sizes, it shows only the [CompactMenuButtons].
-    // ! MediaQuery is used on the assumption that the widget takes up the full
-    // ! width of the screen. If that's not the case, LayoutBuilder should be
-    // ! used instead.
-    final screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth < Breakpoint.tablet) {
-      return AppBar(
-        title: const CheckListAppBarTitle(),
-        actions: [
-          CompactMenuButtons(user: user),
-        ],
-      );
-    } else {
-      return AppBar(
-        title: const CheckListAppBarTitle(),
-        actions: [
-          ActionTextButton(
-            key: tasksMenuButtonKey,
-            text: 'Tasks'.hardcoded,
-            onPressed: () => context.goNamed(AppRoute.tasks.name),
-          ),
-          if (user != null)
-            ActionTextButton(
-              key: accountMenuButtonKey,
-              text: 'Account'.hardcoded,
-              onPressed: () => context.goNamed(AppRoute.account.name),
-            )
-          else
-            ActionTextButton(
-              key: signInMenuButtonKey,
-              text: 'Sign In'.hardcoded,
-              onPressed: () => context.goNamed(AppRoute.signIn.name),
-            )
-        ],
-      );
-    }
+    final firebaseAuth = ref.watch(authRepositoryProvider);
+    return StreamBuilder(
+      stream: firebaseAuth.authStateChanges(),
+      builder: (context, snapshot) {
+        final user = snapshot.data;
+        // * This widget is responsive.
+        // * On large screen sizes, it shows all the actions in the app bar.
+        // * On small screen sizes, it shows only the [CompactMenuButtons].
+        // ! MediaQuery is used on the assumption that the widget takes up the full
+        // ! width of the screen. If that's not the case, LayoutBuilder should be
+        // ! used instead.
+        final screenWidth = MediaQuery.of(context).size.width;
+        if (screenWidth < Breakpoint.tablet) {
+          return AppBar(
+            title: const CheckListAppBarTitle(),
+            actions: [
+              CompactMenuButtons(user: user),
+            ],
+          );
+        } else {
+          return AppBar(
+            title: const CheckListAppBarTitle(),
+            actions: [
+              ActionTextButton(
+                key: tasksMenuButtonKey,
+                text: 'Tasks'.hardcoded,
+                onPressed: () => context.goNamed(AppRoute.tasks.name),
+              ),
+              if (user == null)
+                ActionTextButton(
+                  key: signInMenuButtonKey,
+                  text: 'Sign In'.hardcoded,
+                  onPressed: () => context.goNamed(AppRoute.signIn.name),
+                )
+              else
+                ActionTextButton(
+                  key: accountMenuButtonKey,
+                  text: 'Account'.hardcoded,
+                  onPressed: () => context.goNamed(AppRoute.account.name),
+                )
+            ],
+          );
+        }
+      },
+    );
   }
 
   @override

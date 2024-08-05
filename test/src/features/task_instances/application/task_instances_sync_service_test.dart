@@ -1,4 +1,4 @@
-import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
+import 'package:flow/src/features/authentication/data/fake_auth_repository.dart';
 import 'package:flow/src/features/authentication/domain/app_user.dart';
 import 'package:flow/src/features/task_instances/application/task_instances_sync_service.dart';
 import 'package:flow/src/features/task_instances/data/local/local_task_instances_repository.dart';
@@ -58,7 +58,7 @@ void main() {
         (_) => Future.value(remoteTaskInstances),
       );
       when(
-        () => remoteTaskInstancesRepository.setTaskInstances(
+        () => remoteTaskInstancesRepository.updateTaskInstances(
           uid,
           expectedRemoteTaskInstances,
         ),
@@ -66,7 +66,7 @@ void main() {
         (_) => Future.value(),
       );
       when(
-        () => localTaskInstancesRepository.setTaskInstances(
+        () => localTaskInstancesRepository.updateTaskInstances(
           [],
         ),
       ).thenAnswer(
@@ -79,25 +79,25 @@ void main() {
       //verify
       if (localTaskInstances.isNotEmpty) {
         verify(
-          () => remoteTaskInstancesRepository.setTaskInstances(
+          () => remoteTaskInstancesRepository.updateTaskInstances(
             uid,
             expectedRemoteTaskInstances,
           ),
         ).called(1);
         verify(
-          () => localTaskInstancesRepository.setTaskInstances(
+          () => localTaskInstancesRepository.updateTaskInstances(
             [],
           ),
         ).called(1);
       } else {
         verifyNever(
-          () => remoteTaskInstancesRepository.setTaskInstances(
+          () => remoteTaskInstancesRepository.updateTaskInstances(
             uid,
             expectedRemoteTaskInstances,
           ),
         );
         verifyNever(
-          () => localTaskInstancesRepository.setTaskInstances(
+          () => localTaskInstancesRepository.updateTaskInstances(
             [],
           ),
         );

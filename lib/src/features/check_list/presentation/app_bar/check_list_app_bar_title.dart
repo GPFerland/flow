@@ -1,7 +1,6 @@
 import 'package:flow/src/common_widgets/async_value_widget.dart';
 import 'package:flow/src/features/check_list/data/date_repository.dart';
 import 'package:flow/src/utils/date.dart';
-import 'package:flow/src/utils/style.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -39,7 +38,6 @@ class CheckListAppBarTitle extends ConsumerWidget {
             child: Text(
               getFormattedDateString(date),
               key: dateTitleKey,
-              style: getTitleLargeOnPrimary(context),
             ),
           ),
         );

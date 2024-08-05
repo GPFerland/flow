@@ -69,8 +69,7 @@ void main() {
       // verify that the listener is no longer called
       verifyNoMoreInteractions(listener);
       // verify that no repository calls during initialization
-      verifyNever(() => tasksService.setTasks(any()));
-      verifyNever(() => taskInstancesService.setTaskInstances(any()));
+      verifyNever(() => tasksService.updateTasks(any()));
     });
   });
 
@@ -81,7 +80,7 @@ void main() {
       final rescheduledDate = getDateNoTimeTomorrow();
       final updatedTaskInstance = taskInstance.reschedule(rescheduledDate);
       when(
-        () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
+        () => taskInstancesService.updateTaskInstance(updatedTaskInstance),
       ).thenAnswer((_) => Future.value(null));
       // sto
       const data = AsyncData<void>(null);
@@ -105,7 +104,7 @@ void main() {
       ]);
       verifyNoMoreInteractions(listener);
       verify(
-        () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
+        () => taskInstancesService.updateTaskInstance(updatedTaskInstance),
       ).called(1);
     });
     test('failure', () async {
@@ -114,7 +113,7 @@ void main() {
       final rescheduledDate = getDateNoTimeTomorrow();
       final updatedTaskInstance = taskInstance.reschedule(rescheduledDate);
       when(
-        () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
+        () => taskInstancesService.updateTaskInstance(updatedTaskInstance),
       ).thenThrow((_) => Exception('Failure'));
       // sto
       const data = AsyncData<void>(null);
@@ -141,7 +140,7 @@ void main() {
       ]);
       verifyNoMoreInteractions(listener);
       verify(
-        () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
+        () => taskInstancesService.updateTaskInstance(updatedTaskInstance),
       ).called(1);
     });
   });
@@ -153,7 +152,7 @@ void main() {
       final taskInstance = createTestTaskInstance();
       final updatedTaskInstance = taskInstance.toggleSkipped(today);
       when(
-        () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
+        () => taskInstancesService.updateTaskInstance(updatedTaskInstance),
       ).thenAnswer((_) => Future.value(null));
       when(() => dateRepository.date).thenAnswer((_) => today);
       // sto
@@ -177,7 +176,7 @@ void main() {
       ]);
       verifyNoMoreInteractions(listener);
       verify(
-        () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
+        () => taskInstancesService.updateTaskInstance(updatedTaskInstance),
       ).called(1);
     });
     test('failure', () async {
@@ -185,9 +184,9 @@ void main() {
       final today = getDateNoTimeToday();
       final taskInstance = createTestTaskInstance();
       final updatedTaskInstance = taskInstance.toggleSkipped(today);
-      final taskInstanceService = MockTaskInstancesService();
+      final taskInstancesService = MockTaskInstancesService();
       when(
-        () => taskInstanceService.setTaskInstances([updatedTaskInstance]),
+        () => taskInstancesService.updateTaskInstance(updatedTaskInstance),
       ).thenThrow((_) => Exception('Failure'));
       when(() => dateRepository.date).thenAnswer((_) => today);
       // sto
@@ -214,7 +213,7 @@ void main() {
       ]);
       verifyNoMoreInteractions(listener);
       verify(
-        () => taskInstancesService.setTaskInstances([updatedTaskInstance]),
+        () => taskInstancesService.updateTaskInstance(updatedTaskInstance),
       ).called(1);
     });
   });

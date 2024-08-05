@@ -3,7 +3,6 @@ import 'package:flow/src/utils/date.dart';
 
 /// Helper extension used to mutate the fields in a taskInstance object.
 extension MutableTaskInstance on TaskInstance {
-  /// reschedule the task instance to the provided date
   TaskInstance reschedule(DateTime rescheduledDate) {
     return copyWith(
       rescheduledDate: () => rescheduledDate,
@@ -12,7 +11,6 @@ extension MutableTaskInstance on TaskInstance {
     );
   }
 
-  /// toggle the completed field of the task instance
   TaskInstance toggleCompleted(DateTime date) {
     if (completed) {
       return copyWith(completed: false, completedDate: () => null);
@@ -21,7 +19,6 @@ extension MutableTaskInstance on TaskInstance {
     }
   }
 
-  /// toggle the skipped field of the task instance
   TaskInstance toggleSkipped(DateTime date) {
     if (skipped) {
       return copyWith(skipped: false, skippedDate: () => null);
@@ -35,26 +32,17 @@ extension MutableTaskInstance on TaskInstance {
   }
 
   bool isDisplayed(DateTime date) {
-    if (isOverdue(date)) {
+    if (isScheduled(date) ||
+        // only display a task instance that isOverdue if the date is today
+        (date == getDateNoTimeToday() && isOverdue(date)) ||
+        isAddressed(date)) {
       return true;
     }
-
-    if (isScheduled(date)) {
-      return true;
-    }
-
-    if (untilCompleted &&
-        date.isBefore(getDateNoTimeToday()) &&
-        ((completed && date == completedDate) ||
-            (skipped && date == skippedDate))) {
-      return true;
-    }
-
     return false;
   }
 
   bool isScheduled(DateTime date) {
-    if ((date == initialDate && rescheduledDate == null) ||
+    if ((date == scheduledDate && rescheduledDate == null) ||
         date == rescheduledDate) {
       return true;
     }
@@ -62,15 +50,26 @@ extension MutableTaskInstance on TaskInstance {
   }
 
   bool isOverdue(DateTime date) {
-    final today = getDateNoTimeToday();
-    final dayBeforeNext = nextInstanceOn?.subtract(const Duration(days: 1));
-    if (untilCompleted &&
-        (date == today || (date.isBefore(today) && date == dayBeforeNext)) &&
-        initialDate.isBefore(date) &&
+    // if the task instance should be shown until it is completed or skipped
+    if (untilAddressed &&
+        // and the date is past the scheduledDate
+        scheduledDate.isBefore(date) &&
+        // and the rescheduledDate is null or date is past rescheduledDate
         (rescheduledDate == null || rescheduledDate!.isBefore(date)) &&
-        (nextInstanceOn == null || date.isBefore(nextInstanceOn!)) &&
-        !completed &&
-        !skipped) {
+        // and the nextScheduledDate is null or date is before nextScheduledDate
+        (nextScheduledDate == null || date.isBefore(nextScheduledDate!)) &&
+        // and the task instance is not addressed on the date
+        !isAddressed(date)) {
+      // then the task instance is overdue
+      return true;
+    }
+    return false;
+  }
+
+  // * return true if the task instance was either completed or skipped on date
+  bool isAddressed(DateTime date) {
+    if (((completed && date == completedDate) ||
+        (skipped && date == skippedDate))) {
       return true;
     }
     return false;

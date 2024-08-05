@@ -1,7 +1,6 @@
-import 'package:flow/src/features/authentication/data/test_auth_repository.dart';
-import 'package:flow/src/features/authentication/presentation/account/account_screen.dart';
-import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_form_type.dart';
-import 'package:flow/src/features/authentication/presentation/sign_in/email_password_sign_in_screen.dart';
+import 'package:flow/src/features/authentication/data/auth_repository.dart';
+import 'package:flow/src/features/authentication/presentation/account/flow_account_screen.dart';
+import 'package:flow/src/features/authentication/presentation/sign_in/flow_sign_in_screen.dart';
 import 'package:flow/src/features/check_list/presentation/check_list_screen.dart';
 import 'package:flow/src/features/tasks/presentation/task/task_screen.dart';
 import 'package:flow/src/features/tasks/presentation/tasks_list/tasks_list_screen.dart';
@@ -30,13 +29,12 @@ GoRouter goRouter(GoRouterRef ref) {
     debugLogDiagnostics: false,
     redirect: (context, state) {
       final isLoggedIn = authRepository.currentUser != null;
-      final path = state.uri.path;
       if (isLoggedIn) {
-        if (path == '/${AppRoute.signIn.name}') {
+        if (state.uri.path == '/${AppRoute.signIn.name}') {
           return '/';
         }
       } else {
-        if (path == '/${AppRoute.account.name}') {
+        if (state.uri.path == '/${AppRoute.account.name}') {
           return '/';
         }
       }
@@ -82,7 +80,7 @@ GoRouter goRouter(GoRouterRef ref) {
             name: AppRoute.account.name,
             pageBuilder: (context, state) => const MaterialPage(
               fullscreenDialog: true,
-              child: AccountScreen(),
+              child: FlowAccountScreen(),
             ),
           ),
           GoRoute(
@@ -90,9 +88,7 @@ GoRouter goRouter(GoRouterRef ref) {
             name: AppRoute.signIn.name,
             pageBuilder: (context, state) => const MaterialPage(
               fullscreenDialog: true,
-              child: EmailPasswordSignInScreen(
-                formType: EmailPasswordSignInFormType.signIn,
-              ),
+              child: FlowSignInScreen(),
             ),
           ),
         ],
